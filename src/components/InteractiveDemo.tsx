@@ -56,6 +56,28 @@ const InteractiveDemo = () => {
         </form>
       </div>
       
+      {/* Sector Buttons */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 max-w-4xl w-full">
+        {[
+          "HF",
+          "Infrastructure", 
+          "Institutional",
+          "Natural Resources",
+          "Private Debt",
+          "Private Equity",
+          "Real Estate",
+          "Public Markets"
+        ].map((sector) => (
+          <Button
+            key={sector}
+            variant="outline"
+            className="h-12 text-sm font-medium bg-white border-gray-200 hover:bg-gray-50 text-gray-700"
+          >
+            {sector}
+          </Button>
+        ))}
+      </div>
+
       {/* Footer Text */}
       <div className="text-center text-sm text-gray-600 max-w-lg">
         <p>Frondex can make mistakes. Please double-check responses.</p>
