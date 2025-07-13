@@ -57,7 +57,7 @@ const InteractiveDemo = () => {
       </div>
       
       {/* Sector Buttons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 max-w-5xl w-full">
+      <div className="grid grid-cols-8 gap-4 mb-8 max-w-6xl w-full">
         {[
           "HF",
           "Infrastructure", 
