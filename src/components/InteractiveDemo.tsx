@@ -58,7 +58,7 @@ const InteractiveDemo = () => {
       </div>
       
       <div className="mb-8 w-full max-w-4xl">
-        <Dock className="items-end pb-3 w-full" magnification={80} distance={120} panelHeight={80}>
+        <Dock className="items-start pt-3" magnification={80} distance={120} panelHeight={100}>
           {[
             "HF",
             "Infrastructure", 

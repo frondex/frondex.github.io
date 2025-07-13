@@ -96,7 +96,7 @@ function Dock({
         height: height,
         scrollbarWidth: 'none',
       }}
-      className='mx-2 flex max-w-full items-end overflow-x-auto'
+      className='mx-2 flex max-w-full items-start justify-center overflow-x-auto'
     >
       <motion.div
         onMouseMove={({ pageX }) => {
@@ -108,10 +108,10 @@ function Dock({
           mouseX.set(Infinity);
         }}
         className={cn(
-          'mx-auto flex w-full gap-2 rounded-2xl bg-gray-50 px-4 dark:bg-neutral-900 justify-center',
+          'mx-auto flex w-full gap-1 rounded-2xl bg-gray-50 px-2 dark:bg-neutral-900 justify-between',
           className
         )}
-        style={{ height: panelHeight }}
+        style={{ height: panelHeight, alignItems: 'flex-start', paddingTop: '8px' }}
         role='toolbar'
         aria-label='Application dock'
       >
