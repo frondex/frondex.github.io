@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
+import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
 
 const InteractiveDemo = () => {
   const [query, setQuery] = useState("");
@@ -56,26 +57,30 @@ const InteractiveDemo = () => {
         </form>
       </div>
       
-      {/* Sector Buttons */}
-      <div className="grid grid-cols-8 gap-4 mb-8 max-w-6xl w-full">
-        {[
-          "HF",
-          "Infrastructure", 
-          "Institutional",
-          "Natural Resources",
-          "Private Debt",
-          "Private Equity",
-          "Real Estate",
-          "Public Markets"
-        ].map((sector) => (
-          <Button
-            key={sector}
-            variant="outline"
-            className="w-20 h-20 text-sm font-bold bg-white border-2 border-gray-300 hover:border-gray-900 hover:bg-gray-900 hover:text-white text-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-lg"
-          >
-            {sector}
-          </Button>
-        ))}
+      {/* Sector Dock */}
+      <div className="mb-8">
+        <Dock className="items-end pb-3">
+          {[
+            "HF",
+            "Infrastructure", 
+            "Institutional",
+            "Natural Resources",
+            "Private Debt",
+            "Private Equity",
+            "Real Estate",
+            "Public Markets"
+          ].map((sector, idx) => (
+            <DockItem
+              key={idx}
+              className="aspect-square rounded-2xl bg-white border-2 border-gray-300 hover:border-gray-900 transition-colors"
+            >
+              <DockLabel>{sector}</DockLabel>
+              <DockIcon>
+                <span className="text-sm font-bold text-gray-900">{sector}</span>
+              </DockIcon>
+            </DockItem>
+          ))}
+        </Dock>
       </div>
 
       {/* Footer Text */}
