@@ -18,9 +18,9 @@ const InteractiveDemo = () => {
       {/* Logo */}
       <div className="mb-20">
         <img 
-          src="/lovable-uploads/6b7371f7-ab10-4ed6-8a3e-3fdfd1a7fbc5.png" 
+          src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
           alt="Frondex" 
-          className="h-24 md:h-32 mx-auto"
+          className="h-16 md:h-20 mx-auto"
         />
       </div>
       
