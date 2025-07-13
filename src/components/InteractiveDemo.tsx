@@ -20,7 +20,7 @@ const InteractiveDemo = () => {
         <img 
           src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
           alt="Frondex" 
-          className="h-16 md:h-20 mx-auto"
+          className="h-24 md:h-32 w-72 md:w-96 mx-auto object-contain"
         />
       </div>
       
