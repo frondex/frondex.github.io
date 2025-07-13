@@ -108,7 +108,7 @@ function Dock({
           mouseX.set(Infinity);
         }}
         className={cn(
-          'mx-auto flex w-fit gap-4 rounded-2xl bg-gray-50 px-4 dark:bg-neutral-900',
+          'mx-auto flex w-full gap-2 rounded-2xl bg-gray-50 px-4 dark:bg-neutral-900 justify-center',
           className
         )}
         style={{ height: panelHeight }}
@@ -138,7 +138,7 @@ function DockItem({ children, className }: DockItemProps) {
   const widthTransform = useTransform(
     mouseDistance,
     [-distance, 0, distance],
-    [40, magnification, 40]
+    [80, magnification, 80]
   );
 
   const width = useSpring(widthTransform, spring);
