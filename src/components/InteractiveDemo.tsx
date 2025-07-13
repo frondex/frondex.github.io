@@ -14,9 +14,9 @@ const InteractiveDemo = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
       {/* Logo */}
-      <div className="mb-20">
+      <div className="mb-8">
         <img 
           src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
           alt="Frondex" 
