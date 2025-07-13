@@ -59,7 +59,7 @@ const InteractiveDemo = () => {
       
       {/* Sector Dock */}
       <div className="mb-8">
-        <Dock className="items-end pb-3">
+        <Dock className="items-end pb-3" magnification={160} distance={200}>
           {[
             "HF",
             "Infrastructure", 
@@ -72,11 +72,11 @@ const InteractiveDemo = () => {
           ].map((sector, idx) => (
             <DockItem
               key={idx}
-              className="aspect-square rounded-2xl bg-white border-2 border-gray-300 hover:border-gray-900 transition-colors"
+              className="aspect-square rounded-2xl bg-white border-2 border-gray-300 hover:border-gray-900 transition-colors w-16 h-16"
             >
               <DockLabel>{sector}</DockLabel>
               <DockIcon>
-                <span className="text-sm font-bold text-gray-900">{sector}</span>
+                <div className="w-full h-full"></div>
               </DockIcon>
             </DockItem>
           ))}
