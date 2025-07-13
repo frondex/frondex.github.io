@@ -57,8 +57,8 @@ const InteractiveDemo = () => {
         </form>
       </div>
       
-      <div className="mb-8 w-full max-w-4xl">
-        <Dock className="items-start pt-3" magnification={80} distance={120} panelHeight={100}>
+      <div className="mb-8 w-full max-w-4xl flex justify-center">
+        <Dock className="w-full" magnification={100} distance={140} panelHeight={90}>
           {[
             "HF",
             "Infrastructure", 
@@ -71,7 +71,7 @@ const InteractiveDemo = () => {
           ].map((sector, idx) => (
             <DockItem
               key={idx}
-              className="aspect-square rounded-2xl bg-white border-2 border-gray-300 hover:border-gray-900 transition-colors min-w-[80px] max-w-[80px] h-20"
+              className="aspect-square rounded-2xl bg-white border-2 border-gray-300 hover:border-gray-900 transition-colors"
             >
               <DockLabel>{sector}</DockLabel>
               <DockIcon>
