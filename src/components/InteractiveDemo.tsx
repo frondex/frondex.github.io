@@ -57,7 +57,7 @@ const InteractiveDemo = () => {
       </div>
       
       {/* Sector Buttons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 max-w-5xl w-full">
         {[
           "HF",
           "Infrastructure", 
@@ -71,7 +71,7 @@ const InteractiveDemo = () => {
           <Button
             key={sector}
             variant="outline"
-            className="aspect-square h-20 text-sm font-bold bg-white border-2 border-gray-300 hover:border-gray-900 hover:bg-gray-900 hover:text-white text-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="w-20 h-20 text-sm font-bold bg-white border-2 border-gray-300 hover:border-gray-900 hover:bg-gray-900 hover:text-white text-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             {sector}
           </Button>
