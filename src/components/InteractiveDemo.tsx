@@ -122,7 +122,7 @@ const InteractiveDemo = () => {
             { 
               name: "Carry and Conquer", 
               description: "",
-              grayscaleImage: carryConquerGrayNew,
+              grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
               colorImage: carryConquerColor,
               detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors.",
               link: "https://carryandconquer.substack.com/"
@@ -130,7 +130,7 @@ const InteractiveDemo = () => {
             { 
               name: "Landlord Ledger", 
               description: "",
-              grayscaleImage: landlordLedgerGrayNew,
+              grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
               colorImage: landlordLedgerColor,
               detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools.",
               link: "https://landlordledger.substack.com/"
