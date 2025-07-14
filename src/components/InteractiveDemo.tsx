@@ -106,7 +106,7 @@ const InteractiveDemo = () => {
             { 
               name: "Natural Currency", 
               description: "",
-              grayscaleImage: naturalCurrencyGrayNew,
+              grayscaleImage: "/lovable-uploads/b71bf268-6fe7-4ed4-b3e0-4a604f452fd0.png",
               colorImage: naturalCurrencyColor,
               detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments.",
               link: "https://naturalcurrency.substack.com/"
@@ -114,7 +114,7 @@ const InteractiveDemo = () => {
             { 
               name: "Debt Capital Chronicles", 
               description: "",
-              grayscaleImage: debtCapitalGrayNew,
+              grayscaleImage: "/lovable-uploads/2f36adb1-6c20-470c-a2c8-3eb23c28f831.png",
               colorImage: debtCapitalColor,
               detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools.",
               link: "https://debtcapitalchronicles.substack.com/"
