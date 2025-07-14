@@ -147,3 +147,16 @@ All colors MUST be HSL.
 html {
   scroll-behavior: smooth;
 }
+
+/* Enhanced animation utilities for brand cards */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.transform-gpu {
+  transform: translate3d(0, 0, 0);
+}

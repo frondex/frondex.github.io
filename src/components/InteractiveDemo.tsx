@@ -3,6 +3,24 @@ import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 
+// Import all generated images
+import longShortGray from "@/assets/long-short-grayscale.jpg";
+import longShortColor from "@/assets/long-short-color.jpg";
+import infraLedgerGray from "@/assets/infraledger-grayscale.jpg";
+import infraLedgerColor from "@/assets/infraledger-color.jpg";
+import allocatorGray from "@/assets/allocator-grayscale.jpg";
+import allocatorColor from "@/assets/allocator-color.jpg";
+import naturalCurrencyGray from "@/assets/natural-currency-grayscale.jpg";
+import naturalCurrencyColor from "@/assets/natural-currency-color.jpg";
+import debtCapitalGray from "@/assets/debt-capital-grayscale.jpg";
+import debtCapitalColor from "@/assets/debt-capital-color.jpg";
+import carryConquerGray from "@/assets/carry-conquer-grayscale.jpg";
+import carryConquerColor from "@/assets/carry-conquer-color.jpg";
+import landlordLedgerGray from "@/assets/landlord-ledger-grayscale.jpg";
+import landlordLedgerColor from "@/assets/landlord-ledger-color.jpg";
+import republicGray from "@/assets/republic-grayscale.jpg";
+import republicColor from "@/assets/republic-color.jpg";
+
 const InteractiveDemo = () => {
   const [query, setQuery] = useState("");
 
@@ -52,52 +70,70 @@ const InteractiveDemo = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            {
-              name: "The Long & Short",
-              description: "Hedge Funds",
-              image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop"
+            { 
+              name: "The Long & Short", 
+              description: "Hedge fund strategies and market analysis",
+              grayscaleImage: longShortGray,
+              colorImage: longShortColor,
+              detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors."
             },
-            {
-              name: "InfraLedger",
-              description: "Infrastructure", 
-              image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop"
+            { 
+              name: "InfraLedger", 
+              description: "Infrastructure investment tracking",
+              grayscaleImage: infraLedgerGray,
+              colorImage: infraLedgerColor,
+              detailedDescription: "Comprehensive infrastructure investment platform tracking global projects from transportation networks to renewable energy developments. Smart city investments and sustainable infrastructure opportunities."
             },
-            {
-              name: "The Allocator's Almanac",
-              description: "Institutional",
-              image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop"
+            { 
+              name: "The Allocator's Almanac", 
+              description: "Institutional investment allocation",
+              grayscaleImage: allocatorGray,
+              colorImage: allocatorColor,
+              detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes."
             },
-            {
-              name: "Natural Currency",
-              description: "Natural Resources",
-              image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop"
+            { 
+              name: "Natural Currency", 
+              description: "Natural resources and commodities",
+              grayscaleImage: naturalCurrencyGray,
+              colorImage: naturalCurrencyColor,
+              detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments."
             },
-            {
-              name: "Debt Capital Chronicles",
-              description: "Private Debt",
-              image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop"
+            { 
+              name: "Debt Capital Chronicles", 
+              description: "Private debt and credit markets",
+              grayscaleImage: debtCapitalGray,
+              colorImage: debtCapitalColor,
+              detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools."
             },
-            {
-              name: "Carry and Conquer",
-              description: "Private Equity",
-              image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop"
+            { 
+              name: "Carry and Conquer", 
+              description: "Private equity opportunities",
+              grayscaleImage: carryConquerGray,
+              colorImage: carryConquerColor,
+              detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors."
             },
-            {
-              name: "Landlord Ledger",
-              description: "Real Estate",
-              image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop"
+            { 
+              name: "Landlord Ledger", 
+              description: "Real estate investment platform",
+              grayscaleImage: landlordLedgerGray,
+              colorImage: landlordLedgerColor,
+              detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools."
             },
-            {
-              name: "Republic",
-              description: "Public Markets",
-              image: "https://images.unsplash.com/photo-1611095973362-ee02dcb0ed4c?w=400&h=300&fit=crop"
+            { 
+              name: "Republic", 
+              description: "Public markets and equity research",
+              grayscaleImage: republicGray,
+              colorImage: republicColor,
+              detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors."
             }
           ].map((brand, idx) => (
             <AnimatedBrandCard
               key={idx}
               name={brand.name}
               description={brand.description}
-              image={brand.image}
+              grayscaleImage={brand.grayscaleImage}
+              colorImage={brand.colorImage}
+              detailedDescription={brand.detailedDescription}
             />
           ))}
         </div>
