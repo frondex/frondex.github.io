@@ -17,17 +17,20 @@ const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({
 }) => {
   return (
     <div className="relative w-full h-80 rounded-2xl cursor-pointer overflow-hidden group perspective-1000">
-      {/* Default grayscale background */}
-      <div 
-        className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
-        style={{ backgroundImage: `url(${grayscaleImage})` }}
-      />
-      
-      {/* Color background on hover */}
-      <div 
-        className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 scale-95 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100 z-20"
-        style={{ backgroundImage: `url(${colorImage})` }}
-      />
+      {/* Image frame container */}
+      <div className="absolute inset-4 rounded-xl overflow-hidden">
+        {/* Default grayscale background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
+          style={{ backgroundImage: `url(${grayscaleImage})` }}
+        />
+        
+        {/* Color background on hover */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-0 scale-95 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100 z-20"
+          style={{ backgroundImage: `url(${colorImage})` }}
+        />
+      </div>
       
       {/* Elegant overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 group-hover:from-black/80 group-hover:to-black/40 transition-all duration-500 z-30" />
