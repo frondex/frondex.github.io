@@ -82,7 +82,7 @@ const InteractiveDemo = () => {
             { 
               name: "The Long & Short", 
               description: "",
-              grayscaleImage: longShortGrayNew,
+              grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
               colorImage: longShortColor,
               detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors.",
               link: "https://longshorthf.substack.com/"
@@ -98,7 +98,7 @@ const InteractiveDemo = () => {
             { 
               name: "The Allocator's Almanac", 
               description: "",
-              grayscaleImage: allocatorGrayNew,
+              grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
               colorImage: allocatorColor,
               detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes.",
               link: "https://allocatorsalmanac.substack.com/"
@@ -138,7 +138,7 @@ const InteractiveDemo = () => {
             { 
               name: "Republic", 
               description: "",
-              grayscaleImage: republicGrayNew,
+              grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
               colorImage: republicColor,
               detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors.",
               link: "https://www.frondex.com/"
