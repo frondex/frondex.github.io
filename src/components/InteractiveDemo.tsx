@@ -6,7 +6,7 @@ import AnimatedBrandCard from "./AnimatedBrandCard";
 // Import all generated images
 import longShortGray from "@/assets/long-short-grayscale.jpg";
 import longShortColor from "@/assets/long-short-color.jpg";
-import infraLedgerGray from "@/assets/infraledger-grayscale.jpg";
+import infraLedgerGray from "/lovable-uploads/25257823-3fe9-4deb-adbe-c27f2e30fe2f.png";
 import infraLedgerColor from "@/assets/infraledger-color.jpg";
 import allocatorGray from "@/assets/allocator-grayscale.jpg";
 import allocatorColor from "@/assets/allocator-color.jpg";
