@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
+import AnimatedBrandCard from "./AnimatedBrandCard";
 
 const InteractiveDemo = () => {
   const [query, setQuery] = useState("");
@@ -92,38 +93,12 @@ const InteractiveDemo = () => {
               image: "https://images.unsplash.com/photo-1611095973362-ee02dcb0ed4c?w=400&h=300&fit=crop"
             }
           ].map((brand, idx) => (
-            <div 
+            <AnimatedBrandCard
               key={idx}
-              className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden"
-            >
-              {/* Background gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              {/* Content */}
-              <div className="relative z-10">
-                <div className="w-full h-48 rounded-2xl overflow-hidden mb-6 bg-gradient-to-br from-gray-100 to-gray-200">
-                  <img 
-                    src={brand.image} 
-                    alt={brand.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
-                
-                <h3 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-purple-700 transition-colors duration-300">
-                  {brand.name}
-                </h3>
-                
-                <p className="text-gray-600 text-sm leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                  {brand.description}
-                </p>
-                
-                {/* Decorative element */}
-                <div className="absolute top-6 right-6 w-4 h-4 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              
-              {/* Hover effect border */}
-              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-purple-200 transition-all duration-300"></div>
-            </div>
+              name={brand.name}
+              description={brand.description}
+              image={brand.image}
+            />
           ))}
         </div>
       </section>
