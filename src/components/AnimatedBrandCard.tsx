@@ -6,6 +6,7 @@ interface AnimatedBrandCardProps {
   grayscaleImage: string;
   colorImage: string;
   detailedDescription: string;
+  link: string;
 }
 
 const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({ 
@@ -13,10 +14,16 @@ const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({
   description, 
   grayscaleImage, 
   colorImage, 
-  detailedDescription 
+  detailedDescription,
+  link 
 }) => {
   return (
-    <div className="relative w-full h-80 rounded-2xl cursor-pointer overflow-hidden group perspective-1000">
+    <a 
+      href={link} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="relative w-full h-80 rounded-2xl cursor-pointer overflow-hidden group perspective-1000 block"
+    >
       {/* Default grayscale background */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
@@ -59,7 +66,7 @@ const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({
       
       {/* Subtle glow effect */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-blue-400/30 via-purple-400/30 to-pink-400/30 transition-opacity duration-700 z-5" />
-    </div>
+    </a>
   );
 };
 

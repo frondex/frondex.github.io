@@ -75,56 +75,64 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: longShortGray,
               colorImage: longShortColor,
-              detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors."
+              detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors.",
+              link: "https://longshorthf.substack.com/"
             },
             { 
               name: "InfraLedger", 
               description: "",
               grayscaleImage: "/lovable-uploads/fbc9a6dd-fabb-4d96-ac35-edda576dbd2e.png",
               colorImage: infraLedgerColor,
-              detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities."
+              detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities.",
+              link: "https://theinfraledger.substack.com/"
             },
             { 
               name: "The Allocator's Almanac", 
               description: "",
               grayscaleImage: allocatorGray,
               colorImage: allocatorColor,
-              detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes."
+              detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes.",
+              link: "https://allocatorsalmanac.substack.com/"
             },
             { 
               name: "Natural Currency", 
               description: "",
               grayscaleImage: naturalCurrencyGray,
               colorImage: naturalCurrencyColor,
-              detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments."
+              detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments.",
+              link: "https://naturalcurrency.substack.com/"
             },
             { 
               name: "Debt Capital Chronicles", 
               description: "",
               grayscaleImage: debtCapitalGray,
               colorImage: debtCapitalColor,
-              detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools."
+              detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools.",
+              link: "https://debtcapitalchronicles.substack.com/"
             },
             { 
               name: "Carry and Conquer", 
               description: "",
               grayscaleImage: carryConquerGray,
               colorImage: carryConquerColor,
-              detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors."
+              detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors.",
+              link: "https://carryandconquer.substack.com/"
             },
             { 
               name: "Landlord Ledger", 
               description: "",
               grayscaleImage: "/lovable-uploads/f4f7c5ad-67bf-49f8-9910-ff83f82db312.png",
               colorImage: landlordLedgerColor,
-              detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools."
+              detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools.",
+              link: "https://landlordledger.substack.com/"
             },
             { 
               name: "Republic", 
               description: "",
               grayscaleImage: republicGray,
               colorImage: republicColor,
-              detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors."
+              detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors.",
+              link: "https://www.frondex.com/"
             }
           ].map((brand, idx) => (
             <AnimatedBrandCard
@@ -134,6 +142,7 @@ const InteractiveDemo = () => {
               grayscaleImage={brand.grayscaleImage}
               colorImage={brand.colorImage}
               detailedDescription={brand.detailedDescription}
+              link={brand.link}
             />
           ))}
         </div>
