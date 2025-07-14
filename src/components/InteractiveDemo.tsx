@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
+import { ChevronDown } from "lucide-react";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 import ChatConversationView from "./ChatConversationView";
 
@@ -29,6 +30,13 @@ const InteractiveDemo = () => {
   const handleChatSubmit = (query: string) => {
     setInitialQuery(query);
     setShowChatView(true);
+  };
+
+  const scrollToBrands = () => {
+    const brandsSection = document.getElementById('brands-section');
+    if (brandsSection) {
+      brandsSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   if (showChatView) {
@@ -62,12 +70,26 @@ const InteractiveDemo = () => {
       </div>
       
       {/* Chat Input */}
-      <div className="w-full max-w-4xl mb-64">
+      <div className="w-full max-w-4xl mb-16">
         <VercelV0Chat onSubmit={handleChatSubmit} />
       </div>
       
+      {/* Scroll Down Indicator */}
+      <div className="flex flex-col items-center mb-32">
+        <button
+          onClick={scrollToBrands}
+          className="group flex flex-col items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+          aria-label="Scroll to brands section"
+        >
+          <span className="text-sm font-medium">Explore Our Brands</span>
+          <ChevronDown 
+            className="h-6 w-6 animate-bounce group-hover:translate-y-1 transition-transform duration-200" 
+          />
+        </button>
+      </div>
+      
       {/* Our Brands Section */}
-      <section className="w-full max-w-7xl px-6">
+      <section id="brands-section" className="w-full max-w-7xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
             Our Brands
