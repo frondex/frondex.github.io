@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { ArrowLeft, Send, Paperclip } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Send, Paperclip, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { FlowithService, FlowithSettings, FlowithMessage } from "@/lib/flowith";
+import FlowithSettingsComponent from "./FlowithSettings";
 
 interface ChatConversationViewProps {
   onBack: () => void;
@@ -9,24 +12,75 @@ interface ChatConversationViewProps {
 }
 
 const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationViewProps) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "user" as const,
-      content: initialQuery || "What are the latest trends in private equity investments?",
-      timestamp: new Date(Date.now() - 2 * 60 * 1000)
-    },
-    {
-      id: 2,
-      type: "assistant" as const,
-      content: "Based on current market analysis, here are the key trends in private equity:\n\n1. **ESG Integration**: Environmental, social, and governance factors are becoming central to investment decisions, with 78% of PE firms now incorporating ESG criteria.\n\n2. **Technology Focus**: Software and fintech deals continue to dominate, representing 32% of all PE transactions in 2024.\n\n3. **Healthcare Innovation**: Medical technology and biotechnology investments have increased by 45% year-over-year.\n\n4. **Supply Chain Resilience**: Investments in supply chain technology and logistics have grown significantly post-pandemic.\n\nWould you like me to dive deeper into any of these trends or explore specific sectors?",
-      timestamp: new Date(Date.now() - 1 * 60 * 1000)
-    }
-  ]);
+  const [messages, setMessages] = useState<Array<{
+    id: number;
+    type: "user" | "assistant";
+    content: string;
+    timestamp: Date;
+  }>>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [flowithService, setFlowithService] = useState<FlowithService | null>(null);
+  const [settings, setSettings] = useState<FlowithSettings | null>(null);
+  const { toast } = useToast();
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+  useEffect(() => {
+    const storedSettings = FlowithService.getStoredSettings();
+    if (storedSettings) {
+      setSettings(storedSettings);
+      setFlowithService(new FlowithService(storedSettings));
+    }
+
+    // Add initial query if provided
+    if (initialQuery) {
+      setMessages([{
+        id: 1,
+        type: "user",
+        content: initialQuery,
+        timestamp: new Date()
+      }]);
+      
+      // Send initial query to API if settings are available
+      if (storedSettings) {
+        handleInitialQuery(initialQuery, new FlowithService(storedSettings));
+      }
+    }
+  }, [initialQuery]);
+
+  const handleInitialQuery = async (query: string, service: FlowithService) => {
+    setIsLoading(true);
+    try {
+      const flowithMessages: FlowithMessage[] = [{ role: 'user', content: query }];
+      const response = await service.sendMessage(flowithMessages);
+      
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        type: "assistant",
+        content: response,
+        timestamp: new Date()
+      }]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to get response",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || isLoading) return;
+
+    if (!flowithService || !settings) {
+      toast({
+        title: "Configuration Required",
+        description: "Please configure your Flowith API settings first.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     const userMessage = {
       id: messages.length + 1,
@@ -37,17 +91,41 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
 
     setMessages(prev => [...prev, userMessage]);
     setNewMessage("");
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = {
-        id: messages.length + 2,
-        type: "assistant" as const,
-        content: "I'm analyzing your question about private markets. Let me provide you with detailed insights based on the latest market data and trends...",
+    try {
+      // Convert messages to Flowith format
+      const flowithMessages: FlowithMessage[] = [...messages, userMessage].map(msg => ({
+        role: msg.type === "user" ? "user" : "assistant",
+        content: msg.content
+      }));
+
+      const response = await flowithService.sendMessage(flowithMessages);
+      
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        type: "assistant",
+        content: response,
         timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1500);
+      }]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send message",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSettingsChange = (newSettings: FlowithSettings) => {
+    setSettings(newSettings);
+    setFlowithService(new FlowithService(newSettings));
+    toast({
+      title: "Settings Updated",
+      description: "Flowith API settings have been saved successfully.",
+    });
   };
 
   const formatTime = (date: Date) => {
@@ -62,7 +140,7 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
           <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0">
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <img 
               src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
               alt="Frondex" 
@@ -73,6 +151,10 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
               <p className="text-sm text-muted-foreground">Private Markets Assistant</p>
             </div>
           </div>
+          <FlowithSettingsComponent 
+            onSettingsChange={handleSettingsChange}
+            currentSettings={settings || undefined}
+          />
         </div>
       </div>
 
@@ -114,6 +196,22 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
               )}
             </div>
           ))}
+          
+          {isLoading && (
+            <div className="flex gap-4 justify-start">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 mt-1">
+                <span className="text-primary-foreground text-sm font-medium">F</span>
+              </div>
+              <div className="max-w-[70%]">
+                <div className="rounded-2xl px-4 py-3 bg-muted text-foreground">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Analyzing your question...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -144,11 +242,15 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
             </div>
             <Button 
               onClick={handleSendMessage}
-              disabled={!newMessage.trim()}
+              disabled={!newMessage.trim() || isLoading}
               className="h-12 w-12 shrink-0"
               size="icon"
             >
-              <Send className="h-4 w-4" />
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
