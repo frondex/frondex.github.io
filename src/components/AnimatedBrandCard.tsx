@@ -19,13 +19,13 @@ const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({
     <div className="relative w-full h-80 rounded-2xl cursor-pointer overflow-hidden group perspective-1000">
       {/* Default grayscale background */}
       <div 
-        className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
+        className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
         style={{ backgroundImage: `url(${grayscaleImage})` }}
       />
       
       {/* Color background on hover */}
       <div 
-        className="absolute inset-0 bg-cover bg-center opacity-0 scale-95 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100 z-20"
+        className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 scale-95 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100 z-20"
         style={{ backgroundImage: `url(${colorImage})` }}
       />
       
