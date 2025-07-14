@@ -34,7 +34,7 @@ const InteractiveDemo = () => {
       </div>
       
       {/* Chat Input */}
-      <div className="w-full max-w-4xl mb-8">
+      <div className="w-full max-w-4xl mb-32">
         <VercelV0Chat />
       </div>
       
