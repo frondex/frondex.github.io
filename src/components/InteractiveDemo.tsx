@@ -3,7 +3,7 @@ import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 
-// Import all generated images
+import landlordLedgerGrayNew from "@/assets/landlord-ledger-grayscale-new.jpg";
 import longShortGray from "@/assets/long-short-grayscale.jpg";
 import longShortColor from "@/assets/long-short-color.jpg";
 import infraLedgerGray from "/lovable-uploads/25257823-3fe9-4deb-adbe-c27f2e30fe2f.png";
@@ -121,7 +121,7 @@ const InteractiveDemo = () => {
             { 
               name: "Landlord Ledger", 
               description: "",
-              grayscaleImage: "/lovable-uploads/1ad1bb02-baea-496e-9c88-6451decd0e12.png",
+              grayscaleImage: landlordLedgerGrayNew,
               colorImage: landlordLedgerColor,
               detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools.",
               link: "https://landlordledger.substack.com/"
