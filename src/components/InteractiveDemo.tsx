@@ -106,7 +106,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
               colorImage: longShortColor,
-              detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors.",
+              detailedDescription: "Insights and analysis on hedge funds, covering market trends, fund strategies, and key moves shaping the industry.",
               link: "https://longshorthf.substack.com/"
             },
             { 
@@ -114,7 +114,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/b4ce8e3a-c44e-4bf9-8709-8d3175ceac17.png",
               colorImage: infraLedgerColor,
-              detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities.",
+              detailedDescription: "Insights and analysis on infrastructure investing, covering key projects, capital flows, and market trends shaping global development.",
               link: "https://theinfraledger.substack.com/"
             },
             { 
@@ -122,7 +122,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
               colorImage: allocatorColor,
-              detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes.",
+              detailedDescription: "Providing in-depth insights into institutional investors' transactions, market movements, and capital allocation strategies.",
               link: "https://allocatorsalmanac.substack.com/"
             },
             { 
@@ -130,7 +130,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/b71bf268-6fe7-4ed4-b3e0-4a604f452fd0.png",
               colorImage: naturalCurrencyColor,
-              detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments.",
+              detailedDescription: "Natural Currency explores the dynamic world of natural resource transactions, delving into the value, trade, and sustainability of earth's most precious assets. Stay informed on the flow of resources shaping the global economy.",
               link: "https://naturalcurrency.substack.com/"
             },
             { 
@@ -138,7 +138,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/2f36adb1-6c20-470c-a2c8-3eb23c28f831.png",
               colorImage: debtCapitalColor,
-              detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools.",
+              detailedDescription: "Insights and analysis on private debt, covering credit markets, direct lending, and key trends shaping the industry.",
               link: "https://debtcapitalchronicles.substack.com/"
             },
             { 
@@ -146,7 +146,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
               colorImage: carryConquerColor,
-              detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors.",
+              detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
               link: "https://carryandconquer.substack.com/"
             },
             { 
@@ -154,7 +154,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
               colorImage: landlordLedgerColor,
-              detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools.",
+              detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
               link: "https://landlordledger.substack.com/"
             },
             { 
@@ -162,7 +162,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
               colorImage: republicColor,
-              detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors.",
+              detailedDescription: "Insights on the global public markets",
               link: "https://www.frondex.com/"
             }
           ].map((brand, idx) => (
