@@ -130,7 +130,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: "/lovable-uploads/b71bf268-6fe7-4ed4-b3e0-4a604f452fd0.png",
               colorImage: naturalCurrencyColor,
-              detailedDescription: "Natural Currency explores the dynamic world of natural resource transactions, delving into the value, trade, and sustainability of earth's most precious assets. Stay informed on the flow of resources shaping the global economy.",
+              detailedDescription: "Explores the dynamic world of natural resource transactions, delving into the value, trade, and sustainability of earth's most precious assets.",
               link: "https://naturalcurrency.substack.com/"
             },
             { 
