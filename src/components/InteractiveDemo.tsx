@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
+import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
 
 const InteractiveDemo = () => {
@@ -37,24 +35,7 @@ const InteractiveDemo = () => {
       
       {/* Chat Input */}
       <div className="w-full max-w-4xl mb-8">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-          <div className="flex items-center gap-4">
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask anything"
-              className="border-0 bg-transparent text-lg py-4 focus-visible:ring-0 flex-1 text-gray-900 placeholder:text-gray-500"
-            />
-            <Button 
-              type="submit" 
-              size="icon" 
-              className="h-12 w-12 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition-colors"
-              disabled={!query.trim()}
-            >
-              <Send className="h-5 w-5" />
-            </Button>
-          </div>
-        </form>
+        <VercelV0Chat />
       </div>
       
       <div className="mb-8 w-full max-w-4xl flex justify-center">
