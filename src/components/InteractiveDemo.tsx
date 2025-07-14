@@ -121,7 +121,7 @@ const InteractiveDemo = () => {
             { 
               name: "Landlord Ledger", 
               description: "",
-              grayscaleImage: "/lovable-uploads/f4f7c5ad-67bf-49f8-9910-ff83f82db312.png",
+              grayscaleImage: "/lovable-uploads/1ad1bb02-baea-496e-9c88-6451decd0e12.png",
               colorImage: landlordLedgerColor,
               detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools.",
               link: "https://landlordledger.substack.com/"
