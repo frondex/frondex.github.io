@@ -26,7 +26,7 @@ const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({
     >
       {/* Default grayscale background */}
       <div 
-        className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
+        className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-0 z-10"
         style={{ backgroundImage: `url(${grayscaleImage})` }}
       />
       
