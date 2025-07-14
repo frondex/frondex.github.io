@@ -50,8 +50,14 @@ export class FlowithService {
       throw new Error('Rate limit exceeded. Please try again later.');
     }
 
+    if (response.status === 402) {
+      throw new Error('Account quota exceeded. Please check your Flowith account billing.');
+    }
+
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      const errorMessage = errorData?.error || `API error: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -78,8 +84,14 @@ export class FlowithService {
       throw new Error('Rate limit exceeded. Please try again later.');
     }
 
+    if (response.status === 402) {
+      throw new Error('Account quota exceeded. Please check your Flowith account billing.');
+    }
+
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      const errorMessage = errorData?.error || `API error: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
     }
 
     if (!response.body) {
