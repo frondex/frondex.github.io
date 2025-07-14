@@ -7,7 +7,7 @@ import ChatConversationView from "./ChatConversationView";
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
 import longShortColor from "@/assets/long-short-color.jpg";
-import infraLedgerGrayNew from "@/assets/infraledger-grayscale-new.jpg";
+// import infraLedgerGrayNew from "@/assets/infraledger-grayscale-new.jpg";
 import infraLedgerColor from "@/assets/infraledger-color.jpg";
 import allocatorGrayNew from "@/assets/allocator-grayscale-new.jpg";
 import allocatorColor from "@/assets/allocator-color.jpg";
@@ -90,7 +90,7 @@ const InteractiveDemo = () => {
             { 
               name: "InfraLedger", 
               description: "",
-              grayscaleImage: infraLedgerGrayNew,
+              grayscaleImage: "/lovable-uploads/b4ce8e3a-c44e-4bf9-8709-8d3175ceac17.png",
               colorImage: infraLedgerColor,
               detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities.",
               link: "https://theinfraledger.substack.com/"
