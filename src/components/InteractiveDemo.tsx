@@ -82,7 +82,7 @@ const InteractiveDemo = () => {
               description: "",
               grayscaleImage: infraLedgerGray,
               colorImage: infraLedgerColor,
-              detailedDescription: "Infrastructure investment tracking - Comprehensive infrastructure investment platform tracking global projects from transportation networks to renewable energy developments. Smart city investments and sustainable infrastructure opportunities."
+              detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities."
             },
             { 
               name: "The Allocator's Almanac", 

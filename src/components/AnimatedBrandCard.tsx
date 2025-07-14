@@ -41,8 +41,8 @@ const AnimatedBrandCard: React.FC<AnimatedBrandCardProps> = ({
       
       {/* Content container */}
       <div className="relative w-full h-full flex flex-col justify-end p-6 z-50">
-        {/* Brand name - always visible */}
-        <h3 className="text-2xl font-bold text-white mb-2 leading-tight transform transition-all duration-500 group-hover:scale-105 group-hover:text-shadow-lg">
+        {/* Brand name - hidden by default, visible on hover for InfraLedger */}
+        <h3 className={`text-2xl font-bold text-white mb-2 leading-tight transform transition-all duration-500 group-hover:scale-105 group-hover:text-shadow-lg ${name === "InfraLedger" ? "opacity-0 group-hover:opacity-100" : ""}`}>
           {name}
         </h3>
         
