@@ -52,44 +52,44 @@ const InteractiveDemo = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
-              name: "TechFlow",
-              description: "Next-generation software solutions",
-              image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=300&fit=crop"
+              name: "The Long & Short",
+              description: "Hedge Funds",
+              image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop"
             },
             {
-              name: "DataVision",
-              description: "AI-powered analytics platform", 
-              image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop"
+              name: "InfraLedger",
+              description: "Infrastructure", 
+              image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop"
             },
             {
-              name: "CloudScale",
-              description: "Enterprise cloud infrastructure",
-              image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop"
+              name: "The Allocator's Almanac",
+              description: "Institutional",
+              image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop"
             },
             {
-              name: "InnovateLab",
-              description: "Research & development hub",
-              image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop"
+              name: "Natural Currency",
+              description: "Natural Resources",
+              image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop"
             },
             {
-              name: "DigitalCore",
-              description: "Digital transformation specialists",
-              image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=300&fit=crop"
+              name: "Debt Capital Chronicles",
+              description: "Private Debt",
+              image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop"
             },
             {
-              name: "FutureStack",
-              description: "Modern development framework",
-              image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop"
+              name: "Carry and Conquer",
+              description: "Private Equity",
+              image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop"
             },
             {
-              name: "SmartSystems",
-              description: "Intelligent automation solutions",
-              image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop"
+              name: "Landlord Ledger",
+              description: "Real Estate",
+              image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop"
             },
             {
-              name: "CodeCraft",
-              description: "Premium software craftsmanship",
-              image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop"
+              name: "Republic",
+              description: "Public Markets",
+              image: "https://images.unsplash.com/photo-1611095973362-ee02dcb0ed4c?w=400&h=300&fit=crop"
             }
           ].map((brand, idx) => (
             <div 
