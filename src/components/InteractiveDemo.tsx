@@ -3,22 +3,22 @@ import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 
-import landlordLedgerGrayNew from "@/assets/landlord-ledger-grayscale-new.jpg";
-import longShortGray from "@/assets/long-short-grayscale.jpg";
+// Import all generated images
+import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
 import longShortColor from "@/assets/long-short-color.jpg";
-import infraLedgerGray from "/lovable-uploads/25257823-3fe9-4deb-adbe-c27f2e30fe2f.png";
+import infraLedgerGrayNew from "@/assets/infraledger-grayscale-new.jpg";
 import infraLedgerColor from "@/assets/infraledger-color.jpg";
-import allocatorGray from "@/assets/allocator-grayscale.jpg";
+import allocatorGrayNew from "@/assets/allocator-grayscale-new.jpg";
 import allocatorColor from "@/assets/allocator-color.jpg";
-import naturalCurrencyGray from "@/assets/natural-currency-grayscale.jpg";
+import naturalCurrencyGrayNew from "@/assets/natural-currency-grayscale-new.jpg";
 import naturalCurrencyColor from "@/assets/natural-currency-color.jpg";
-import debtCapitalGray from "@/assets/debt-capital-grayscale.jpg";
+import debtCapitalGrayNew from "@/assets/debt-capital-grayscale-new.jpg";
 import debtCapitalColor from "@/assets/debt-capital-color.jpg";
-import carryConquerGray from "@/assets/carry-conquer-grayscale.jpg";
+import carryConquerGrayNew from "@/assets/carry-conquer-grayscale-new.jpg";
 import carryConquerColor from "@/assets/carry-conquer-color.jpg";
-import landlordLedgerGray from "@/assets/landlord-ledger-grayscale.jpg";
+import landlordLedgerGrayNew from "@/assets/landlord-ledger-grayscale-new.jpg";
 import landlordLedgerColor from "@/assets/landlord-ledger-color.jpg";
-import republicGray from "@/assets/republic-grayscale.jpg";
+import republicGrayNew from "@/assets/republic-grayscale-new.jpg";
 import republicColor from "@/assets/republic-color.jpg";
 
 const InteractiveDemo = () => {
@@ -73,7 +73,7 @@ const InteractiveDemo = () => {
             { 
               name: "The Long & Short", 
               description: "",
-              grayscaleImage: longShortGray,
+              grayscaleImage: longShortGrayNew,
               colorImage: longShortColor,
               detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors.",
               link: "https://longshorthf.substack.com/"
@@ -81,7 +81,7 @@ const InteractiveDemo = () => {
             { 
               name: "InfraLedger", 
               description: "",
-              grayscaleImage: "/lovable-uploads/fbc9a6dd-fabb-4d96-ac35-edda576dbd2e.png",
+              grayscaleImage: infraLedgerGrayNew,
               colorImage: infraLedgerColor,
               detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities.",
               link: "https://theinfraledger.substack.com/"
@@ -89,7 +89,7 @@ const InteractiveDemo = () => {
             { 
               name: "The Allocator's Almanac", 
               description: "",
-              grayscaleImage: allocatorGray,
+              grayscaleImage: allocatorGrayNew,
               colorImage: allocatorColor,
               detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes.",
               link: "https://allocatorsalmanac.substack.com/"
@@ -97,7 +97,7 @@ const InteractiveDemo = () => {
             { 
               name: "Natural Currency", 
               description: "",
-              grayscaleImage: naturalCurrencyGray,
+              grayscaleImage: naturalCurrencyGrayNew,
               colorImage: naturalCurrencyColor,
               detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments.",
               link: "https://naturalcurrency.substack.com/"
@@ -105,7 +105,7 @@ const InteractiveDemo = () => {
             { 
               name: "Debt Capital Chronicles", 
               description: "",
-              grayscaleImage: debtCapitalGray,
+              grayscaleImage: debtCapitalGrayNew,
               colorImage: debtCapitalColor,
               detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools.",
               link: "https://debtcapitalchronicles.substack.com/"
@@ -113,7 +113,7 @@ const InteractiveDemo = () => {
             { 
               name: "Carry and Conquer", 
               description: "",
-              grayscaleImage: carryConquerGray,
+              grayscaleImage: carryConquerGrayNew,
               colorImage: carryConquerColor,
               detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors.",
               link: "https://carryandconquer.substack.com/"
@@ -129,7 +129,7 @@ const InteractiveDemo = () => {
             { 
               name: "Republic", 
               description: "",
-              grayscaleImage: republicGray,
+              grayscaleImage: republicGrayNew,
               colorImage: republicColor,
               detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors.",
               link: "https://www.frondex.com/"
