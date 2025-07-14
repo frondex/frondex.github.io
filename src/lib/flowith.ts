@@ -59,49 +59,65 @@ export class FlowithService {
   }
 
   private async sendStreamingMessage(messages: FlowithMessage[]): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const eventSource = new EventSource(`${FlowithService.API_URL}?stream=true`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.settings.apiToken}`,
-          'Content-Type': 'application/json',
-          'Host': 'edge.flowith.net'
-        },
-        body: JSON.stringify({
-          messages,
-          model: this.settings.model,
-          stream: true,
-          kb_list: this.settings.kbIds
-        })
-      } as any);
-
-      let fullResponse = '';
-
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.content) {
-            fullResponse += data.content;
-          }
-        } catch (error) {
-          console.error('Error parsing SSE data:', error);
-        }
-      };
-
-      eventSource.onerror = (error) => {
-        eventSource.close();
-        if (fullResponse) {
-          resolve(fullResponse);
-        } else {
-          reject(new Error('Streaming connection failed'));
-        }
-      };
-
-      eventSource.addEventListener('end', () => {
-        eventSource.close();
-        resolve(fullResponse);
-      });
+    const response = await fetch(FlowithService.API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.settings.apiToken}`,
+        'Content-Type': 'application/json',
+        'Host': 'edge.flowith.net'
+      },
+      body: JSON.stringify({
+        messages,
+        model: this.settings.model,
+        stream: true,
+        kb_list: this.settings.kbIds
+      })
     });
+
+    if (response.status === 429) {
+      throw new Error('Rate limit exceeded. Please try again later.');
+    }
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    if (!response.body) {
+      throw new Error('No response body received');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullResponse = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.content) {
+                fullResponse += data.content;
+              }
+            } catch (error) {
+              // Skip invalid JSON lines
+              console.log('Skipping invalid JSON:', line);
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    return fullResponse || 'No response received';
   }
 
   static getStoredSettings(): FlowithSettings | null {
