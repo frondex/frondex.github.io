@@ -80,7 +80,7 @@ const InteractiveDemo = () => {
             { 
               name: "InfraLedger", 
               description: "",
-              grayscaleImage: "/lovable-uploads/a599b8d1-6bca-487f-80c8-82c75d357ee1.png",
+              grayscaleImage: "/lovable-uploads/fbc9a6dd-fabb-4d96-ac35-edda576dbd2e.png",
               colorImage: infraLedgerColor,
               detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities."
             },
@@ -115,7 +115,7 @@ const InteractiveDemo = () => {
             { 
               name: "Landlord Ledger", 
               description: "",
-              grayscaleImage: "/lovable-uploads/3c6fdda6-aa83-487f-8fea-0dda7d3bb91f.png",
+              grayscaleImage: "/lovable-uploads/f4f7c5ad-67bf-49f8-9910-ff83f82db312.png",
               colorImage: landlordLedgerColor,
               detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools."
             },
