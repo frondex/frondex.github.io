@@ -2,6 +2,7 @@ import { useState } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
 import AnimatedBrandCard from "./AnimatedBrandCard";
+import ChatConversationView from "./ChatConversationView";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -22,14 +23,22 @@ import republicGrayNew from "@/assets/republic-grayscale-new.jpg";
 import republicColor from "@/assets/republic-color.jpg";
 
 const InteractiveDemo = () => {
-  const [query, setQuery] = useState("");
+  const [showChatView, setShowChatView] = useState(false);
+  const [initialQuery, setInitialQuery] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      console.log("Demo query:", query);
-    }
+  const handleChatSubmit = (query: string) => {
+    setInitialQuery(query);
+    setShowChatView(true);
   };
+
+  if (showChatView) {
+    return (
+      <ChatConversationView 
+        onBack={() => setShowChatView(false)}
+        initialQuery={initialQuery}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
@@ -54,7 +63,7 @@ const InteractiveDemo = () => {
       
       {/* Chat Input */}
       <div className="w-full max-w-4xl mb-64">
-        <VercelV0Chat />
+        <VercelV0Chat onSubmit={handleChatSubmit} />
       </div>
       
       {/* Our Brands Section */}

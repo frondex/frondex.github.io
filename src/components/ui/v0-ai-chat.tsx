@@ -71,20 +71,29 @@ function useAutoResizeTextarea({
     return { textareaRef, adjustHeight };
 }
 
-export function VercelV0Chat() {
+interface VercelV0ChatProps {
+    onSubmit?: (query: string) => void;
+}
+
+export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     const [value, setValue] = useState("");
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 60,
         maxHeight: 200,
     });
 
+    const handleSubmit = () => {
+        if (value.trim()) {
+            onSubmit?.(value.trim());
+            setValue("");
+            adjustHeight(true);
+        }
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            if (value.trim()) {
-                setValue("");
-                adjustHeight(true);
-            }
+            handleSubmit();
         }
     };
 
@@ -140,6 +149,8 @@ export function VercelV0Chat() {
                         </button>
                         <button
                             type="button"
+                            onClick={handleSubmit}
+                            disabled={!value.trim()}
                             className={cn(
                                 "px-1.5 py-1.5 rounded-lg text-sm transition-colors border border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1",
                                 value.trim()
