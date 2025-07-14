@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import AnimatedBrandCard from "./AnimatedBrandCard";
-import { RunwareService } from "@/lib/runware";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -26,99 +23,11 @@ import republicColor from "@/assets/republic-color.jpg";
 
 const InteractiveDemo = () => {
   const [query, setQuery] = useState("");
-  const [generatedImages, setGeneratedImages] = useState<{[key: string]: string}>({});
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [currentlyGenerating, setCurrentlyGenerating] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
       console.log("Demo query:", query);
-    }
-  };
-
-  const brandPrompts = {
-    'long-short': {
-      grayscale: "Professional embossed silver card design, The Long & Short hedge fund theme, financial charts and graphs, bull and bear market symbols, elegant monochromatic silver tones, embossed metallic texture, sophisticated financial aesthetic, trading floor elements, grayscale",
-      color: "Professional embossed silver card design, The Long & Short hedge fund theme, financial charts and graphs, bull and bear market symbols, rich blue and gold accents, embossed metallic texture, sophisticated financial aesthetic, trading floor elements, premium colors"
-    },
-    'infraledger': {
-      grayscale: "Professional embossed silver card design, InfraLedger infrastructure theme, modern bridges and smart city elements, power grids and construction symbols, elegant monochromatic silver tones, embossed metallic texture, engineering aesthetic, grayscale",
-      color: "Professional embossed silver card design, InfraLedger infrastructure theme, modern bridges and smart city elements, power grids and construction symbols, deep green and steel blue accents, embossed metallic texture, engineering aesthetic, premium colors"
-    },
-    'allocator': {
-      grayscale: "Professional embossed silver card design, The Allocator's Almanac theme, portfolio allocation diagrams, institutional investment symbols, balance scales and charts, elegant monochromatic silver tones, embossed metallic texture, institutional aesthetic, grayscale",
-      color: "Professional embossed silver card design, The Allocator's Almanac theme, portfolio allocation diagrams, institutional investment symbols, balance scales and charts, rich purple and gold accents, embossed metallic texture, institutional aesthetic, premium colors"
-    },
-    'natural-currency': {
-      grayscale: "Professional embossed silver card design, Natural Currency commodities theme, gold bars and oil symbols, agricultural products and natural resources, elegant monochromatic silver tones, embossed metallic texture, commodities trading aesthetic, grayscale",
-      color: "Professional embossed silver card design, Natural Currency commodities theme, gold bars and oil symbols, agricultural products and natural resources, warm amber and earth tone accents, embossed metallic texture, commodities trading aesthetic, premium colors"
-    },
-    'debt-capital': {
-      grayscale: "Professional embossed silver card design, Debt Capital Chronicles theme, bonds and lending documents, capital structure diagrams, financial instruments, elegant monochromatic silver tones, embossed metallic texture, corporate finance aesthetic, grayscale",
-      color: "Professional embossed silver card design, Debt Capital Chronicles theme, bonds and lending documents, capital structure diagrams, financial instruments, deep red and silver accents, embossed metallic texture, corporate finance aesthetic, premium colors"
-    },
-    'carry-conquer': {
-      grayscale: "Professional embossed silver card design, Carry and Conquer private equity theme, growth arrows and acquisition symbols, business expansion elements, elegant monochromatic silver tones, embossed metallic texture, private equity aesthetic, grayscale",
-      color: "Professional embossed silver card design, Carry and Conquer private equity theme, growth arrows and acquisition symbols, business expansion elements, bold orange and black accents, embossed metallic texture, private equity aesthetic, premium colors"
-    },
-    'landlord-ledger': {
-      grayscale: "Professional embossed silver card design, Landlord Ledger real estate theme, modern buildings and property portfolios, keys and real estate symbols, elegant monochromatic silver tones, embossed metallic texture, real estate aesthetic, grayscale",
-      color: "Professional embossed silver card design, Landlord Ledger real estate theme, modern buildings and property portfolios, keys and real estate symbols, rich teal and copper accents, embossed metallic texture, real estate aesthetic, premium colors"
-    },
-    'republic': {
-      grayscale: "Professional embossed silver card design, Republic public markets theme, stock exchange and trading floor elements, public market symbols and charts, elegant monochromatic silver tones, embossed metallic texture, public markets aesthetic, grayscale",
-      color: "Professional embossed silver card design, Republic public markets theme, stock exchange and trading floor elements, public market symbols and charts, patriotic blue and red accents, embossed metallic texture, public markets aesthetic, premium colors"
-    }
-  };
-
-  const generateAllImages = async () => {
-    setIsGenerating(true);
-    const apiKey = "2VyUGYZi0jAxOcmctIJX3um3kZMoTOXV";
-    const runware = new RunwareService(apiKey);
-
-    try {
-      toast.success("Starting image generation for all 8 brands...");
-      
-      for (const [brandKey, prompts] of Object.entries(brandPrompts)) {
-        setCurrentlyGenerating(`${brandKey} (grayscale)`);
-        
-        // Generate grayscale version
-        const grayscaleResult = await runware.generateImage({
-          positivePrompt: prompts.grayscale,
-          model: "runware:100@1",
-          CFGScale: 7,
-          scheduler: "FlowMatchEulerDiscreteScheduler",
-          outputFormat: "WEBP"
-        });
-
-        setCurrentlyGenerating(`${brandKey} (color)`);
-        
-        // Generate color version
-        const colorResult = await runware.generateImage({
-          positivePrompt: prompts.color,
-          model: "runware:100@1",
-          CFGScale: 7,
-          scheduler: "FlowMatchEulerDiscreteScheduler",
-          outputFormat: "WEBP"
-        });
-
-        setGeneratedImages(prev => ({
-          ...prev,
-          [`${brandKey}-grayscale`]: grayscaleResult.imageURL,
-          [`${brandKey}-color`]: colorResult.imageURL
-        }));
-
-        toast.success(`Generated images for ${brandKey}`);
-      }
-      
-      toast.success("All brand images generated successfully!");
-    } catch (error) {
-      console.error("Error generating images:", error);
-      toast.error("Failed to generate images. Please try again.");
-    } finally {
-      setIsGenerating(false);
-      setCurrentlyGenerating('');
     }
   };
 
@@ -131,17 +40,6 @@ const InteractiveDemo = () => {
           alt="Frondex" 
           className="h-54 md:h-72 w-full mx-auto object-contain"
         />
-      </div>
-
-      {/* Generate Images Button */}
-      <div className="flex items-center justify-center mb-8">
-        <Button 
-          onClick={generateAllImages}
-          disabled={isGenerating}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold shadow-lg"
-        >
-          {isGenerating ? `Generating ${currentlyGenerating}...` : "Generate Better Images"}
-        </Button>
       </div>
       
       {/* Main Heading */}
@@ -175,64 +73,64 @@ const InteractiveDemo = () => {
             { 
               name: "The Long & Short", 
               description: "",
-              grayscaleImage: generatedImages['long-short-grayscale'] || longShortGrayNew,
-              colorImage: generatedImages['long-short-color'] || longShortColor,
+              grayscaleImage: longShortGrayNew,
+              colorImage: longShortColor,
               detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors.",
               link: "https://longshorthf.substack.com/"
             },
             { 
               name: "InfraLedger", 
               description: "",
-              grayscaleImage: generatedImages['infraledger-grayscale'] || infraLedgerGrayNew,
-              colorImage: generatedImages['infraledger-color'] || infraLedgerColor,
+              grayscaleImage: infraLedgerGrayNew,
+              colorImage: infraLedgerColor,
               detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities.",
               link: "https://theinfraledger.substack.com/"
             },
             { 
               name: "The Allocator's Almanac", 
               description: "",
-              grayscaleImage: generatedImages['allocator-grayscale'] || allocatorGrayNew,
-              colorImage: generatedImages['allocator-color'] || allocatorColor,
+              grayscaleImage: allocatorGrayNew,
+              colorImage: allocatorColor,
               detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes.",
               link: "https://allocatorsalmanac.substack.com/"
             },
             { 
               name: "Natural Currency", 
               description: "",
-              grayscaleImage: generatedImages['natural-currency-grayscale'] || naturalCurrencyGrayNew,
-              colorImage: generatedImages['natural-currency-color'] || naturalCurrencyColor,
+              grayscaleImage: naturalCurrencyGrayNew,
+              colorImage: naturalCurrencyColor,
               detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments.",
               link: "https://naturalcurrency.substack.com/"
             },
             { 
               name: "Debt Capital Chronicles", 
               description: "",
-              grayscaleImage: generatedImages['debt-capital-grayscale'] || debtCapitalGrayNew,
-              colorImage: generatedImages['debt-capital-color'] || debtCapitalColor,
+              grayscaleImage: debtCapitalGrayNew,
+              colorImage: debtCapitalColor,
               detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools.",
               link: "https://debtcapitalchronicles.substack.com/"
             },
             { 
               name: "Carry and Conquer", 
               description: "",
-              grayscaleImage: generatedImages['carry-conquer-grayscale'] || carryConquerGrayNew,
-              colorImage: generatedImages['carry-conquer-color'] || carryConquerColor,
+              grayscaleImage: carryConquerGrayNew,
+              colorImage: carryConquerColor,
               detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors.",
               link: "https://carryandconquer.substack.com/"
             },
             { 
               name: "Landlord Ledger", 
               description: "",
-              grayscaleImage: generatedImages['landlord-ledger-grayscale'] || landlordLedgerGrayNew,
-              colorImage: generatedImages['landlord-ledger-color'] || landlordLedgerColor,
+              grayscaleImage: landlordLedgerGrayNew,
+              colorImage: landlordLedgerColor,
               detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools.",
               link: "https://landlordledger.substack.com/"
             },
             { 
               name: "Republic", 
               description: "",
-              grayscaleImage: generatedImages['republic-grayscale'] || republicGrayNew,
-              colorImage: generatedImages['republic-color'] || republicColor,
+              grayscaleImage: republicGrayNew,
+              colorImage: republicColor,
               detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors.",
               link: "https://www.frondex.com/"
             }
