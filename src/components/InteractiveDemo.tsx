@@ -72,7 +72,7 @@ const InteractiveDemo = () => {
           {[
             { 
               name: "The Long & Short", 
-              description: "Hedge fund strategies and market analysis",
+              description: "",
               grayscaleImage: longShortGray,
               colorImage: longShortColor,
               detailedDescription: "Advanced hedge fund strategies combining quantitative analysis with traditional long/short equity approaches. Real-time market sentiment tracking and algorithmic trading signals for institutional investors."
@@ -80,48 +80,48 @@ const InteractiveDemo = () => {
             { 
               name: "InfraLedger", 
               description: "",
-              grayscaleImage: infraLedgerGray,
+              grayscaleImage: "/lovable-uploads/a599b8d1-6bca-487f-80c8-82c75d357ee1.png",
               colorImage: infraLedgerColor,
               detailedDescription: "Infrastructure investment tracking - Global platform for transportation, renewable energy, and smart city investments with sustainable infrastructure opportunities."
             },
             { 
               name: "The Allocator's Almanac", 
-              description: "Institutional investment allocation",
+              description: "",
               grayscaleImage: allocatorGray,
               colorImage: allocatorColor,
               detailedDescription: "Sophisticated portfolio allocation tools for institutional investors including pension funds, endowments, and family offices. Advanced risk management and diversification strategies across multiple asset classes."
             },
             { 
               name: "Natural Currency", 
-              description: "Natural resources and commodities",
+              description: "",
               grayscaleImage: naturalCurrencyGray,
               colorImage: naturalCurrencyColor,
               detailedDescription: "Comprehensive commodities trading platform covering precious metals, energy resources, and agricultural products. Real-time market data and supply chain analytics for natural resource investments."
             },
             { 
               name: "Debt Capital Chronicles", 
-              description: "Private debt and credit markets",
+              description: "",
               grayscaleImage: debtCapitalGray,
               colorImage: debtCapitalColor,
               detailedDescription: "Private debt marketplace connecting institutional lenders with corporate borrowers. Structured credit products, direct lending opportunities, and comprehensive credit risk assessment tools."
             },
             { 
               name: "Carry and Conquer", 
-              description: "Private equity opportunities",
+              description: "",
               grayscaleImage: carryConquerGray,
               colorImage: carryConquerColor,
               detailedDescription: "Elite private equity platform featuring growth capital, buyout opportunities, and venture investments. Comprehensive due diligence tools and portfolio company performance tracking for institutional investors."
             },
             { 
               name: "Landlord Ledger", 
-              description: "Real estate investment platform",
-              grayscaleImage: landlordLedgerGray,
+              description: "",
+              grayscaleImage: "/lovable-uploads/3c6fdda6-aa83-487f-8fea-0dda7d3bb91f.png",
               colorImage: landlordLedgerColor,
               detailedDescription: "Institutional real estate investment platform covering commercial properties, residential developments, and REITs. Advanced property analytics, market trends, and portfolio optimization tools."
             },
             { 
               name: "Republic", 
-              description: "Public markets and equity research",
+              description: "",
               grayscaleImage: republicGray,
               colorImage: republicColor,
               detailedDescription: "Comprehensive public markets research platform with institutional-grade equity analysis, market intelligence, and trading execution. Advanced charting tools and fundamental analysis for professional investors."
