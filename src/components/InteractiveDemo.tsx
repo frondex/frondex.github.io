@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
-import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share } from "lucide-react";
+import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Pricing } from "@/components/ui/pricing-cards";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 import ChatConversationView from "./ChatConversationView";
 
@@ -26,6 +29,7 @@ import republicColor from "@/assets/republic-color.jpg";
 const InteractiveDemo = () => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
+  const [showPricing, setShowPricing] = useState(false);
   const [messages, setMessages] = useState<Array<{
     id: number;
     type: "user" | "assistant";
@@ -84,6 +88,19 @@ const InteractiveDemo = () => {
           <p className="text-gray-600 text-xl md:text-2xl">
             Ask anything about private markets, deal flow, or portfolio insights
           </p>
+          <div className="mt-8">
+            <Dialog open={showPricing} onOpenChange={setShowPricing}>
+              <DialogTrigger asChild>
+                <Button className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                  <Crown className="w-4 h-4" />
+                  Upgrade to Pro
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+                <Pricing />
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
         
         {/* Chat Input */}
@@ -208,18 +225,31 @@ const InteractiveDemo = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header with back button and logo */}
-      <div className="flex items-center gap-4 p-4 bg-white border-b">
-        <button
-          onClick={() => setShowChatView(false)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          ← Back
-        </button>
-        <img 
-          src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
-          alt="Frondex" 
-          className="h-8 w-auto"
-        />
+      <div className="flex items-center justify-between gap-4 p-4 bg-white border-b">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowChatView(false)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            ← Back
+          </button>
+          <img 
+            src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
+            alt="Frondex" 
+            className="h-8 w-auto"
+          />
+        </div>
+        <Dialog open={showPricing} onOpenChange={setShowPricing}>
+          <DialogTrigger asChild>
+            <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+              <Crown className="w-4 h-4" />
+              Upgrade
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+            <Pricing />
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Messages area */}
