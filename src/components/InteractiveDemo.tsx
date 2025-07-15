@@ -26,10 +26,24 @@ import republicColor from "@/assets/republic-color.jpg";
 const InteractiveDemo = () => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
+  const [messages, setMessages] = useState<Array<{
+    id: number;
+    type: "user" | "assistant";
+    content: string;
+    timestamp: Date;
+  }>>([]);
 
   const handleChatSubmit = (query: string) => {
     setInitialQuery(query);
     setShowChatView(true);
+    // Add the user message to the conversation
+    const newMessage = {
+      id: Date.now(),
+      type: "user" as const,
+      content: query,
+      timestamp: new Date()
+    };
+    setMessages([newMessage]);
   };
 
   const scrollToBrands = () => {
@@ -39,149 +53,185 @@ const InteractiveDemo = () => {
     }
   };
 
-  if (showChatView) {
+  if (!showChatView) {
     return (
-      <ChatConversationView 
-        onBack={() => setShowChatView(false)}
-        initialQuery={initialQuery}
-      />
-    );
-  }
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
-      {/* Logo */}
-      <div className="-mb-20">
-        <img 
-          src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
-          alt="Frondex" 
-          className="h-54 md:h-72 w-full mx-auto object-contain"
-        />
-      </div>
-      
-      {/* Main Heading */}
-      <div className="text-center mb-16 max-w-3xl">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
-          What can I help with?
-        </h1>
-        <p className="text-gray-600 text-xl md:text-2xl">
-          Ask anything about private markets, deal flow, or portfolio insights
-        </p>
-      </div>
-      
-      {/* Chat Input */}
-      <div className="w-full max-w-4xl mb-16">
-        <VercelV0Chat onSubmit={handleChatSubmit} />
-      </div>
-      
-      {/* Scroll Down Indicator */}
-      <div className="flex flex-col items-center mb-32">
-        <button
-          onClick={scrollToBrands}
-          className="group flex flex-col items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-          aria-label="Scroll to brands section"
-        >
-          <span className="text-sm font-medium">Explore Our Brands</span>
-          <ChevronDown 
-            className="h-6 w-6 animate-bounce group-hover:translate-y-1 transition-transform duration-200" 
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
+        {/* Logo */}
+        <div className="-mb-20">
+          <img 
+            src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
+            alt="Frondex" 
+            className="h-54 md:h-72 w-full mx-auto object-contain"
           />
-        </button>
-      </div>
-      
-      {/* Our Brands Section */}
-      <section id="brands-section" className="w-full max-w-7xl px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-            Our Brands
-          </h2>
-          <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
-            Discover the innovative companies and visionary brands that shape tomorrow's markets
+        </div>
+        
+        {/* Main Heading */}
+        <div className="text-center mb-16 max-w-3xl">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
+            What can I help with?
+          </h1>
+          <p className="text-gray-600 text-xl md:text-2xl">
+            Ask anything about private markets, deal flow, or portfolio insights
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {[
-            { 
-              name: "The Long & Short", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
-              colorImage: longShortColor,
-              detailedDescription: "Insights and analysis on hedge funds, covering market trends, fund strategies, and key moves shaping the industry.",
-              link: "https://longshorthf.substack.com/"
-            },
-            { 
-              name: "InfraLedger", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/b4ce8e3a-c44e-4bf9-8709-8d3175ceac17.png",
-              colorImage: infraLedgerColor,
-              detailedDescription: "Insights and analysis on infrastructure investing, covering key projects, capital flows, and market trends shaping global development.",
-              link: "https://theinfraledger.substack.com/"
-            },
-            { 
-              name: "The Allocator's Almanac", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
-              colorImage: allocatorColor,
-              detailedDescription: "Providing in-depth insights into institutional investors' transactions, market movements, and capital allocation strategies.",
-              link: "https://allocatorsalmanac.substack.com/"
-            },
-            { 
-              name: "Natural Currency", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/b71bf268-6fe7-4ed4-b3e0-4a604f452fd0.png",
-              colorImage: naturalCurrencyColor,
-              detailedDescription: "Explores the dynamic world of natural resource transactions, delving into the value, trade, and sustainability of earth's most precious assets.",
-              link: "https://naturalcurrency.substack.com/"
-            },
-            { 
-              name: "Debt Capital Chronicles", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/2f36adb1-6c20-470c-a2c8-3eb23c28f831.png",
-              colorImage: debtCapitalColor,
-              detailedDescription: "Insights and analysis on private debt, covering credit markets, direct lending, and key trends shaping the industry.",
-              link: "https://debtcapitalchronicles.substack.com/"
-            },
-            { 
-              name: "Carry and Conquer", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
-              colorImage: carryConquerColor,
-              detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
-              link: "https://carryandconquer.substack.com/"
-            },
-            { 
-              name: "Landlord Ledger", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
-              colorImage: landlordLedgerColor,
-              detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
-              link: "https://landlordledger.substack.com/"
-            },
-            { 
-              name: "Republic", 
-              description: "",
-              grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
-              colorImage: republicColor,
-              detailedDescription: "Insights on the global public markets",
-              link: "https://www.frondex.com/"
-            }
-          ].map((brand, idx) => (
-            <AnimatedBrandCard
-              key={idx}
-              name={brand.name}
-              description={brand.description}
-              grayscaleImage={brand.grayscaleImage}
-              colorImage={brand.colorImage}
-              detailedDescription={brand.detailedDescription}
-              link={brand.link}
+        {/* Chat Input */}
+        <div className="w-full max-w-4xl mb-16">
+          <VercelV0Chat onSubmit={handleChatSubmit} />
+        </div>
+        
+        {/* Scroll Down Indicator */}
+        <div className="flex flex-col items-center mb-32">
+          <button
+            onClick={scrollToBrands}
+            className="group flex flex-col items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+            aria-label="Scroll to brands section"
+          >
+            <span className="text-sm font-medium">Explore Our Brands</span>
+            <ChevronDown 
+              className="h-6 w-6 animate-bounce group-hover:translate-y-1 transition-transform duration-200" 
             />
+          </button>
+        </div>
+        
+        {/* Our Brands Section */}
+        <section id="brands-section" className="w-full max-w-7xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+              Our Brands
+            </h2>
+            <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
+              Discover the innovative companies and visionary brands that shape tomorrow's markets
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { 
+                name: "The Long & Short", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
+                colorImage: longShortColor,
+                detailedDescription: "Insights and analysis on hedge funds, covering market trends, fund strategies, and key moves shaping the industry.",
+                link: "https://longshorthf.substack.com/"
+              },
+              { 
+                name: "InfraLedger", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/b4ce8e3a-c44e-4bf9-8709-8d3175ceac17.png",
+                colorImage: infraLedgerColor,
+                detailedDescription: "Insights and analysis on infrastructure investing, covering key projects, capital flows, and market trends shaping global development.",
+                link: "https://theinfraledger.substack.com/"
+              },
+              { 
+                name: "The Allocator's Almanac", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
+                colorImage: allocatorColor,
+                detailedDescription: "Providing in-depth insights into institutional investors' transactions, market movements, and capital allocation strategies.",
+                link: "https://allocatorsalmanac.substack.com/"
+              },
+              { 
+                name: "Natural Currency", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/b71bf268-6fe7-4ed4-b3e0-4a604f452fd0.png",
+                colorImage: naturalCurrencyColor,
+                detailedDescription: "Explores the dynamic world of natural resource transactions, delving into the value, trade, and sustainability of earth's most precious assets.",
+                link: "https://naturalcurrency.substack.com/"
+              },
+              { 
+                name: "Debt Capital Chronicles", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/2f36adb1-6c20-470c-a2c8-3eb23c28f831.png",
+                colorImage: debtCapitalColor,
+                detailedDescription: "Insights and analysis on private debt, covering credit markets, direct lending, and key trends shaping the industry.",
+                link: "https://debtcapitalchronicles.substack.com/"
+              },
+              { 
+                name: "Carry and Conquer", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
+                colorImage: carryConquerColor,
+                detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
+                link: "https://carryandconquer.substack.com/"
+              },
+              { 
+                name: "Landlord Ledger", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
+                colorImage: landlordLedgerColor,
+                detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
+                link: "https://landlordledger.substack.com/"
+              },
+              { 
+                name: "Republic", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
+                colorImage: republicColor,
+                detailedDescription: "Insights on the global public markets",
+                link: "https://www.frondex.com/"
+              }
+            ].map((brand, idx) => (
+              <AnimatedBrandCard
+                key={idx}
+                name={brand.name}
+                description={brand.description}
+                grayscaleImage={brand.grayscaleImage}
+                colorImage={brand.colorImage}
+                detailedDescription={brand.detailedDescription}
+                link={brand.link}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Footer Text */}
+        <div className="text-center text-sm text-gray-600 max-w-lg">
+          <p>Frondex can make mistakes. Please double-check responses.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Chat view layout - same VercelV0Chat component, just positioned at bottom
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header with back button and logo */}
+      <div className="flex items-center gap-4 p-4 bg-white border-b">
+        <button
+          onClick={() => setShowChatView(false)}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          ← Back
+        </button>
+        <img 
+          src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
+          alt="Frondex" 
+          className="h-8 w-auto"
+        />
+      </div>
+
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="max-w-4xl mx-auto">
+          {messages.map((message) => (
+            <div key={message.id} className="mb-4">
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="text-sm text-gray-600 mb-1">
+                  {message.type === "user" ? "You" : "Frondex AI"}
+                </div>
+                <div className="text-gray-900">{message.content}</div>
+              </div>
+            </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* Footer Text */}
-      <div className="text-center text-sm text-gray-600 max-w-lg">
-        <p>Frondex can make mistakes. Please double-check responses.</p>
+      {/* Chat input fixed at bottom - same VercelV0Chat component */}
+      <div className="border-t bg-white p-4">
+        <div className="max-w-4xl mx-auto">
+          <VercelV0Chat onSubmit={handleChatSubmit} />
+        </div>
       </div>
     </div>
   );
