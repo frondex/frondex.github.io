@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share } from "lucide-react";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 import ChatConversationView from "./ChatConversationView";
 
@@ -36,14 +36,25 @@ const InteractiveDemo = () => {
   const handleChatSubmit = (query: string) => {
     setInitialQuery(query);
     setShowChatView(true);
-    // Add the user message to the conversation
-    const newMessage = {
+    // Add the user message and AI response
+    const userMessage = {
       id: Date.now(),
       type: "user" as const,
       content: query,
       timestamp: new Date()
     };
-    setMessages([newMessage]);
+    const aiMessage = {
+      id: Date.now() + 1,
+      type: "assistant" as const,
+      content: "Hey! How can I help you today?",
+      timestamp: new Date()
+    };
+    setMessages([userMessage, aiMessage]);
+  };
+
+  const handleMessageAction = (action: string, messageId: number) => {
+    // Handle message actions like copy, thumbs up, etc.
+    console.log(`Action: ${action} for message: ${messageId}`);
   };
 
   const scrollToBrands = () => {
@@ -212,15 +223,67 @@ const InteractiveDemo = () => {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto p-6 bg-white">
+        <div className="max-w-4xl mx-auto space-y-6">
           {messages.map((message) => (
-            <div key={message.id} className="mb-4">
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-sm text-gray-600 mb-1">
-                  {message.type === "user" ? "You" : "Frondex AI"}
-                </div>
-                <div className="text-gray-900">{message.content}</div>
+            <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[80%] ${message.type === "user" ? "order-2" : "order-1"}`}>
+                {message.type === "user" ? (
+                  <div className="bg-gray-100 rounded-2xl px-4 py-3 text-right">
+                    <div className="text-gray-900 text-sm">{message.content}</div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-gray-900 text-base leading-relaxed">
+                      {message.content}
+                    </div>
+                    {/* Action buttons for AI messages */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleMessageAction('copy', message.id)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                        title="Copy"
+                      >
+                        <Copy className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                      </button>
+                      <button
+                        onClick={() => handleMessageAction('thumbsUp', message.id)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                        title="Good response"
+                      >
+                        <ThumbsUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                      </button>
+                      <button
+                        onClick={() => handleMessageAction('thumbsDown', message.id)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                        title="Bad response"
+                      >
+                        <ThumbsDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                      </button>
+                      <button
+                        onClick={() => handleMessageAction('regenerate', message.id)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                        title="Regenerate"
+                      >
+                        <RotateCcw className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                      </button>
+                      <button
+                        onClick={() => handleMessageAction('speak', message.id)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                        title="Read aloud"
+                      >
+                        <Volume2 className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                      </button>
+                      <button
+                        onClick={() => handleMessageAction('share', message.id)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                        title="Share"
+                      >
+                        <Share className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}
