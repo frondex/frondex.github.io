@@ -70,7 +70,22 @@ const InteractiveDemo = () => {
 
   if (!showChatView) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
+        {/* Upgrade Button - Top Right */}
+        <div className="fixed top-4 right-4 z-10">
+          <Dialog open={showPricing} onOpenChange={setShowPricing}>
+            <DialogTrigger asChild>
+              <Button className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                <Crown className="w-4 h-4" />
+                Upgrade to Pro
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+              <Pricing />
+            </DialogContent>
+          </Dialog>
+        </div>
+
         {/* Logo */}
         <div className="-mb-20">
           <img 
@@ -88,19 +103,6 @@ const InteractiveDemo = () => {
           <p className="text-gray-600 text-xl md:text-2xl">
             Ask anything about private markets, deal flow, or portfolio insights
           </p>
-          <div className="mt-8">
-            <Dialog open={showPricing} onOpenChange={setShowPricing}>
-              <DialogTrigger asChild>
-                <Button className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
-                  <Crown className="w-4 h-4" />
-                  Upgrade to Pro
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
-                <Pricing />
-              </DialogContent>
-            </Dialog>
-          </div>
         </div>
         
         {/* Chat Input */}
