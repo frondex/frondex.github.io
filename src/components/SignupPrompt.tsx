@@ -24,22 +24,22 @@ export function SignupPrompt({ open, onOpenChange, onSignup, onLogin }: SignupPr
           </Button>
         </div>
         
-        <div className="flex flex-col items-center space-y-6 -mt-4">
-          {/* Frondex Logo */}
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center">
+        <div className="flex flex-col space-y-6 -mt-4">
+          {/* Frondex Logo - Left Aligned */}
+          <div className="flex justify-start">
             <img 
-              src="/lovable-uploads/1ad1bb02-baea-496e-9c88-6451decd0e12.png" 
+              src="/lovable-uploads/975e116a-7efb-4cb8-b615-b3ca56cacdb7.png" 
               alt="Frondex" 
-              className="h-10 w-auto"
+              className="h-12 w-auto"
             />
           </div>
           
           {/* Heading */}
-          <div className="text-center space-y-2">
+          <div className="text-left space-y-2">
             <h2 className="text-2xl font-semibold text-gray-900">
               Join and start building
             </h2>
-            <p className="text-gray-600 text-base leading-relaxed max-w-sm">
+            <p className="text-gray-600 text-base leading-relaxed">
               Create a free account to continue your private markets journey with unlimited access to Frondex AI
             </p>
           </div>
