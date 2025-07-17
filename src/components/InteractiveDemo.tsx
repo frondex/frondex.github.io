@@ -9,6 +9,7 @@ import { OpenAIService, type ChatMessage } from "@/lib/openai";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { SignupPrompt } from "./SignupPrompt";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 
 // Import all generated images
@@ -41,13 +42,24 @@ const InteractiveDemo = () => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
   const [showPricing, setShowPricing] = useState(false);
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
+  const [queryCount, setQueryCount] = useState(0);
   const { toast } = useToast();
 
   const handleChatSubmit = useCallback(async (query: string) => {
     if (!query.trim() || isLoading) return;
+
+    // Increment query count and check if we should show signup prompt
+    const newQueryCount = queryCount + 1;
+    setQueryCount(newQueryCount);
+    
+    if (newQueryCount > 2) {
+      setShowSignupPrompt(true);
+      return;
+    }
 
     setInitialQuery(query);
     setShowChatView(true);
@@ -134,7 +146,23 @@ const InteractiveDemo = () => {
       setIsLoading(false);
       setStreamingMessageId(null);
     }
-  }, [isLoading, messages, toast]);
+  }, [isLoading, messages, toast, queryCount]);
+
+  const handleSignup = () => {
+    setShowSignupPrompt(false);
+    toast({
+      title: "Sign Up",
+      description: "Redirecting to sign up page...",
+    });
+  };
+
+  const handleLogin = () => {
+    setShowSignupPrompt(false);
+    toast({
+      title: "Log In", 
+      description: "Redirecting to login page...",
+    });
+  };
 
   const handleMessageAction = (action: string, messageId: number) => {
     // Handle message actions like copy, thumbs up, etc.
@@ -458,6 +486,14 @@ const InteractiveDemo = () => {
           )}
         </div>
       </div>
+      
+      {/* Signup Prompt Modal */}
+      <SignupPrompt
+        open={showSignupPrompt}
+        onOpenChange={setShowSignupPrompt}
+        onSignup={handleSignup}
+        onLogin={handleLogin}
+      />
     </div>
   );
 };
