@@ -30,7 +30,7 @@ export function SignupPrompt({ open, onOpenChange, onSignup, onLogin }: SignupPr
             <img 
               src="/lovable-uploads/975e116a-7efb-4cb8-b615-b3ca56cacdb7.png" 
               alt="Frondex" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
           </div>
           
@@ -40,7 +40,7 @@ export function SignupPrompt({ open, onOpenChange, onSignup, onLogin }: SignupPr
               Join and start building
             </h2>
             <p className="text-gray-600 text-base leading-relaxed">
-              Create a free account to continue your private markets journey with unlimited access to Frondex AI
+              Log in or create a free account to continue your private markets journey
             </p>
           </div>
           
