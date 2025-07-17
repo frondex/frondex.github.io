@@ -300,6 +300,14 @@ const InteractiveDemo = () => {
                 link: "https://debtcapitalchronicles.substack.com/"
               },
               { 
+                name: "The Allocator's Almanac", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
+                colorImage: allocatorColor,
+                detailedDescription: "Providing in-depth insights into institutional investors' transactions, market movements, and capital allocation strategies.",
+                link: "https://allocatorsalmanac.substack.com/"
+              },
+              { 
                 name: "Republic", 
                 description: "",
                 grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
