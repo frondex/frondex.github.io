@@ -252,12 +252,20 @@ const InteractiveDemo = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { 
-                name: "The Long & Short", 
+                name: "Carry and Conquer", 
                 description: "",
-                grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
-                colorImage: longShortColor,
-                detailedDescription: "Insights and analysis on hedge funds, covering market trends, fund strategies, and key moves shaping the industry.",
-                link: "https://longshorthf.substack.com/"
+                grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
+                colorImage: carryConquerColor,
+                detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
+                link: "https://carryandconquer.substack.com/"
+              },
+              { 
+                name: "Landlord Ledger", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
+                colorImage: landlordLedgerColor,
+                detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
+                link: "https://landlordledger.substack.com/"
               },
               { 
                 name: "InfraLedger", 
@@ -268,12 +276,12 @@ const InteractiveDemo = () => {
                 link: "https://theinfraledger.substack.com/"
               },
               { 
-                name: "The Allocator's Almanac", 
+                name: "The Long & Short", 
                 description: "",
-                grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
-                colorImage: allocatorColor,
-                detailedDescription: "Providing in-depth insights into institutional investors' transactions, market movements, and capital allocation strategies.",
-                link: "https://allocatorsalmanac.substack.com/"
+                grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
+                colorImage: longShortColor,
+                detailedDescription: "Insights and analysis on hedge funds, covering market trends, fund strategies, and key moves shaping the industry.",
+                link: "https://longshorthf.substack.com/"
               },
               { 
                 name: "Natural Currency", 
@@ -290,22 +298,6 @@ const InteractiveDemo = () => {
                 colorImage: debtCapitalColor,
                 detailedDescription: "Insights and analysis on private debt, covering credit markets, direct lending, and key trends shaping the industry.",
                 link: "https://debtcapitalchronicles.substack.com/"
-              },
-              { 
-                name: "Carry and Conquer", 
-                description: "",
-                grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
-                colorImage: carryConquerColor,
-                detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
-                link: "https://carryandconquer.substack.com/"
-              },
-              { 
-                name: "Landlord Ledger", 
-                description: "",
-                grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
-                colorImage: landlordLedgerColor,
-                detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
-                link: "https://landlordledger.substack.com/"
               },
               { 
                 name: "Republic", 
