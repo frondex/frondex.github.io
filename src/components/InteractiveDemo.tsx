@@ -52,17 +52,22 @@ const InteractiveDemo = () => {
   const handleChatSubmit = useCallback(async (query: string) => {
     if (!query.trim() || isLoading) return;
 
+    console.log('Current queryCount:', queryCount);
+
     // Check if user has already exhausted their queries
     if (queryCount >= 2) {
+      console.log('Query limit reached, showing signup prompt');
       setShowSignupPrompt(true);
       return;
     }
 
     // Increment query count for valid queries
     const newQueryCount = queryCount + 1;
+    console.log('New queryCount:', newQueryCount);
     setQueryCount(newQueryCount);
     
     if (newQueryCount > 2) {
+      console.log('New query count exceeded limit, showing signup prompt');
       setShowSignupPrompt(true);
       return;
     }
