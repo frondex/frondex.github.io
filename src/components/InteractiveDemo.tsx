@@ -7,6 +7,8 @@ import { Pricing } from "@/components/ui/pricing-cards";
 import { OpenAISettings } from "./OpenAISettings";
 import { OpenAIService, type ChatMessage } from "@/lib/openai";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 
 // Import all generated images
@@ -359,8 +361,30 @@ const InteractiveDemo = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="text-gray-900 text-base leading-relaxed">
-                      {message.content}
+                    <div className="text-gray-900 text-base leading-relaxed prose prose-gray max-w-none">
+                      {message.type === "assistant" ? (
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
+                            h1: ({ children }) => <h1 className="text-xl font-semibold mb-3 text-gray-900">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-lg font-semibold mb-2 text-gray-900">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-base font-semibold mb-2 text-gray-900">{children}</h3>,
+                            ul: ({ children }) => <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>,
+                            li: ({ children }) => <li className="text-gray-900">{children}</li>,
+                            strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                            em: ({ children }) => <em className="italic text-gray-700">{children}</em>,
+                            code: ({ children }) => <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800">{children}</code>,
+                            pre: ({ children }) => <pre className="bg-gray-100 p-3 rounded-lg overflow-x-auto mb-4">{children}</pre>,
+                            blockquote: ({ children }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 mb-4">{children}</blockquote>,
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      ) : (
+                        <p className="mb-0">{message.content}</p>
+                      )}
                       {message.isStreaming && (
                         <span className="inline-block w-2 h-5 bg-gray-800 ml-1 animate-pulse" />
                       )}
