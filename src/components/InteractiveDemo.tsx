@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
-import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
-import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown } from "lucide-react";
+import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Pricing } from "@/components/ui/pricing-cards";
+import { OpenAISettings } from "./OpenAISettings";
+import { OpenAIService, type ChatMessage } from "@/lib/openai";
+import { useToast } from "@/hooks/use-toast";
 import AnimatedBrandCard from "./AnimatedBrandCard";
-import ChatConversationView from "./ChatConversationView";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -26,35 +27,112 @@ import landlordLedgerColor from "@/assets/landlord-ledger-color.jpg";
 import republicGrayNew from "@/assets/republic-grayscale-new.jpg";
 import republicColor from "@/assets/republic-color.jpg";
 
+interface Message {
+  id: number;
+  type: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  isStreaming?: boolean;
+}
+
 const InteractiveDemo = () => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
   const [showPricing, setShowPricing] = useState(false);
-  const [messages, setMessages] = useState<Array<{
-    id: number;
-    type: "user" | "assistant";
-    content: string;
-    timestamp: Date;
-  }>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
+  const { toast } = useToast();
 
-  const handleChatSubmit = (query: string) => {
+  const handleChatSubmit = useCallback(async (query: string) => {
+    if (!query.trim() || isLoading) return;
+
     setInitialQuery(query);
     setShowChatView(true);
-    // Add the user message and AI response
-    const userMessage = {
+    setIsLoading(true);
+    
+    // Add user message
+    const userMessage: Message = {
       id: Date.now(),
-      type: "user" as const,
+      type: "user",
       content: query,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    const aiMessage = {
-      id: Date.now() + 1,
-      type: "assistant" as const,
-      content: "Hey! How can I help you today?",
-      timestamp: new Date()
-    };
-    setMessages([userMessage, aiMessage]);
-  };
+    
+    setMessages(prev => [...prev, userMessage]);
+
+    try {
+      // Check if OpenAI is configured
+      const settings = OpenAIService.getSettings();
+      if (!settings.apiKey) {
+        toast({
+          title: "API Key Required",
+          description: "Please configure your OpenAI API key in settings.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Prepare conversation history
+      const chatHistory: ChatMessage[] = messages.map(msg => ({
+        role: msg.type === "user" ? "user" : "assistant",
+        content: msg.content,
+      }));
+      
+      // Add current user message
+      chatHistory.push({
+        role: "user",
+        content: query,
+      });
+
+      // Create AI message placeholder
+      const aiMessageId = Date.now() + 1;
+      const aiMessage: Message = {
+        id: aiMessageId,
+        type: "assistant",
+        content: "",
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+      setStreamingMessageId(aiMessageId);
+
+      // Call OpenAI API
+      const response = await OpenAIService.sendMessage(
+        chatHistory,
+        settings.streaming ? (chunk: string) => {
+          setMessages(prev => prev.map(msg => 
+            msg.id === aiMessageId 
+              ? { ...msg, content: msg.content + chunk }
+              : msg
+          ));
+        } : undefined
+      );
+
+      // Update final message
+      setMessages(prev => prev.map(msg => 
+        msg.id === aiMessageId 
+          ? { ...msg, content: response, isStreaming: false }
+          : msg
+      ));
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send message",
+        variant: "destructive",
+      });
+      
+      // Remove the empty AI message on error
+      setMessages(prev => prev.filter(msg => msg.id !== Date.now() + 1));
+    } finally {
+      setIsLoading(false);
+      setStreamingMessageId(null);
+    }
+  }, [isLoading, messages, toast]);
 
   const handleMessageAction = (action: string, messageId: number) => {
     // Handle message actions like copy, thumbs up, etc.
@@ -71,8 +149,14 @@ const InteractiveDemo = () => {
   if (!showChatView) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
-        {/* Upgrade Button - Top Right */}
-        <div className="fixed top-4 right-4 z-10">
+        {/* Top Right Controls */}
+        <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
+          <OpenAISettings onSettingsChange={() => {
+            toast({
+              title: "Settings Updated",
+              description: "Your OpenAI settings have been saved.",
+            });
+          }} />
           <Dialog open={showPricing} onOpenChange={setShowPricing}>
             <DialogTrigger asChild>
               <Button className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
@@ -229,29 +313,38 @@ const InteractiveDemo = () => {
       {/* Header with back button and logo */}
       <div className="flex items-center justify-between gap-4 p-4 bg-white border-b">
         <div className="flex items-center gap-4">
-          <button
+          <Button 
+            variant="ghost" 
+            size="icon"
             onClick={() => setShowChatView(false)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            ← Back
-          </button>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
           <img 
             src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
             alt="Frondex" 
             className="h-8 w-auto"
           />
         </div>
-        <Dialog open={showPricing} onOpenChange={setShowPricing}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
-              <Crown className="w-4 h-4" />
-              Upgrade
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
-            <Pricing />
-          </DialogContent>
-        </Dialog>
+        <div className="flex items-center gap-2">
+          <OpenAISettings onSettingsChange={() => {
+            toast({
+              title: "Settings Updated",
+              description: "Your OpenAI settings have been saved.",
+            });
+          }} />
+          <Dialog open={showPricing} onOpenChange={setShowPricing}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                <Crown className="w-4 h-4" />
+                Upgrade
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+              <Pricing />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Messages area */}
@@ -268,52 +361,60 @@ const InteractiveDemo = () => {
                   <div className="space-y-3">
                     <div className="text-gray-900 text-base leading-relaxed">
                       {message.content}
+                      {message.isStreaming && (
+                        <span className="inline-block w-2 h-5 bg-gray-800 ml-1 animate-pulse" />
+                      )}
                     </div>
                     {/* Action buttons for AI messages */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleMessageAction('copy', message.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                        title="Copy"
-                      >
-                        <Copy className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                      </button>
-                      <button
-                        onClick={() => handleMessageAction('thumbsUp', message.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                        title="Good response"
-                      >
-                        <ThumbsUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                      </button>
-                      <button
-                        onClick={() => handleMessageAction('thumbsDown', message.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                        title="Bad response"
-                      >
-                        <ThumbsDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                      </button>
-                      <button
-                        onClick={() => handleMessageAction('regenerate', message.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                        title="Regenerate"
-                      >
-                        <RotateCcw className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                      </button>
-                      <button
-                        onClick={() => handleMessageAction('speak', message.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                        title="Read aloud"
-                      >
-                        <Volume2 className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                      </button>
-                      <button
-                        onClick={() => handleMessageAction('share', message.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                        title="Share"
-                      >
-                        <Share className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                      </button>
-                    </div>
+                    {!message.isStreaming && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(message.content);
+                            toast({ title: "Copied to clipboard" });
+                          }}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Copy"
+                        >
+                          <Copy className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('thumbsUp', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Good response"
+                        >
+                          <ThumbsUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('thumbsDown', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Bad response"
+                        >
+                          <ThumbsDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('regenerate', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Regenerate"
+                        >
+                          <RotateCcw className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('speak', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Read aloud"
+                        >
+                          <Volume2 className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('share', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Share"
+                        >
+                          <Share className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -324,8 +425,13 @@ const InteractiveDemo = () => {
 
       {/* Chat input fixed at bottom - same VercelV0Chat component */}
       <div className="border-t bg-white p-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto relative">
           <VercelV0Chat onSubmit={handleChatSubmit} />
+          {isLoading && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+            </div>
+          )}
         </div>
       </div>
     </div>
