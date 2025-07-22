@@ -276,7 +276,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
                 colorImage: landlordLedgerColor,
                 detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
-                link: "https://landlordledger.substack.com/"
+                link: "https://thelandlordledger.github.io/"
               },
               { 
                 name: "InfraLedger", 
