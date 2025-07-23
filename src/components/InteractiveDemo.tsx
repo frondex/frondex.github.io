@@ -268,7 +268,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
                 colorImage: carryConquerColor,
                 detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
-                link: "https://carryandconquer.substack.com/"
+                link: "https://carryandconquer.github.io/"
               },
               { 
                 name: "Landlord Ledger", 
@@ -284,7 +284,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/b4ce8e3a-c44e-4bf9-8709-8d3175ceac17.png",
                 colorImage: infraLedgerColor,
                 detailedDescription: "Insights and analysis on infrastructure investing, covering key projects, capital flows, and market trends shaping global development.",
-                link: "https://theinfraledger.substack.com/"
+                link: "https://infraledger.github.io/"
               },
               { 
                 name: "The Long & Short", 
@@ -292,7 +292,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/f74daaa2-426f-4449-a037-75ae04104ef6.png",
                 colorImage: longShortColor,
                 detailedDescription: "Insights and analysis on hedge funds, covering market trends, fund strategies, and key moves shaping the industry.",
-                link: "https://longshorthf.substack.com/"
+                link: "https://thelongshort.github.io/"
               },
               { 
                 name: "Natural Currency", 
@@ -300,7 +300,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/b71bf268-6fe7-4ed4-b3e0-4a604f452fd0.png",
                 colorImage: naturalCurrencyColor,
                 detailedDescription: "Explores the dynamic world of natural resource transactions, delving into the value, trade, and sustainability of earth's most precious assets.",
-                link: "https://naturalcurrency.substack.com/"
+                link: "https://naturalcurrency.github.io/"
               },
               { 
                 name: "Debt Capital Chronicles", 
@@ -308,7 +308,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/2f36adb1-6c20-470c-a2c8-3eb23c28f831.png",
                 colorImage: debtCapitalColor,
                 detailedDescription: "Insights and analysis on private debt, covering credit markets, direct lending, and key trends shaping the industry.",
-                link: "https://debtcapitalchronicles.substack.com/"
+                link: "https://debtcapitalchronicles.github.io/"
               },
               { 
                 name: "The Allocator's Almanac", 
@@ -316,7 +316,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/efc117d7-1c03-438b-b3db-b0a9c3e78fcc.png",
                 colorImage: allocatorColor,
                 detailedDescription: "Providing in-depth insights into institutional investors' transactions, market movements, and capital allocation strategies.",
-                link: "https://allocatorsalmanac.substack.com/"
+                link: "https://allocatorsalmanac.github.io/"
               },
               { 
                 name: "Republic", 
@@ -324,7 +324,7 @@ const InteractiveDemo = () => {
                 grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
                 colorImage: republicColor,
                 detailedDescription: "Insights on the global public markets",
-                link: "https://www.frondex.com/"
+                link: "https://dividenz.github.io/"
               }
             ].map((brand, idx) => (
               <AnimatedBrandCard
