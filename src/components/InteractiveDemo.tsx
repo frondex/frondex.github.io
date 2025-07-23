@@ -319,10 +319,10 @@ const InteractiveDemo = () => {
                 link: "https://allocatorsalmanac.github.io/"
               },
               { 
-                name: "Republic", 
+                name: "Dividenz", 
                 description: "",
-                grayscaleImage: "/lovable-uploads/cbd035f4-ea2e-4184-bbf5-393851406c1d.png",
-                colorImage: republicColor,
+                grayscaleImage: "/lovable-uploads/7e131ed6-c038-487d-8493-87b5caf06016.png",
+                colorImage: "/lovable-uploads/7e131ed6-c038-487d-8493-87b5caf06016.png",
                 detailedDescription: "Insights on the global public markets",
                 link: "https://dividenz.github.io/"
               }
