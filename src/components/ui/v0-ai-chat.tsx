@@ -13,6 +13,7 @@ import {
     ArrowUpIcon,
     Paperclip,
     PlusIcon,
+    Zap,
 } from "lucide-react";
 
 interface UseAutoResizeTextareaProps {
@@ -77,6 +78,7 @@ interface VercelV0ChatProps {
 
 export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     const [value, setValue] = useState("");
+    const [agentMode, setAgentMode] = useState(false);
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 60,
         maxHeight: 200,
@@ -100,7 +102,27 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     return (
         <div className="w-full">
             <div className="relative bg-white rounded-xl border border-gray-200 shadow-lg">
-                <div className="overflow-y-auto">
+                {/* Agent Mode Toggle */}
+                <div className="absolute top-3 right-3 z-10">
+                    <button
+                        type="button"
+                        onClick={() => setAgentMode(!agentMode)}
+                        className={cn(
+                            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+                            agentMode
+                                ? "bg-orange-100 text-orange-700 border border-orange-200"
+                                : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-150"
+                        )}
+                    >
+                        <Zap className={cn("w-3 h-3", agentMode ? "text-orange-600" : "text-gray-500")} />
+                        <span>AGENT MODE</span>
+                        <span className={cn("font-bold", agentMode ? "text-orange-700" : "text-gray-500")}>
+                            {agentMode ? "ON" : "OFF"}
+                        </span>
+                    </button>
+                </div>
+
+                <div className="overflow-y-auto pt-2">
                     <Textarea
                         ref={textareaRef}
                         value={value}
