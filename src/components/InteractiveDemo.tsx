@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SignupPrompt } from "./SignupPrompt";
+import { JoinWaitlistModal } from "./JoinWaitlistModal";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 
 // Import all generated images
@@ -43,6 +44,7 @@ const InteractiveDemo = () => {
   const [initialQuery, setInitialQuery] = useState("");
   const [showPricing, setShowPricing] = useState(false);
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
@@ -50,114 +52,9 @@ const InteractiveDemo = () => {
   const { toast } = useToast();
 
   const handleChatSubmit = useCallback(async (query: string) => {
-    if (!query.trim() || isLoading) return;
-
-    console.log('Current queryCount:', queryCount);
-
-    // Check if user has already exhausted their queries
-    if (queryCount >= 2) {
-      console.log('Query limit reached, showing signup prompt');
-      setShowSignupPrompt(true);
-      return;
-    }
-
-    // Increment query count for valid queries
-    const newQueryCount = queryCount + 1;
-    console.log('New queryCount:', newQueryCount);
-    setQueryCount(newQueryCount);
-    
-    if (newQueryCount > 2) {
-      console.log('New query count exceeded limit, showing signup prompt');
-      setShowSignupPrompt(true);
-      return;
-    }
-
-    setInitialQuery(query);
-    setShowChatView(true);
-    setIsLoading(true);
-    
-    // Add user message
-    const userMessage: Message = {
-      id: Date.now(),
-      type: "user",
-      content: query,
-      timestamp: new Date(),
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
-
-    try {
-      // Check if OpenAI is configured
-      const settings = OpenAIService.getSettings();
-      if (!settings.apiKey) {
-        toast({
-          title: "API Key Required",
-          description: "Please configure your OpenAI API key in settings.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      // Prepare conversation history
-      const chatHistory: ChatMessage[] = messages.map(msg => ({
-        role: msg.type === "user" ? "user" : "assistant",
-        content: msg.content,
-      }));
-      
-      // Add current user message
-      chatHistory.push({
-        role: "user",
-        content: query,
-      });
-
-      // Create AI message placeholder
-      const aiMessageId = Date.now() + 1;
-      const aiMessage: Message = {
-        id: aiMessageId,
-        type: "assistant",
-        content: "",
-        timestamp: new Date(),
-        isStreaming: true,
-      };
-      
-      setMessages(prev => [...prev, aiMessage]);
-      setStreamingMessageId(aiMessageId);
-
-      // Call OpenAI API
-      const response = await OpenAIService.sendMessage(
-        chatHistory,
-        settings.streaming ? (chunk: string) => {
-          setMessages(prev => prev.map(msg => 
-            msg.id === aiMessageId 
-              ? { ...msg, content: msg.content + chunk }
-              : msg
-          ));
-        } : undefined
-      );
-
-      // Update final message
-      setMessages(prev => prev.map(msg => 
-        msg.id === aiMessageId 
-          ? { ...msg, content: response, isStreaming: false }
-          : msg
-      ));
-
-    } catch (error) {
-      console.error('Chat error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to send message",
-        variant: "destructive",
-      });
-      
-      // Remove the empty AI message on error
-      setMessages(prev => prev.filter(msg => msg.id !== Date.now() + 1));
-    } finally {
-      setIsLoading(false);
-      setStreamingMessageId(null);
-    }
-  }, [isLoading, messages, toast, queryCount]);
+    if (!query.trim()) return;
+    setShowWaitlistModal(true);
+  }, []);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);
@@ -198,17 +95,13 @@ const InteractiveDemo = () => {
               description: "Your OpenAI settings have been saved.",
             });
           }} />
-          <Dialog open={showPricing} onOpenChange={setShowPricing}>
-            <DialogTrigger asChild>
-              <Button className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
-                <Crown className="w-4 h-4" />
-                Upgrade to Pro
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
-              <Pricing />
-            </DialogContent>
-          </Dialog>
+          <Button 
+            className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            onClick={() => setShowWaitlistModal(true)}
+          >
+            <Crown className="w-4 h-4" />
+            Upgrade to Pro
+          </Button>
         </div>
 
         {/* Logo */}
@@ -374,17 +267,14 @@ const InteractiveDemo = () => {
               description: "Your OpenAI settings have been saved.",
             });
           }} />
-          <Dialog open={showPricing} onOpenChange={setShowPricing}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
-                <Crown className="w-4 h-4" />
-                Upgrade
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
-              <Pricing />
-            </DialogContent>
-          </Dialog>
+          <Button 
+            size="sm" 
+            className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            onClick={() => setShowWaitlistModal(true)}
+          >
+            <Crown className="w-4 h-4" />
+            Upgrade
+          </Button>
         </div>
       </div>
 
@@ -499,12 +389,17 @@ const InteractiveDemo = () => {
       </div>
       
       {/* Signup Prompt Modal */}
-      <SignupPrompt
-        open={showSignupPrompt}
-        onOpenChange={setShowSignupPrompt}
-        onSignup={handleSignup}
-        onLogin={handleLogin}
-      />
+        <SignupPrompt
+          open={showSignupPrompt}
+          onOpenChange={setShowSignupPrompt}
+          onSignup={handleSignup}
+          onLogin={handleLogin}
+        />
+        
+        <JoinWaitlistModal
+          open={showWaitlistModal}
+          onOpenChange={setShowWaitlistModal}
+        />
     </div>
   );
 };
