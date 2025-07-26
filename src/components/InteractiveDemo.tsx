@@ -53,6 +53,8 @@ const InteractiveDemo = () => {
 
   const handleChatSubmit = useCallback(async (query: string) => {
     if (!query.trim()) return;
+    console.log('Chat submit called with:', query);
+    console.log('Setting showWaitlistModal to true');
     setShowWaitlistModal(true);
   }, []);
 
@@ -97,7 +99,10 @@ const InteractiveDemo = () => {
           }} />
           <Button 
             className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-            onClick={() => setShowWaitlistModal(true)}
+            onClick={() => {
+              console.log('Upgrade button clicked');
+              setShowWaitlistModal(true);
+            }}
           >
             <Crown className="w-4 h-4" />
             Upgrade to Pro
@@ -270,7 +275,10 @@ const InteractiveDemo = () => {
           <Button 
             size="sm" 
             className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-            onClick={() => setShowWaitlistModal(true)}
+            onClick={() => {
+              console.log('Chat view upgrade button clicked');
+              setShowWaitlistModal(true);
+            }}
           >
             <Crown className="w-4 h-4" />
             Upgrade
