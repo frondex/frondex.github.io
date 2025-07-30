@@ -14,6 +14,7 @@ import {
     Paperclip,
     PlusIcon,
     Zap,
+    Phone,
 } from "lucide-react";
 
 interface UseAutoResizeTextareaProps {
@@ -102,8 +103,18 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     return (
         <div className="w-full">
             <div className="relative bg-white rounded-xl border border-gray-200 shadow-lg">
-                {/* Agent Mode Toggle */}
-                <div className="absolute top-3 right-3 z-10">
+                {/* Top Controls */}
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+                    {/* Video Chat Button */}
+                    <button
+                        type="button"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-150"
+                    >
+                        <Phone className="w-3 h-3 text-gray-500" />
+                        <span>Video Chat</span>
+                    </button>
+                    
+                    {/* Agent Mode Toggle */}
                     <button
                         type="button"
                         onClick={() => setAgentMode(!agentMode)}
