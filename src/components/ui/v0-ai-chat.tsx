@@ -105,15 +105,6 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
             <div className="relative bg-white rounded-xl border border-gray-200 shadow-lg">
                 {/* Top Controls */}
                 <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-                    {/* Video Chat Button */}
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-150"
-                    >
-                        <Phone className="w-3 h-3 text-gray-500" />
-                        <span>Video Chat</span>
-                    </button>
-                    
                     {/* Agent Mode Toggle */}
                     <button
                         type="button"
@@ -130,6 +121,15 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         <span className={cn("font-bold", agentMode ? "text-orange-700" : "text-gray-500")}>
                             {agentMode ? "ON" : "OFF"}
                         </span>
+                    </button>
+                    
+                    {/* Video Chat Button */}
+                    <button
+                        type="button"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+                    >
+                        <Phone className="w-3 h-3 text-green-600" />
+                        <span>VIDEO CHAT</span>
                     </button>
                 </div>
 
