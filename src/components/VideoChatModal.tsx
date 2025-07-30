@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { createClient } from "@anam-ai/js-sdk";
 import {
   Dialog,
   DialogContent,
@@ -14,17 +13,41 @@ interface VideoChatModalProps {
   onClose: () => void;
 }
 
+declare global {
+  interface Window {
+    anam: any;
+  }
+}
+
 export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [anamClient, setAnamClient] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
-  const sessionToken = "YzYxODc1NDgtOWEzNC00MmE5LTk5NjktZjM3NzM4ODNkMDkxOlMwclorMDRadUlwY0pYa0lpV04yZDFtZjFDZTNOUEp1K2orZnpuSjJYd0k9";
+  const apiKey = "YzYxODc1NDgtOWEzNC00MmE5LTk5NjktZjM3NzM4ODNkMDkxOlMwclorMDRadUlwY0pYa0lpV04yZDFtZjFDZTNOUEp1K2orZnpuSjJYd0k9";
+
+  // Load the Anam SDK script
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !window.anam) {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/@anam-ai/js-sdk@2.4.4/dist/umd/anam.js';
+      script.onload = () => setScriptLoaded(true);
+      script.onerror = () => setError('Failed to load Anam SDK');
+      document.head.appendChild(script);
+      
+      return () => {
+        document.head.removeChild(script);
+      };
+    } else if (window.anam) {
+      setScriptLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
-    if (isOpen && videoRef.current) {
+    if (isOpen && scriptLoaded && videoRef.current) {
       initializeVideoChat();
     }
 
@@ -33,20 +56,53 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
         anamClient.disconnect?.();
       }
     };
-  }, [isOpen]);
+  }, [isOpen, scriptLoaded]);
 
   const initializeVideoChat = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Create the Anam client with the session token
-      const client = createClient(sessionToken);
+      if (!window.anam) {
+        throw new Error('Anam SDK not loaded');
+      }
+
+      // Create the Anam client using the direct API key approach
+      const { unsafe_createClientWithApiKey } = window.anam;
+      const client = unsafe_createClientWithApiKey(apiKey, {
+        name: "",
+        avatarId: "6cc28442-cccd-42a8-b6e4-24b7210a09c5",
+        voiceId: "8246d9f7-827e-4a5c-8697-644ce860ca02",
+        llmId: "ANAM_GPT_4O_MINI_V1",
+        systemPrompt: `[ROLE]
+You are a helpful, concise, and reliable assistant.
+
+[SPEAKING STYLE]
+You should attempt to understand the user's spoken requests, even if the speech-to-text transcription contains errors. Your responses will be converted to speech using a text-to-speech system. Therefore, your output must be plain, unformatted text.
+
+When you receive a transcribed user request:
+
+1. Silently correct for likely transcription errors. Focus on the intended meaning, not the literal text. If a word sounds like another word in the given context, infer and correct. For example, if the transcription says "buy milk two tomorrow" interpret this as "buy milk tomorrow".
+2. Provide short, direct answers unless the user explicitly asks for a more detailed response. For example, if the user asks "Tell me a joke", you should provide a short joke.
+3. Always prioritize clarity and accuracy. Respond in plain text, without any formatting, bullet points, or extra conversational filler.
+4. Occasionally add a pause "..." or disfluency eg., "Um" or "Erm."
+
+Your output will be directly converted to speech, so your response should be natural-sounding and appropriate for a spoken conversation.
+
+[USEFUL CONTEXT]
+`,
+      });
+
       setAnamClient(client);
 
       // Stream to the video element
       if (videoRef.current) {
         await client.streamToVideoElement(videoRef.current.id);
+        
+        // Add listener for when video starts playing
+        client.addListener('VIDEO_PLAY_STARTED', () => {
+          client.talk('Hello! I\'m your AI assistant. How can I help you today?');
+        });
       }
     } catch (err) {
       console.error("Failed to initialize video chat:", err);
