@@ -1,8 +1,9 @@
+
 // Anam.ai API utilities
 
 export const getAnamSessionToken = async (): Promise<string> => {
-  const response = await fetch('/functions/v1/anam-session', {
-    method: 'POST',
+  const response = await fetch('https://anam-test-gldl7fbe6-spark-stones-projects.vercel.app/session', {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
