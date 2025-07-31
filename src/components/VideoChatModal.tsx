@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { createClient } from "@anam-ai/js-sdk";
 import { getAnamSessionToken } from "@/lib/anam";
+
+// Declare window.anam for TypeScript
+declare global {
+  interface Window {
+    anam: any;
+  }
+}
 import {
   Dialog,
   DialogContent,
@@ -44,21 +50,68 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
       setIsLoading(true);
       setError(null);
 
-      // Get session token from our secure edge function
-      const sessionToken = await getSessionToken();
-      
-      // Create the Anam client with session token (secure approach)
-      const client = createClient(sessionToken);
-      setAnamClient(client);
+      // Load Anam SDK if not already loaded
+      if (!window.anam) {
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/@anam-ai/js-sdk@2.4.4/dist/umd/anam.js';
+        script.onload = () => initializeAnamClient();
+        document.head.appendChild(script);
+      } else {
+        initializeAnamClient();
+      }
 
-      // Stream to the video element
-      if (videoRef.current) {
-        await client.streamToVideoElement(videoRef.current.id);
+      async function initializeAnamClient() {
+        try {
+          // Get API key - in production, get this from your session token endpoint
+          const sessionToken = await getSessionToken();
+          
+          // Create the Anam client using your persona config
+          const { unsafe_createClientWithApiKey } = window.anam;
+          const client = unsafe_createClientWithApiKey(sessionToken, {
+            name: "",
+            avatarId: "6cc28442-cccd-42a8-b6e4-24b7210a09c5",
+            voiceId: "8246d9f7-827e-4a5c-8697-644ce860ca02",
+            llmId: "ANAM_GPT_4O_MINI_V1",
+            systemPrompt: `[ROLE]
+You are a helpful, concise, and reliable assistant.
+
+[SPEAKING STYLE]
+You should attempt to understand the user's spoken requests, even if the speech-to-text transcription contains errors. Your responses will be converted to speech using a text-to-speech system. Therefore, your output must be plain, unformatted text.
+
+When you receive a transcribed user request:
+
+1. Silently correct for likely transcription errors. Focus on the intended meaning, not the literal text. If a word sounds like another word in the given context, infer and correct. For example, if the transcription says "buy milk two tomorrow" interpret this as "buy milk tomorrow".
+2. Provide short, direct answers unless the user explicitly asks for a more detailed response. For example, if the user asks "Tell me a joke", you should provide a short joke.
+3. Always prioritize clarity and accuracy. Respond in plain text, without any formatting, bullet points, or extra conversational filler.
+4. Occasionally add a pause "..." or disfluency eg., "Um" or "Erm."
+
+Your output will be directly converted to speech, so your response should be natural-sounding and appropriate for a spoken conversation.
+
+[USEFUL CONTEXT]
+`,
+          });
+          
+          setAnamClient(client);
+
+          // Stream to the video element
+          if (videoRef.current) {
+            await client.streamToVideoElement(videoRef.current.id);
+            
+            // Add event listener for when video starts playing
+            client.addListener('VIDEO_PLAY_STARTED', () => {
+              client.talk('Hello! I\'m your AI assistant. How can I help you today?');
+            });
+          }
+        } catch (err) {
+          console.error("Failed to initialize Anam client:", err);
+          setError("Failed to start video chat. Please try again.");
+        } finally {
+          setIsLoading(false);
+        }
       }
     } catch (err) {
       console.error("Failed to initialize video chat:", err);
       setError("Failed to start video chat. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -120,6 +173,7 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
             id="anam-video-chat"
             autoPlay
             playsInline
+            muted={false}
             className="w-full h-[400px] object-cover"
             style={{ backgroundColor: "#000" }}
           />
