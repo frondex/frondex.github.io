@@ -35,17 +35,20 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
   };
 
   useEffect(() => {
+    console.log('VideoChatModal useEffect triggered:', { isOpen, hasVideo: !!videoRef.current });
     if (isOpen && videoRef.current) {
+      console.log('About to initialize video chat...');
       initializeVideoChat();
     }
 
     return () => {
       if (anamClient) {
+        console.log('Cleaning up video chat...');
         anamClient.stopStreaming?.();
         setAnamClient(null);
       }
     };
-  }, [isOpen, anamClient]);
+  }, [isOpen]);
 
   const initializeVideoChat = async () => {
     try {
