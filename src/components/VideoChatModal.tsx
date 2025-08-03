@@ -42,18 +42,20 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
     return () => {
       if (anamClient) {
         anamClient.stopStreaming?.();
+        setAnamClient(null);
       }
     };
-  }, [isOpen]);
+  }, [isOpen, anamClient]);
 
   const initializeVideoChat = async () => {
     try {
       setIsLoading(true);
       setError(null);
+      console.log('Starting video chat initialization...');
 
       // Load Anam SDK if not already loaded
       if (!window.createAnamClient) {
-        // Use ES modules approach from documentation
+        console.log('Loading Anam SDK...');
         const script = document.createElement('script');
         script.type = 'module';
         script.textContent = `
@@ -67,34 +69,48 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
         await new Promise((resolve) => {
           window.addEventListener('anamLoaded', resolve, { once: true });
           // Fallback timeout
-          setTimeout(resolve, 3000);
+          setTimeout(resolve, 5000);
         });
       }
 
+      if (!window.createAnamClient) {
+        throw new Error('Failed to load Anam SDK');
+      }
+
       // Get session token from your endpoint
+      console.log('Getting session token...');
       const sessionToken = await getSessionToken();
+      console.log('Session token obtained');
       
       // Create the Anam client using session token (secure approach)
-      const anamClient = window.createAnamClient(sessionToken);
-      setAnamClient(anamClient);
+      console.log('Creating Anam client...');
+      const client = window.createAnamClient(sessionToken);
+      setAnamClient(client);
 
       // Start streaming to the video element
       if (videoRef.current) {
-        await anamClient.streamToVideoElement(videoRef.current.id);
+        console.log('Starting stream to video element...');
+        await client.streamToVideoElement(videoRef.current.id);
         
-        // Optional: Add event listeners for better UX
-        anamClient.addListener('VIDEO_PLAY_STARTED', () => {
+        // Add event listeners for better UX
+        client.addListener('VIDEO_PLAY_STARTED', () => {
           console.log('Video chat started successfully!');
+          setIsLoading(false);
         });
         
-        anamClient.addListener('CONNECTION_ESTABLISHED', () => {
+        client.addListener('CONNECTION_ESTABLISHED', () => {
           console.log('Connection established');
+        });
+
+        client.addListener('ERROR', (error: any) => {
+          console.error('Anam error:', error);
+          setError('Connection error occurred');
+          setIsLoading(false);
         });
       }
     } catch (err) {
       console.error("Failed to initialize video chat:", err);
-      setError("Failed to start video chat. Please try again.");
-    } finally {
+      setError(`Failed to start video chat: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setIsLoading(false);
     }
   };
@@ -156,7 +172,6 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
             id="anam-video-chat"
             autoPlay
             playsInline
-            muted={false}
             className="w-full h-[400px] object-cover"
             style={{ backgroundColor: "#000" }}
           />
