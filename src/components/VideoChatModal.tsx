@@ -36,9 +36,25 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
 
   useEffect(() => {
     console.log('VideoChatModal useEffect triggered:', { isOpen, hasVideo: !!videoRef.current });
-    if (isOpen && videoRef.current) {
-      console.log('About to initialize video chat...');
-      initializeVideoChat();
+    if (isOpen) {
+      // Use a small delay to ensure the video element is rendered
+      const timeoutId = setTimeout(() => {
+        if (videoRef.current) {
+          console.log('About to initialize video chat...');
+          initializeVideoChat();
+        } else {
+          console.log('Video element still not available');
+        }
+      }, 100);
+
+      return () => {
+        clearTimeout(timeoutId);
+        if (anamClient) {
+          console.log('Cleaning up video chat...');
+          anamClient.stopStreaming?.();
+          setAnamClient(null);
+        }
+      };
     }
 
     return () => {
