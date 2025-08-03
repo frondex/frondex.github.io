@@ -3,8 +3,8 @@
 
 export const getAnamSessionToken = async (): Promise<string> => {
   console.log('Fetching session token...');
-  const response = await fetch('/api/anam-session', {
-    method: 'POST',
+  const response = await fetch('https://anam-test-gldl7fbe6-spark-stones-projects.vercel.app/session', {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
