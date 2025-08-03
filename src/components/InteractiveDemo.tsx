@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Pricing } from "@/components/ui/pricing-cards";
 import { OpenAISettings } from "./OpenAISettings";
+import { AnamSettings } from "./AnamSettings";
 import { OpenAIService, type ChatMessage } from "@/lib/openai";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
@@ -91,6 +92,12 @@ const InteractiveDemo = () => {
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
         {/* Top Right Controls */}
         <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
+          <AnamSettings onSettingsChange={() => {
+            toast({
+              title: "Settings Updated",
+              description: "Your Anam settings have been saved.",
+            });
+          }} />
           <OpenAISettings onSettingsChange={() => {
             toast({
               title: "Settings Updated",
@@ -266,6 +273,12 @@ const InteractiveDemo = () => {
           />
         </div>
         <div className="flex items-center gap-2">
+          <AnamSettings onSettingsChange={() => {
+            toast({
+              title: "Settings Updated",
+              description: "Your Anam settings have been saved.",
+            });
+          }} />
           <OpenAISettings onSettingsChange={() => {
             toast({
               title: "Settings Updated",
