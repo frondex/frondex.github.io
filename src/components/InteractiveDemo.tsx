@@ -6,7 +6,9 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Pricing } from "@/components/ui/pricing-cards";
 import { OpenAISettings } from "./OpenAISettings";
 import { AnamSettings } from "./AnamSettings";
+import { PrivateMarketsSettings } from "./PrivateMarketsSettings";
 import { OpenAIService, type ChatMessage } from "@/lib/openai";
+import { PrivateMarketsService, type PrivateMarketsResponse, type PrivateMarketsEntity, type PrivateMarketsSuggestion } from "@/lib/private-markets";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -38,6 +40,9 @@ interface Message {
   content: string;
   timestamp: Date;
   isStreaming?: boolean;
+  entities?: PrivateMarketsEntity[];
+  suggestions?: PrivateMarketsSuggestion[];
+  visualizations?: any[];
 }
 
 const InteractiveDemo = () => {
@@ -50,14 +55,77 @@ const InteractiveDemo = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
   const [queryCount, setQueryCount] = useState(0);
+  const [currentService, setCurrentService] = useState<'openai' | 'private-markets'>('private-markets');
+  const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
   const { toast } = useToast();
 
   const handleChatSubmit = useCallback(async (query: string) => {
     if (!query.trim()) return;
-    console.log('Chat submit called with:', query);
-    console.log('Setting showWaitlistModal to true');
-    setShowWaitlistModal(true);
-  }, []);
+    
+    setIsLoading(true);
+    setInitialQuery(query);
+    setShowChatView(true);
+    
+    // Add user message
+    const userMessage: Message = {
+      id: Date.now(),
+      type: "user",
+      content: query,
+      timestamp: new Date(),
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    
+    try {
+      if (currentService === 'private-markets') {
+        // Initialize Private Markets service if not already done
+        if (!privateMarketsService) {
+          const settings = PrivateMarketsService.getSettings();
+          const service = new PrivateMarketsService(settings);
+          await service.initSession();
+          setPrivateMarketsService(service);
+        }
+        
+        const response = await (privateMarketsService || new PrivateMarketsService(PrivateMarketsService.getSettings())).sendMessage(query);
+        
+        const assistantMessage: Message = {
+          id: Date.now() + 1,
+          type: "assistant",
+          content: response.message,
+          timestamp: new Date(),
+          entities: response.entities,
+          suggestions: response.suggestions,
+          visualizations: response.visualizations,
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+      } else {
+        // OpenAI fallback
+        const chatMessages: ChatMessage[] = [{ role: 'user', content: query }];
+        const response = await OpenAIService.sendMessage(chatMessages);
+        
+        const assistantMessage: Message = {
+          id: Date.now() + 1,
+          type: "assistant", 
+          content: response,
+          timestamp: new Date(),
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage: Message = {
+        id: Date.now() + 1,
+        type: "assistant",
+        content: `I'm sorry, I encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentService, privateMarketsService]);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);
@@ -103,6 +171,13 @@ const InteractiveDemo = () => {
               title: "Settings Updated",
               description: "Your OpenAI settings have been saved.",
             });
+          }} />
+          <PrivateMarketsSettings onSettingsChange={() => {
+            toast({
+              title: "Settings Updated",
+              description: "Your Private Markets settings have been saved.",
+            });
+            setPrivateMarketsService(null);
           }} />
           <Button 
             className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
@@ -281,9 +356,17 @@ const InteractiveDemo = () => {
           }} />
           <OpenAISettings onSettingsChange={() => {
             toast({
-              title: "Settings Updated",
+              title: "Settings Updated", 
               description: "Your OpenAI settings have been saved.",
             });
+          }} />
+          <PrivateMarketsSettings onSettingsChange={() => {
+            toast({
+              title: "Settings Updated",
+              description: "Your Private Markets settings have been saved.",
+            });
+            // Reset service to pick up new settings
+            setPrivateMarketsService(null);
           }} />
           <Button 
             size="sm" 
@@ -339,19 +422,91 @@ const InteractiveDemo = () => {
                         <span className="inline-block w-2 h-5 bg-gray-800 ml-1 animate-pulse" />
                       )}
                     </div>
-                    {/* Action buttons for AI messages */}
-                    {!message.isStreaming && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(message.content);
-                            toast({ title: "Copied to clipboard" });
-                          }}
-                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-                          title="Copy"
-                        >
-                          <Copy className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
-                        </button>
+                     
+                     {/* Rich content for Private Markets responses */}
+                     {message.entities && message.entities.length > 0 && (
+                       <div className="mt-4 space-y-3">
+                         <h4 className="font-semibold text-gray-900">Key Information:</h4>
+                         <div className="grid gap-3">
+                           {message.entities.map((entity, index) => (
+                             <div key={entity.id || index} className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+                               <div className="flex justify-between items-start">
+                                 <div>
+                                   <h5 className="font-semibold text-gray-900">{entity.name}</h5>
+                                   <p className="text-sm text-gray-600">{entity.type}</p>
+                                   {entity.location && <p className="text-sm text-gray-500">{entity.location}</p>}
+                                 </div>
+                                 <div className="text-right">
+                                   {entity.aumFormatted && (
+                                     <div className="text-lg font-bold text-gray-900">{entity.aumFormatted}</div>
+                                   )}
+                                   {entity.rank && (
+                                     <div className="text-sm text-gray-500">Rank #{entity.rank}</div>
+                                   )}
+                                 </div>
+                               </div>
+                               {entity.highlight && (
+                                 <p className="mt-2 text-sm text-gray-700 font-medium">{entity.highlight}</p>
+                               )}
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Suggestions */}
+                     {message.suggestions && message.suggestions.length > 0 && (
+                       <div className="mt-4">
+                         <h4 className="font-semibold text-gray-900 mb-3">Suggested follow-ups:</h4>
+                         <div className="flex flex-wrap gap-2">
+                           {message.suggestions.map((suggestion, index) => (
+                             <Button
+                               key={index}
+                               variant="outline"
+                               size="sm"
+                               onClick={() => handleChatSubmit(suggestion.text)}
+                               className="text-sm"
+                             >
+                               {suggestion.text}
+                             </Button>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Visualizations */}
+                     {message.visualizations && message.visualizations.length > 0 && (
+                       <div className="mt-4">
+                         <h4 className="font-semibold text-gray-900 mb-3">Suggested Charts:</h4>
+                         <div className="space-y-2">
+                           {message.visualizations.map((viz, index) => (
+                             <div key={index} className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                               <div className="flex items-center gap-2">
+                                 <span className="text-lg">📊</span>
+                                 <div>
+                                   <p className="font-medium text-amber-900">{viz.title}</p>
+                                   <p className="text-sm text-amber-700">{viz.description}</p>
+                                 </div>
+                               </div>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Action buttons for AI messages */}
+                     {!message.isStreaming && (
+                       <div className="flex items-center gap-2 mt-4">
+                         <button
+                           onClick={() => {
+                             navigator.clipboard.writeText(message.content);
+                             toast({ title: "Copied to clipboard" });
+                           }}
+                           className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                           title="Copy"
+                         >
+                           <Copy className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                         </button>
                         <button
                           onClick={() => handleMessageAction('thumbsUp', message.id)}
                           className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
