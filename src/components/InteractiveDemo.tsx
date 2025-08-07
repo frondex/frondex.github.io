@@ -160,25 +160,6 @@ const InteractiveDemo = () => {
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
         {/* Top Right Controls */}
         <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
-          <AnamSettings onSettingsChange={() => {
-            toast({
-              title: "Settings Updated",
-              description: "Your Anam settings have been saved.",
-            });
-          }} />
-          <OpenAISettings onSettingsChange={() => {
-            toast({
-              title: "Settings Updated",
-              description: "Your OpenAI settings have been saved.",
-            });
-          }} />
-          <PrivateMarketsSettings onSettingsChange={() => {
-            toast({
-              title: "Settings Updated",
-              description: "Your Private Markets settings have been saved.",
-            });
-            setPrivateMarketsService(null);
-          }} />
           <Button 
             className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
             onClick={() => {
@@ -322,7 +303,7 @@ const InteractiveDemo = () => {
 
         {/* Footer Text */}
         <div className="text-center text-sm text-gray-600 max-w-lg">
-          <p>Frondex can make mistakes. Please double-check responses.</p>
+          <p>Frondex can make mistakes. <a href="/admin" className="text-gray-600 hover:text-gray-800">Please</a> double-check responses.</p>
         </div>
       </div>
     );
@@ -348,26 +329,6 @@ const InteractiveDemo = () => {
           />
         </div>
         <div className="flex items-center gap-2">
-          <AnamSettings onSettingsChange={() => {
-            toast({
-              title: "Settings Updated",
-              description: "Your Anam settings have been saved.",
-            });
-          }} />
-          <OpenAISettings onSettingsChange={() => {
-            toast({
-              title: "Settings Updated", 
-              description: "Your OpenAI settings have been saved.",
-            });
-          }} />
-          <PrivateMarketsSettings onSettingsChange={() => {
-            toast({
-              title: "Settings Updated",
-              description: "Your Private Markets settings have been saved.",
-            });
-            // Reset service to pick up new settings
-            setPrivateMarketsService(null);
-          }} />
           <Button 
             size="sm" 
             className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
