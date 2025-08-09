@@ -5,7 +5,7 @@ import { SubscriptionManager } from "@/components/SubscriptionManager";
 import InteractiveDemo from "@/components/InteractiveDemo";
 
 const Index = () => {
-  const { user, signOut, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -17,27 +17,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background font-sans">
-      <nav className="border-b bg-card p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-primary">Frondex</h1>
-          <div className="flex items-center gap-4">
-            {user ? (
-              <>
-                <span className="text-sm text-muted-foreground">{user.email}</span>
-                <Button variant="outline" onClick={signOut}>
-                  Sign Out
-                </Button>
-              </>
-            ) : (
-              <Button asChild>
-                <Link to="/auth">Sign In</Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </nav>
-      
       <div className="max-w-7xl mx-auto p-6 space-y-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-primary">Frondex</h1>
+          {!user && (
+            <Button asChild>
+              <Link to="/auth">Sign In</Link>
+            </Button>
+          )}
+        </div>
         <SubscriptionManager user={user} />
         <InteractiveDemo />
       </div>

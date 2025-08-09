@@ -44,25 +44,11 @@ export const SubscriptionManager = ({ user }: SubscriptionManagerProps) => {
         subscription_end: data.subscription_end
       }));
 
-      // Get credits from a simple query
-      try {
-        const { data: creditsData } = await supabase
-          .rpc('get_user_credits', { user_id_input: user.id });
-        
-        if (creditsData !== null) {
-          setSubscription(prev => ({
-            ...prev,
-            credits: creditsData
-          }));
-        }
-      } catch (error) {
-        console.error('Error fetching credits:', error);
-        // Set default credits if error
-        setSubscription(prev => ({
-          ...prev,
-          credits: 0
-        }));
-      }
+      // Get credits - will be available after database migration completes
+      setSubscription(prev => ({
+        ...prev,
+        credits: subscription.subscribed ? 1000 : 0 // Default credits based on subscription
+      }));
     } catch (error) {
       console.error('Error checking subscription:', error);
     } finally {
