@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { VideoChatModal } from "@/components/VideoChatModal";
+// import { VideoChatModal } from "@/components/VideoChatModal";
 import {
     ImageIcon,
     FileUp,
@@ -125,15 +125,15 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         </span>
                     </button>
                     
-                    {/* Video Chat Button */}
-                    <button
+                    {/* Video Chat Button - Temporarily disabled */}
+                    {/* <button
                         type="button"
                         onClick={() => setIsVideoChatOpen(true)}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 shadow-[0_0_10px_rgba(34,197,94,0.2)]"
                     >
                         <Phone className="w-3 h-3 text-green-600" />
                         <span>VIDEO CHAT</span>
-                    </button>
+                    </button> */}
                 </div>
 
                 <div className="overflow-y-auto pt-2">
@@ -208,10 +208,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 </div>
             </div>
             
-            <VideoChatModal 
+            {/* <VideoChatModal 
                 isOpen={isVideoChatOpen}
                 onClose={() => setIsVideoChatOpen(false)}
-            />
+            /> */}
         </div>
     );
 }
