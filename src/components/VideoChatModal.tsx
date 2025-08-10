@@ -56,9 +56,13 @@ export function VideoChatModal({ isOpen, onClose }: VideoChatModalProps) {
         setAnamClient(null);
       }
     };
-  }, [isOpen, anamClient]);
+  }, [isOpen]);
 
   const initializeVideoChat = async () => {
+    if (anamClient || isLoading) {
+      console.log('Skipping initialization: client exists or already loading');
+      return;
+    }
     try {
       setIsLoading(true);
       setError(null);
