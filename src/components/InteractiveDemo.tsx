@@ -164,9 +164,9 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   if (!showChatView) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
-        {/* Top Right Controls - only show if user is not authenticated */}
-        {!user && (
-          <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
+        {/* Top Right Controls */}
+        <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
+          {!user ? (
             <Button 
               asChild
               variant="outline"
@@ -177,18 +177,19 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                 Log In or Sign Up
               </Link>
             </Button>
+          ) : (
             <Button 
               className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
               onClick={() => {
                 console.log('Upgrade button clicked');
-                setShowWaitlistModal(true);
+                setShowPricing(true);
               }}
             >
               <Crown className="w-4 h-4" />
               Upgrade to Pro
             </Button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Logo */}
         <div className="-mb-20">
@@ -555,6 +556,12 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           open={showWaitlistModal}
           onOpenChange={setShowWaitlistModal}
         />
+
+        <Dialog open={showPricing} onOpenChange={setShowPricing}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            <Pricing />
+          </DialogContent>
+        </Dialog>
     </div>
   );
 };
