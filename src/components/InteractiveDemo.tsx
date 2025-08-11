@@ -16,6 +16,7 @@ import remarkGfm from "remark-gfm";
 import { SignupPrompt } from "./SignupPrompt";
 import { JoinWaitlistModal } from "./JoinWaitlistModal";
 import AnimatedBrandCard from "./AnimatedBrandCard";
+import { User } from "@supabase/supabase-js";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -46,7 +47,11 @@ interface Message {
   visualizations?: any[];
 }
 
-const InteractiveDemo = () => {
+interface InteractiveDemoProps {
+  user?: User | null;
+}
+
+const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
   const [showPricing, setShowPricing] = useState(false);
@@ -159,29 +164,31 @@ const InteractiveDemo = () => {
   if (!showChatView) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
-        {/* Top Right Controls */}
-        <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
-          <Button 
-            asChild
-            variant="outline"
-            className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
-          >
-            <Link to="/auth">
+        {/* Top Right Controls - only show if user is not authenticated */}
+        {!user && (
+          <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
+            <Button 
+              asChild
+              variant="outline"
+              className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
+              <Link to="/auth">
+                <Crown className="w-4 h-4" />
+                Log In or Sign Up
+              </Link>
+            </Button>
+            <Button 
+              className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+              onClick={() => {
+                console.log('Upgrade button clicked');
+                setShowWaitlistModal(true);
+              }}
+            >
               <Crown className="w-4 h-4" />
-              Log In or Sign Up
-            </Link>
-          </Button>
-          <Button 
-            className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-            onClick={() => {
-              console.log('Upgrade button clicked');
-              setShowWaitlistModal(true);
-            }}
-          >
-            <Crown className="w-4 h-4" />
-            Upgrade to Pro
-          </Button>
-        </div>
+              Upgrade to Pro
+            </Button>
+          </div>
+        )}
 
         {/* Logo */}
         <div className="-mb-20">

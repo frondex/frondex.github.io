@@ -38,7 +38,7 @@ const Index = () => {
         </div>
       )}
       <div className="max-w-7xl mx-auto p-6 space-y-8">
-        <InteractiveDemo />
+        <InteractiveDemo user={user} />
       </div>
     </div>
   );
