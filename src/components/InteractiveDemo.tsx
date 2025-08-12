@@ -149,6 +149,13 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     });
   };
 
+  const handleUpgradeClick = () => {
+    console.log('Upgrade button clicked - handler function called');
+    console.log('Current showPricing state:', showPricing);
+    setShowPricing(true);
+    console.log('setShowPricing(true) called');
+  };
+
   const handleMessageAction = (action: string, messageId: number) => {
     // Handle message actions like copy, thumbs up, etc.
     console.log(`Action: ${action} for message: ${messageId}`);
@@ -180,11 +187,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           ) : (
             <Button 
               className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-              onClick={() => {
-                console.log('Upgrade button clicked, showPricing before:', showPricing);
-                setShowPricing(true);
-                console.log('Upgrade button clicked, showPricing after setShowPricing(true)');
-              }}
+              onClick={handleUpgradeClick}
             >
               <Crown className="w-4 h-4" />
               Upgrade to Pro
