@@ -4,7 +4,7 @@ import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Pricing } from "@/components/ui/pricing-cards";
+import Pricing from "@/components/ui/pricing-cards";
 import { OpenAISettings } from "./OpenAISettings";
 import { AnamSettings } from "./AnamSettings";
 import { PrivateMarketsSettings } from "./PrivateMarketsSettings";
