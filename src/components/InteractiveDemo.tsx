@@ -558,8 +558,10 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         />
 
         <Dialog open={showPricing} onOpenChange={setShowPricing}>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-            <Pricing />
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+            <div className="p-6">
+              <Pricing />
+            </div>
           </DialogContent>
         </Dialog>
     </div>
