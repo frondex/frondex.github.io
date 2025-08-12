@@ -328,6 +328,13 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         <div className="text-center text-sm text-gray-600 max-w-lg">
           <p>Frondex can make mistakes. <a href="/admin" className="text-gray-600 hover:text-gray-800">Please</a> double-check responses.</p>
         </div>
+
+        {/* Pricing Modal */}
+        <Dialog open={showPricing} onOpenChange={setShowPricing}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            <Pricing />
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
