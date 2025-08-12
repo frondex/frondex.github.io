@@ -181,8 +181,9 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
             <Button 
               className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
               onClick={() => {
-                console.log('Upgrade button clicked');
+                console.log('Upgrade button clicked, showPricing before:', showPricing);
                 setShowPricing(true);
+                console.log('Upgrade button clicked, showPricing after setShowPricing(true)');
               }}
             >
               <Crown className="w-4 h-4" />
