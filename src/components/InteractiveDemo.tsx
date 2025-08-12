@@ -17,6 +17,7 @@ import { SignupPrompt } from "./SignupPrompt";
 import { JoinWaitlistModal } from "./JoinWaitlistModal";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 import { User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -185,13 +186,25 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
               </Link>
             </Button>
           ) : (
-            <Button 
-              className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-              onClick={handleUpgradeClick}
-            >
-              <Crown className="w-4 h-4" />
-              Upgrade to Pro
-            </Button>
+            <>
+              <Button 
+                className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                onClick={handleUpgradeClick}
+              >
+                <Crown className="w-4 h-4" />
+                Upgrade to Pro
+              </Button>
+              <Button 
+                variant="outline"
+                className="gap-2 border-gray-200 text-gray-700 hover:bg-gray-50"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  window.location.href = '/auth';
+                }}
+              >
+                Sign Out
+              </Button>
+            </>
           )}
         </div>
 
