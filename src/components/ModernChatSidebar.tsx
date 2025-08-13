@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, MessageCircle, Clock, Settings, Bot } from "lucide-react";
+import { Plus, MessageCircle, Clock, Settings, Bot, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/modern-sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -63,14 +63,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
   const Logo = () => {
     return (
       <div className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20">
-        <Bot className="h-6 w-6 text-primary flex-shrink-0" />
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="font-semibold text-foreground whitespace-pre"
-        >
-          Frondex AI
-        </motion.span>
+        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-8 w-auto flex-shrink-0" />
       </div>
     );
   };
@@ -78,7 +71,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
   const LogoIcon = () => {
     return (
       <div className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20">
-        <Bot className="h-6 w-6 text-primary flex-shrink-0" />
+        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-8 w-auto flex-shrink-0" />
       </div>
     );
   };
@@ -87,9 +80,19 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
     <Sidebar open={open} setOpen={setOpen} animate={true}>
       <SidebarBody className="justify-between gap-4">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-          {/* Logo */}
-          <div className="mb-4">
+          {/* Logo and Collapse Button */}
+          <div className="mb-4 flex items-center justify-between">
             {open ? <Logo /> : <LogoIcon />}
+            <button
+              onClick={() => setOpen(!open)}
+              className="p-1 hover:bg-muted rounded-md transition-colors"
+            >
+              {open ? (
+                <PanelLeftClose className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <PanelLeftOpen className="h-4 w-4 text-muted-foreground" />
+              )}
+            </button>
           </div>
           
           {/* New Task Button */}
@@ -102,7 +105,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
             >
               <Button 
                 onClick={onNewChat} 
-                className="w-full gap-2 bg-primary hover:bg-primary/90"
+                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white"
               >
                 <Plus className="h-4 w-4" />
                 New Task
@@ -119,7 +122,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
               <Button 
                 onClick={onNewChat}
                 size="icon"
-                className="w-8 h-8 bg-primary hover:bg-primary/90"
+                className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white"
               >
                 <Plus className="h-4 w-4" />
               </Button>
