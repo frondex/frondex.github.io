@@ -386,38 +386,249 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     );
   }
 
-  // Enhanced Chat view with sidebar
+  // Chat view layout - keep original design with user dropdown
   return (
-    <>
-      <EnhancedChatView
-        onBack={() => setShowChatView(false)}
-        initialQuery={initialQuery}
-        onSendMessage={handleChatSubmit}
-        messages={messages}
-        isLoading={isLoading}
-      />
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header with back button, logo, and user dropdown */}
+      <div className="flex items-center justify-between gap-4 p-4 bg-white border-b">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setShowChatView(false)}
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <img 
+            src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
+            alt="Frondex" 
+            className="h-8 w-auto"
+          />
+        </div>
+        <div className="flex items-center">
+          {user ? (
+            <UserAccountDropdown 
+              user={user} 
+              onUpgradeClick={() => setShowWaitlistModal(true)}
+            />
+          ) : (
+            <Button 
+              asChild
+              variant="outline"
+              className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
+              <Link to="/auth">
+                <Crown className="w-4 h-4" />
+                Log In
+              </Link>
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto p-6 bg-white">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {messages.map((message) => (
+            <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[80%] ${message.type === "user" ? "order-2" : "order-1"}`}>
+                {message.type === "user" ? (
+                  <div className="bg-gray-100 rounded-2xl px-4 py-3 text-right">
+                    <div className="text-gray-900 text-sm">{message.content}</div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-gray-900 text-base leading-relaxed prose prose-gray max-w-none">
+                      {message.type === "assistant" ? (
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
+                            h1: ({ children }) => <h1 className="text-xl font-semibold mb-3 text-gray-900">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-lg font-semibold mb-2 text-gray-900">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-base font-semibold mb-2 text-gray-900">{children}</h3>,
+                            ul: ({ children }) => <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>,
+                            li: ({ children }) => <li className="text-gray-900">{children}</li>,
+                            strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                            em: ({ children }) => <em className="italic text-gray-700">{children}</em>,
+                            code: ({ children }) => <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800">{children}</code>,
+                            pre: ({ children }) => <pre className="bg-gray-100 p-3 rounded-lg overflow-x-auto mb-4">{children}</pre>,
+                            blockquote: ({ children }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 mb-4">{children}</blockquote>,
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      ) : (
+                        <p className="mb-0">{message.content}</p>
+                      )}
+                      {message.isStreaming && (
+                        <span className="inline-block w-2 h-5 bg-gray-800 ml-1 animate-pulse" />
+                      )}
+                    </div>
+                     
+                     {/* Rich content for Private Markets responses */}
+                     {message.entities && message.entities.length > 0 && (
+                       <div className="mt-4 space-y-3">
+                         <h4 className="font-semibold text-gray-900">Key Information:</h4>
+                         <div className="grid gap-3">
+                           {message.entities.map((entity, index) => (
+                             <div key={entity.id || index} className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+                               <div className="flex justify-between items-start">
+                                 <div>
+                                   <h5 className="font-semibold text-gray-900">{entity.name}</h5>
+                                   <p className="text-sm text-gray-600">{entity.type}</p>
+                                   {entity.location && <p className="text-sm text-gray-500">{entity.location}</p>}
+                                 </div>
+                                 <div className="text-right">
+                                   {entity.aumFormatted && (
+                                     <div className="text-lg font-bold text-gray-900">{entity.aumFormatted}</div>
+                                   )}
+                                   {entity.rank && (
+                                     <div className="text-sm text-gray-500">Rank #{entity.rank}</div>
+                                   )}
+                                 </div>
+                               </div>
+                               {entity.highlight && (
+                                 <p className="mt-2 text-sm text-gray-700 font-medium">{entity.highlight}</p>
+                               )}
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Suggestions */}
+                     {message.suggestions && message.suggestions.length > 0 && (
+                       <div className="mt-4">
+                         <h4 className="font-semibold text-gray-900 mb-3">Suggested follow-ups:</h4>
+                         <div className="flex flex-wrap gap-2">
+                           {message.suggestions.map((suggestion, index) => (
+                             <Button
+                               key={index}
+                               variant="outline"
+                               size="sm"
+                               onClick={() => handleChatSubmit(suggestion.text)}
+                               className="text-sm"
+                             >
+                               {suggestion.text}
+                             </Button>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Visualizations */}
+                     {message.visualizations && message.visualizations.length > 0 && (
+                       <div className="mt-4">
+                         <h4 className="font-semibold text-gray-900 mb-3">Suggested Charts:</h4>
+                         <div className="space-y-2">
+                           {message.visualizations.map((viz, index) => (
+                             <div key={index} className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                               <div className="flex items-center gap-2">
+                                 <span className="text-lg">📊</span>
+                                 <div>
+                                   <p className="font-medium text-amber-900">{viz.title}</p>
+                                   <p className="text-sm text-amber-700">{viz.description}</p>
+                                 </div>
+                               </div>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Action buttons for AI messages */}
+                     {!message.isStreaming && (
+                       <div className="flex items-center gap-2 mt-4">
+                         <button
+                           onClick={() => {
+                             navigator.clipboard.writeText(message.content);
+                             toast({ title: "Copied to clipboard" });
+                           }}
+                           className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                           title="Copy"
+                         >
+                           <Copy className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                         </button>
+                        <button
+                          onClick={() => handleMessageAction('thumbsUp', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Good response"
+                        >
+                          <ThumbsUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('thumbsDown', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Bad response"
+                        >
+                          <ThumbsDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('regenerate', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Regenerate"
+                        >
+                          <RotateCcw className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('speak', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Read aloud"
+                        >
+                          <Volume2 className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                        <button
+                          onClick={() => handleMessageAction('share', message.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+                          title="Share"
+                        >
+                          <Share className="h-4 w-4 text-gray-500 group-hover:text-gray-700" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Chat input fixed at bottom - original VercelV0Chat component */}
+      <div className="border-t bg-white p-4">
+        <div className="max-w-4xl mx-auto relative">
+          <VercelV0Chat onSubmit={handleChatSubmit} />
+          {isLoading && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+            </div>
+          )}
+        </div>
+      </div>
       
       {/* Modals */}
-      <SignupPrompt
-        open={showSignupPrompt}
-        onOpenChange={setShowSignupPrompt}
-        onSignup={handleSignup}
-        onLogin={handleLogin}
-      />
-      
-      <JoinWaitlistModal
-        open={showWaitlistModal}
-        onOpenChange={setShowWaitlistModal}
-      />
+        <SignupPrompt
+          open={showSignupPrompt}
+          onOpenChange={setShowSignupPrompt}
+          onSignup={handleSignup}
+          onLogin={handleLogin}
+        />
+        
+        <JoinWaitlistModal
+          open={showWaitlistModal}
+          onOpenChange={setShowWaitlistModal}
+        />
 
-      <Dialog open={showPricing} onOpenChange={setShowPricing}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
-          <div className="p-6">
-            <Pricing />
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        <Dialog open={showPricing} onOpenChange={setShowPricing}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+            <div className="p-6">
+              <Pricing />
+            </div>
+          </DialogContent>
+        </Dialog>
+    </div>
   );
 };
 
