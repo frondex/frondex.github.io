@@ -83,20 +83,28 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
       <SidebarBody className="justify-between gap-4">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo and Collapse Button */}
-          <div className="mb-4 flex items-center justify-between">
-            <div className={`${open ? 'flex-1' : 'flex-none ml-1'}`}>
-              {open ? <Logo /> : <LogoIcon />}
-            </div>
-            <button
-              onClick={() => setOpen(!open)}
-              className="p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0 ml-auto"
-            >
-              {open ? (
-                <PanelLeftClose className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
-              )}
-            </button>
+          <div className="mb-4">
+            {open ? (
+              <div className="flex items-center justify-between">
+                <Logo />
+                <button
+                  onClick={() => setOpen(!open)}
+                  className="p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0"
+                >
+                  <PanelLeftClose className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center space-y-2">
+                <LogoIcon />
+                <button
+                  onClick={() => setOpen(!open)}
+                  className="p-2 hover:bg-muted rounded-md transition-colors"
+                >
+                  <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </div>
+            )}
           </div>
           
           {/* New Task Button */}
