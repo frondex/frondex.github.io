@@ -94,7 +94,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
       <SidebarBody className="justify-between gap-1">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo and Collapse Button - Above header line */}
-          <div className="mb-0 pt-4">
+          <div className="mb-0">
             {open ? (
               <div className="flex items-center justify-between">
                 <Logo />
