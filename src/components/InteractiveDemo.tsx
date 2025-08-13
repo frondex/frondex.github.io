@@ -290,11 +290,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
             </h2>
             <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
               Discover the innovative companies and visionary brands that shape tomorrow's markets
-              {user && (
-                <span className="block mt-2 text-sm text-blue-600">
-                  Click any brand to explore (5 credits per exploration)
-                </span>
-              )}
             </p>
           </div>
           
