@@ -13,9 +13,10 @@ interface ModernChatSidebarProps {
   onSelectChat: (chatId: string) => void;
   currentChatId?: string;
   className?: string;
+  onBackToHome?: () => void;
 }
 
-const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }: ModernChatSidebarProps) => {
+const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, onBackToHome }: ModernChatSidebarProps) => {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const { sessions, loading, createSession, deleteSession, copySessionLink } = useChatSessions();
@@ -50,8 +51,12 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log('Logo clicked - navigating to home');
-          navigate('/');
+          console.log('Logo clicked - going back to home');
+          if (onBackToHome) {
+            onBackToHome();
+          } else {
+            navigate('/');
+          }
         }} 
         className="font-normal flex space-x-2 items-center text-sm py-1 relative z-50 cursor-pointer hover:opacity-80 transition-opacity"
         type="button"
@@ -67,8 +72,12 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log('Logo icon clicked - navigating to home');
-          navigate('/');
+          console.log('Logo icon clicked - going back to home');
+          if (onBackToHome) {
+            onBackToHome();
+          } else {
+            navigate('/');
+          }
         }} 
         className="font-normal flex items-center justify-start text-sm py-2 relative z-50 cursor-pointer hover:opacity-80 transition-opacity"
         type="button"

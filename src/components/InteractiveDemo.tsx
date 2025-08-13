@@ -522,6 +522,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           onNewChat={handleNewChat}
           onSelectChat={loadChatSession}
           currentChatId={currentChatSessionId || undefined}
+          onBackToHome={() => setShowChatView(false)}
         />
 
       {/* Main Chat Area */}
