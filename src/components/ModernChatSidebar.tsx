@@ -1,16 +1,11 @@
 import { useState } from "react";
-import { Plus, MessageCircle, Clock, Settings, Bot, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Plus, MessageCircle, Clock, Settings, Bot, PanelLeftClose, PanelLeftOpen, MoreVertical, Link, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useChatSessions } from "@/hooks/useChatSessions";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/modern-sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
-
-interface ChatSession {
-  id: string;
-  title: string;
-  timestamp: Date;
-  messageCount: number;
-}
 
 interface ModernChatSidebarProps {
   onNewChat: () => void;
@@ -21,30 +16,17 @@ interface ModernChatSidebarProps {
 
 const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }: ModernChatSidebarProps) => {
   const [open, setOpen] = useState(true);
-  
-  // Mock chat history - in a real app, this would come from a backend/state management
-  const [chatSessions] = useState<ChatSession[]>([
-    {
-      id: "1",
-      title: "Private Markets Analysis",
-      timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-      messageCount: 8
-    },
-    {
-      id: "2", 
-      title: "Investment Opportunities",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-      messageCount: 12
-    },
-    {
-      id: "3",
-      title: "Market Research",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-      messageCount: 5
-    }
-  ]);
+  const { sessions, loading, createSession, deleteSession, copySessionLink } = useChatSessions();
 
-  const formatTimestamp = (date: Date) => {
+  const handleNewChat = async () => {
+    const session = await createSession("New Chat");
+    if (session) {
+      onNewChat();
+    }
+  };
+
+  const formatTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
@@ -116,7 +98,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
               }}
             >
               <Button 
-                onClick={onNewChat} 
+                onClick={handleNewChat} 
                 className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white"
               >
                 <Plus className="h-4 w-4" />
@@ -132,7 +114,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
               }}
             >
               <Button 
-                onClick={onNewChat}
+                onClick={handleNewChat}
                 size="icon"
                 className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white"
               >
@@ -158,36 +140,72 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
 
             <ScrollArea className="flex-1">
               <div className="space-y-1 pb-4">
-                {chatSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    onClick={() => onSelectChat(session.id)}
-                    className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
-                      currentChatId === session.id ? 'bg-muted' : 'hover:bg-muted/50'
-                    }`}
-                  >
-                    <MessageCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <motion.div
-                      animate={{
-                        display: open ? "block" : "none",
-                        opacity: open ? 1 : 0,
-                      }}
-                      className="flex flex-col min-w-0 flex-1"
+                {loading ? (
+                  <div className="p-4 text-center text-muted-foreground">Loading...</div>
+                ) : sessions.length === 0 ? (
+                  <div className="p-4 text-center text-muted-foreground">No chat history yet</div>
+                ) : (
+                  sessions.map((session) => (
+                    <div
+                      key={session.id}
+                      className={`group flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
+                        currentChatId === session.id ? 'bg-muted' : 'hover:bg-muted/50'
+                      }`}
                     >
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {session.title}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">
-                          {formatTimestamp(session.timestamp)}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {session.messageCount} messages
-                        </span>
-                      </div>
-                    </motion.div>
-                  </div>
-                ))}
+                      <MessageCircle 
+                        className="h-4 w-4 text-muted-foreground flex-shrink-0" 
+                        onClick={() => onSelectChat(session.id)}
+                      />
+                      <motion.div
+                        animate={{
+                          display: open ? "block" : "none",
+                          opacity: open ? 1 : 0,
+                        }}
+                        className="flex flex-col min-w-0 flex-1"
+                        onClick={() => onSelectChat(session.id)}
+                      >
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {session.title}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-muted-foreground">
+                            {formatTimestamp(session.updated_at)}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {session.messageCount || 0} messages
+                          </span>
+                        </div>
+                      </motion.div>
+                      
+                      {open && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <MoreVertical className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => copySessionLink(session.id)}>
+                              <Link className="h-4 w-4 mr-2" />
+                              Copy Link
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => deleteSession(session.id)}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </ScrollArea>
           </div>
