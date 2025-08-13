@@ -63,15 +63,15 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
   const Logo = () => {
     return (
       <div className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20">
-        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-12 w-auto flex-shrink-0" />
+        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-16 w-auto flex-shrink-0" />
       </div>
     );
   };
 
   const LogoIcon = () => {
     return (
-      <div className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20">
-        <img src="/lovable-uploads/f8da2f55-80e7-41e1-88b5-6a6b67f9a43a.png" alt="Frondex" className="h-8 w-auto flex-shrink-0" />
+      <div className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20 justify-center">
+        <img src="/lovable-uploads/f8da2f55-80e7-41e1-88b5-6a6b67f9a43a.png" alt="Frondex" className="h-12 w-auto flex-shrink-0" />
       </div>
     );
   };
