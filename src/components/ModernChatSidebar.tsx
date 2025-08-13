@@ -70,7 +70,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
 
   const LogoIcon = () => {
     return (
-      <div className="font-normal flex items-center justify-center text-sm py-2 relative z-20 w-full">
+      <div className="font-normal flex items-center justify-start text-sm py-2 relative z-20">
         <div className="text-4xl font-bold bg-gradient-to-r from-green-500 via-teal-500 to-blue-600 bg-clip-text text-transparent">
           f
         </div>
@@ -84,10 +84,12 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo and Collapse Button */}
           <div className="mb-4 flex items-center justify-between">
-            {open ? <Logo /> : <LogoIcon />}
+            <div className={`${open ? 'flex-1' : 'flex-none ml-1'}`}>
+              {open ? <Logo /> : <LogoIcon />}
+            </div>
             <button
               onClick={() => setOpen(!open)}
-              className="p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0"
+              className="p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0 ml-auto"
             >
               {open ? (
                 <PanelLeftClose className="h-5 w-5 text-muted-foreground" />
