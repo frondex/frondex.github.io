@@ -128,7 +128,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             >
               <Button 
                 onClick={handleNewChat} 
-                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white"
+                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white -mt-2"
               >
                 <Plus className="h-4 w-4" />
                 New Task
