@@ -23,6 +23,7 @@ import { useCredits } from "@/hooks/useCredits";
 import UserAccountDropdown from "./UserAccountDropdown";
 import EnhancedChatView from "./EnhancedChatView";
 import ThreeDotsLoader from "./ui/three-dots-loader";
+import ModernChatSidebar from "./ModernChatSidebar";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -390,89 +391,22 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   // Chat view layout - original design with sidebar added
   return (
     <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      <div className="w-64 bg-background border-r border-border flex flex-col h-full">
-        {/* Header */}
-        <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <img 
-              src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
-              alt="Frondex" 
-              className="h-6 w-auto"
-            />
-            <span className="font-semibold text-foreground">Frondex AI</span>
-          </div>
-          
-          <Button 
-            onClick={() => {
-              setMessages([]);
-              setInitialQuery("");
-              toast({
-                title: "New Chat",
-                description: "Started a new conversation",
-              });
-            }} 
-            className="w-full gap-2 bg-primary hover:bg-primary/90"
-          >
-            <span className="text-lg">+</span>
-            New Task
-          </Button>
-        </div>
-
-        {/* Chat History */}
-        <div className="flex-1 overflow-hidden">
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-medium text-muted-foreground">Task History</span>
-            </div>
-          </div>
-
-          <div className="flex-1 px-2">
-            <div className="space-y-1 pb-4">
-              {/* Mock chat history */}
-              <div className="flex flex-col p-3 mx-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-muted/50 bg-muted border border-border">
-                <div className="flex items-start gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      Private Markets Analysis
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">30m ago</span>
-                      <span className="text-xs text-muted-foreground">8 messages</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col p-3 mx-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-muted/50">
-                <div className="flex items-start gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      Investment Opportunities
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">2h ago</span>
-                      <span className="text-xs text-muted-foreground">12 messages</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col p-3 mx-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-muted/50">
-                <div className="flex items-start gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      Market Research
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">1d ago</span>
-                      <span className="text-xs text-muted-foreground">5 messages</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Modern Chat Sidebar */}
+        <ModernChatSidebar 
+          onNewChat={() => {
+            setMessages([]);
+            setInitialQuery("");
+            toast({
+              title: "New Chat",
+              description: "Started a new conversation",
+            });
+          }}
+          onSelectChat={(chatId) => {
+            console.log("Selected chat:", chatId);
+            // Handle chat selection here
+          }}
+          currentChatId={undefined}
+        />
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
