@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
-import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft } from "lucide-react";
+import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Pricing from "@/components/ui/pricing-cards";
@@ -22,6 +22,7 @@ import CreditDisplay from "./CreditDisplay";
 import { useCredits } from "@/hooks/useCredits";
 import UserAccountDropdown from "./UserAccountDropdown";
 import EnhancedChatView from "./EnhancedChatView";
+import ThreeDotsLoader from "./ui/three-dots-loader";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -675,18 +676,32 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                 </div>
               </div>
             ))}
+            
+            {/* Loading indicator with three dots in chat */}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Bot className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-2xl px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <ThreeDotsLoader />
+                      <span className="text-sm text-gray-500">Thinking...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Chat input fixed at bottom - original VercelV0Chat component */}
         <div className="border-t bg-white p-4">
-          <div className="max-w-4xl mx-auto relative">
+          <div className="max-w-4xl mx-auto">
             <VercelV0Chat onSubmit={handleChatSubmit} />
-            {isLoading && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-              </div>
-            )}
           </div>
         </div>
       </div>
