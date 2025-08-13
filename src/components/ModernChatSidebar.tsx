@@ -71,7 +71,9 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
   const LogoIcon = () => {
     return (
       <div className="font-normal flex items-center justify-center text-sm py-2 relative z-20 w-full">
-        <img src="/lovable-uploads/f8da2f55-80e7-41e1-88b5-6a6b67f9a43a.png" alt="Frondex" className="h-16 w-auto flex-shrink-0" />
+        <div className="text-4xl font-bold bg-gradient-to-r from-green-500 via-teal-500 to-blue-600 bg-clip-text text-transparent">
+          f
+        </div>
       </div>
     );
   };
