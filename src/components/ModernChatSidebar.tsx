@@ -47,10 +47,16 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
   const Logo = () => {
     return (
       <button 
-        onClick={() => navigate('/')} 
-        className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20 cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Logo clicked - navigating to home');
+          navigate('/');
+        }} 
+        className="font-normal flex space-x-2 items-center text-sm py-1 relative z-50 cursor-pointer hover:opacity-80 transition-opacity"
+        type="button"
       >
-        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-20 w-auto flex-shrink-0" />
+        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-20 w-auto flex-shrink-0 pointer-events-none" />
       </button>
     );
   };
@@ -58,10 +64,16 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
   const LogoIcon = () => {
     return (
       <button 
-        onClick={() => navigate('/')} 
-        className="font-normal flex items-center justify-start text-sm py-2 relative z-20 cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Logo icon clicked - navigating to home');
+          navigate('/');
+        }} 
+        className="font-normal flex items-center justify-start text-sm py-2 relative z-50 cursor-pointer hover:opacity-80 transition-opacity"
+        type="button"
       >
-        <div className="text-4xl font-bold bg-gradient-to-r from-green-500 via-teal-500 to-blue-600 bg-clip-text text-transparent">
+        <div className="text-4xl font-bold bg-gradient-to-r from-green-500 via-teal-500 to-blue-600 bg-clip-text text-transparent pointer-events-none">
           f
         </div>
       </button>
