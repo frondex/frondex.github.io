@@ -20,6 +20,7 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import CreditDisplay from "./CreditDisplay";
 import { useCredits } from "@/hooks/useCredits";
+import UserAccountDropdown from "./UserAccountDropdown";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -223,15 +224,12 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
         {/* Top Right Controls */}
-        <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
-          {user && (
-            <CreditDisplay className="bg-white/90 backdrop-blur-sm border shadow-lg" />
-          )}
+        <div className="fixed top-4 right-4 z-10">
           {!user ? (
             <Button 
               asChild
               variant="outline"
-              className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+              className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50 bg-white/90 backdrop-blur-sm shadow-sm"
             >
               <Link to="/auth">
                 <Crown className="w-4 h-4" />
@@ -239,25 +237,10 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
               </Link>
             </Button>
           ) : (
-            <>
-              <Button 
-                className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                onClick={handleUpgradeClick}
-              >
-                <Crown className="w-4 h-4" />
-                Upgrade to Pro
-              </Button>
-              <Button 
-                variant="outline"
-                className="gap-2 border-gray-200 text-gray-700 hover:bg-gray-50"
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  window.location.href = '/auth';
-                }}
-              >
-                Sign Out
-              </Button>
-            </>
+            <UserAccountDropdown 
+              user={user} 
+              onUpgradeClick={handleUpgradeClick}
+            />
           )}
         </div>
 
@@ -474,18 +457,24 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
             className="h-8 w-auto"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Button 
-            size="sm" 
-            className="gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-            onClick={() => {
-              console.log('Chat view upgrade button clicked');
-              setShowWaitlistModal(true);
-            }}
-          >
-            <Crown className="w-4 h-4" />
-            Upgrade
-          </Button>
+        <div className="flex items-center">
+          {user ? (
+            <UserAccountDropdown 
+              user={user} 
+              onUpgradeClick={() => setShowWaitlistModal(true)}
+            />
+          ) : (
+            <Button 
+              asChild
+              variant="outline"
+              className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
+              <Link to="/auth">
+                <Crown className="w-4 h-4" />
+                Log In
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
 
