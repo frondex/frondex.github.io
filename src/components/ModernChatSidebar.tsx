@@ -58,7 +58,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             navigate('/');
           }
         }} 
-        className="font-normal flex space-x-2 items-center text-sm py-1 relative z-50 cursor-pointer hover:opacity-80 transition-opacity -mt-6"
+        className="font-normal flex space-x-2 items-center text-sm py-1 relative z-50 cursor-pointer hover:opacity-80 transition-opacity -mt-8"
         type="button"
       >
         <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-32 w-auto flex-shrink-0 pointer-events-none" />
