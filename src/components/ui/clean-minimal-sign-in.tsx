@@ -172,7 +172,48 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
           
           {!isSignUp && (
             <div className="w-full flex justify-end">
-              <button className="text-xs hover:underline font-medium text-primary">
+              <button 
+                type="button"
+                onClick={async () => {
+                  if (!email) {
+                    toast({
+                      title: "Error",
+                      description: "Please enter your email address first.",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  
+                  if (!validateEmail(email)) {
+                    toast({
+                      title: "Error", 
+                      description: "Please enter a valid email address.",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+
+                  try {
+                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                      redirectTo: `${window.location.origin}/auth`
+                    });
+                    
+                    if (error) throw error;
+                    
+                    toast({
+                      title: "Password reset sent",
+                      description: "Check your email for the password reset link."
+                    });
+                  } catch (err: any) {
+                    toast({
+                      title: "Reset failed",
+                      description: err.message,
+                      variant: "destructive"
+                    });
+                  }
+                }}
+                className="text-xs hover:underline font-medium text-primary"
+              >
                 Forgot password?
               </button>
             </div>
