@@ -47,7 +47,7 @@ const UserAccountDropdown: React.FC<UserAccountDropdownProps> = ({
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="flex items-center gap-3 h-10 px-3 bg-white/90 backdrop-blur-sm border shadow-sm hover:bg-gray-50"
+          className="flex items-center gap-3 h-10 px-3 bg-white/90 backdrop-blur-sm border shadow-sm hover:bg-gray-50 transition-all duration-200"
         >
           {/* User Avatar */}
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-medium">
@@ -64,15 +64,6 @@ const UserAccountDropdown: React.FC<UserAccountDropdownProps> = ({
               <span className="text-xs text-gray-600">{credits} credits</span>
             </div>
           </div>
-
-          {/* Upgrade Badge */}
-          <Badge 
-            variant="secondary" 
-            className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs px-2 py-0.5 border-0"
-          >
-            <Crown className="w-3 h-3 mr-1" />
-            Pro
-          </Badge>
         </Button>
       </DropdownMenuTrigger>
 
