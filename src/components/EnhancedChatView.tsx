@@ -127,7 +127,6 @@ const EnhancedChatView = ({
             </Button>
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-semibold text-foreground">Frondex Intelligence</h1>
             </div>
           </div>
           <div className="text-sm text-muted-foreground">
