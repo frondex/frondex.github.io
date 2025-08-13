@@ -18,6 +18,8 @@ import { JoinWaitlistModal } from "./JoinWaitlistModal";
 import AnimatedBrandCard from "./AnimatedBrandCard";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import CreditDisplay from "./CreditDisplay";
+import { useCredits } from "@/hooks/useCredits";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -64,10 +66,33 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [queryCount, setQueryCount] = useState(0);
   const [currentService, setCurrentService] = useState<'openai' | 'private-markets'>('private-markets');
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
+  const { credits, useCredits: deductCredits } = useCredits();
   const { toast } = useToast();
 
   const handleChatSubmit = useCallback(async (query: string) => {
     if (!query.trim()) return;
+    
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to start chatting.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check if user has enough credits (cost: 10 credits per chat message)
+    const creditsNeeded = 10;
+    if (credits < creditsNeeded) {
+      toast({
+        title: "Insufficient credits",
+        description: `You need ${creditsNeeded} credits to send a message. Current balance: ${credits}`,
+        variant: "destructive"
+      });
+      setShowPricing(true);
+      return;
+    }
     
     setIsLoading(true);
     setInitialQuery(query);
@@ -84,6 +109,18 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     setMessages(prev => [...prev, userMessage]);
     
     try {
+      // Deduct credits for the chat interaction
+      const success = await deductCredits(
+        creditsNeeded, 
+        `Chat message: ${query.substring(0, 50)}...`,
+        `chat-${Date.now()}`
+      );
+      
+      if (!success) {
+        setIsLoading(false);
+        return;
+      }
+
       if (currentService === 'private-markets') {
         // Initialize Private Markets service if not already done
         if (!privateMarketsService) {
@@ -120,6 +157,11 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         
         setMessages(prev => [...prev, assistantMessage]);
       }
+      
+      toast({
+        title: "Message sent",
+        description: `${creditsNeeded} credits deducted. Remaining: ${credits - creditsNeeded}`,
+      });
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage: Message = {
@@ -132,7 +174,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentService, privateMarketsService]);
+  }, [currentService, privateMarketsService, user, credits, deductCredits, toast]);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);
@@ -151,6 +193,14 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   };
 
   const handleUpgradeClick = () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to upgrade.",
+        variant: "destructive"
+      });
+      return;
+    }
     console.log('Upgrade button clicked - handler function called');
     console.log('Current showPricing state:', showPricing);
     setShowPricing(true);
@@ -174,6 +224,9 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
         {/* Top Right Controls */}
         <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
+          {user && (
+            <CreditDisplay className="bg-white/90 backdrop-blur-sm border shadow-lg" />
+          )}
           {!user ? (
             <Button 
               asChild
@@ -254,6 +307,11 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
             </h2>
             <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
               Discover the innovative companies and visionary brands that shape tomorrow's markets
+              {user && (
+                <span className="block mt-2 text-sm text-blue-600">
+                  Click any brand to explore (5 credits per exploration)
+                </span>
+              )}
             </p>
           </div>
           
@@ -323,17 +381,62 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                 detailedDescription: "Insights on the global public markets",
                 link: "https://dividenz.github.io/"
               }
-            ].map((brand, idx) => (
-              <AnimatedBrandCard
-                key={idx}
-                name={brand.name}
-                description={brand.description}
-                grayscaleImage={brand.grayscaleImage}
-                colorImage={brand.colorImage}
-                detailedDescription={brand.detailedDescription}
-                link={brand.link}
-              />
-            ))}
+            ].map((brand, idx) => {
+              const handleCardClick = async () => {
+                if (!user) {
+                  toast({
+                    title: "Authentication required",
+                    description: "Please sign in to explore brands.",
+                    variant: "destructive"
+                  });
+                  return;
+                }
+
+                // Check if user has enough credits (cost: 5 credits per brand exploration)
+                const creditsNeeded = 5;
+                if (credits < creditsNeeded) {
+                  toast({
+                    title: "Insufficient credits",
+                    description: `You need ${creditsNeeded} credits to explore this brand. Current balance: ${credits}`,
+                    variant: "destructive"
+                  });
+                  setShowPricing(true);
+                  return;
+                }
+
+                // Deduct credits for the interaction
+                const success = await deductCredits(
+                  creditsNeeded, 
+                  `Brand exploration: ${brand.name}`,
+                  `brand-${brand.name}-${Date.now()}`
+                );
+                
+                if (!success) {
+                  return;
+                }
+
+                // Open the brand link
+                window.open(brand.link, '_blank');
+                
+                toast({
+                  title: "Brand Explored!",
+                  description: `You've successfully explored ${brand.name}. ${creditsNeeded} credits deducted.`,
+                });
+              };
+
+              return (
+                <div key={idx} onClick={handleCardClick} className="cursor-pointer">
+                  <AnimatedBrandCard
+                    name={brand.name}
+                    description={brand.description}
+                    grayscaleImage={brand.grayscaleImage}
+                    colorImage={brand.colorImage}
+                    detailedDescription={brand.detailedDescription}
+                    link={brand.link}
+                  />
+                </div>
+              );
+            })}
           </div>
         </section>
 
