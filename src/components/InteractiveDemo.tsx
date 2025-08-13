@@ -76,6 +76,52 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
 
+  const loadChatSession = useCallback(async (sessionId: string) => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      setShowChatView(true);
+      setCurrentChatSessionId(sessionId);
+      
+      // Fetch messages for this session
+      const { data: messagesData, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('chat_session_id', sessionId)
+        .order('created_at', { ascending: true });
+        
+      if (error) throw error;
+      
+      // Convert database messages to UI messages
+      const loadedMessages: Message[] = messagesData?.map((msg, index) => ({
+        id: index,
+        type: msg.role as "user" | "assistant",
+        content: msg.content,
+        timestamp: new Date(msg.created_at),
+      })) || [];
+      
+      setMessages(loadedMessages);
+      
+    } catch (error) {
+      console.error('Error loading chat session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load chat session",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, toast]);
+
+  const handleNewChat = useCallback(() => {
+    setMessages([]);
+    setCurrentChatSessionId(null);
+    setShowChatView(false);
+    setInitialQuery("");
+  }, []);
+
   const handleChatSubmit = useCallback(async (query: string) => {
     if (!query.trim()) return;
     
@@ -473,20 +519,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     <div className="flex h-screen bg-background">
         {/* Modern Chat Sidebar */}
         <ModernChatSidebar 
-          onNewChat={() => {
-            setMessages([]);
-            setInitialQuery("");
-            setCurrentChatSessionId(null);
-            toast({
-              title: "New Chat",
-              description: "Started a new conversation",
-            });
-          }}
-          onSelectChat={(chatId) => {
-            setCurrentChatSessionId(chatId);
-            // TODO: Load messages for this chat session
-            console.log("Selected chat:", chatId);
-          }}
+          onNewChat={handleNewChat}
+          onSelectChat={loadChatSession}
           currentChatId={currentChatSessionId || undefined}
         />
 
