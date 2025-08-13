@@ -61,7 +61,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
         className="font-normal flex space-x-2 items-center text-sm py-1 relative z-50 cursor-pointer hover:opacity-80 transition-opacity"
         type="button"
       >
-        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-24 w-auto flex-shrink-0 pointer-events-none" />
+        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-32 w-auto flex-shrink-0 pointer-events-none" />
       </button>
     );
   };
@@ -91,10 +91,10 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
 
   return (
     <Sidebar open={open} setOpen={setOpen} animate={true}>
-      <SidebarBody className="justify-between gap-2">
+      <SidebarBody className="justify-between gap-1">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-          {/* Logo and Collapse Button */}
-          <div className="mb-2">
+          {/* Logo and Collapse Button - Above header line */}
+          <div className="mb-1 pt-2">
             {open ? (
               <div className="flex items-center justify-between">
                 <Logo />
@@ -118,8 +118,8 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             )}
           </div>
           
-          {/* New Task Button */}
-          <div className="mb-3">
+          {/* New Task Button - Just below header line */}
+          <div className="mb-1 pt-1">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
@@ -152,14 +152,14 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             </motion.div>
           </div>
 
-          {/* Task History Section */}
+          {/* Task History Section - Just below header line */}
           <div className="flex-1 overflow-hidden">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
                 display: open ? "block" : "none",
               }}
-              className="mb-2"
+              className="mb-1"
             >
               <div className="flex items-center gap-2 px-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
