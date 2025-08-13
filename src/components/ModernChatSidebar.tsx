@@ -58,7 +58,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             navigate('/');
           }
         }} 
-        className="font-normal flex space-x-2 items-center text-sm py-1 relative z-50 cursor-pointer hover:opacity-80 transition-opacity -mt-8"
+        className="font-normal flex space-x-2 items-center text-sm relative z-50 cursor-pointer hover:opacity-80 transition-opacity -mt-8"
         type="button"
       >
         <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-32 w-auto flex-shrink-0 pointer-events-none" />
@@ -94,7 +94,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
       <SidebarBody className="justify-between gap-1">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo and Collapse Button - Above header line */}
-          <div className="mb-0">
+          <div className="mb-0 py-1">
             {open ? (
               <div className="flex items-center justify-between">
                 <Logo />
@@ -119,7 +119,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
           </div>
           
           {/* New Task Button - Just below header line */}
-          <div className="mb-0 pt-2">
+          <div className="mb-0 -mt-2">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
@@ -153,7 +153,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
           </div>
 
           {/* Task History Section - Just below header line */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden -mt-2">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
