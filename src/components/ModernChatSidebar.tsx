@@ -153,13 +153,13 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
           </div>
 
           {/* Task History Section - Just below header line */}
-          <div className="flex-1 overflow-hidden -mt-4">
+          <div className="flex-1 overflow-hidden mt-2">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
                 display: open ? "block" : "none",
               }}
-              className="mb-0"
+              className="mb-2 mt-4"
             >
               <div className="flex items-center gap-2 px-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
