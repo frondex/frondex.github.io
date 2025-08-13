@@ -6,6 +6,7 @@ import { useChatSessions } from "@/hooks/useChatSessions";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/modern-sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import { Link as RouterLink } from "react-router-dom";
 
 interface ModernChatSidebarProps {
   onNewChat: () => void;
@@ -44,19 +45,19 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
 
   const Logo = () => {
     return (
-      <div className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20">
+      <RouterLink to="/" className="font-normal flex space-x-2 items-center text-sm py-1 relative z-20">
         <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-20 w-auto flex-shrink-0" />
-      </div>
+      </RouterLink>
     );
   };
 
   const LogoIcon = () => {
     return (
-      <div className="font-normal flex items-center justify-start text-sm py-2 relative z-20">
+      <RouterLink to="/" className="font-normal flex items-center justify-start text-sm py-2 relative z-20">
         <div className="text-4xl font-bold bg-gradient-to-r from-green-500 via-teal-500 to-blue-600 bg-clip-text text-transparent">
           f
         </div>
-      </div>
+      </RouterLink>
     );
   };
 
