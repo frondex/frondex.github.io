@@ -84,10 +84,10 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       return;
     }
 
-    
+    // Show chat view immediately when a message is submitted
+    setShowChatView(true);
     setIsLoading(true);
     setInitialQuery(query);
-    setShowChatView(true);
     
     // Add user message
     const userMessage: Message = {
