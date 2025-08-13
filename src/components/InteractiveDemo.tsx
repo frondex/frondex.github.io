@@ -83,17 +83,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       return;
     }
 
-    // Check if user has enough credits (cost: 10 credits per chat message)
-    const creditsNeeded = 10;
-    if (credits < creditsNeeded) {
-      toast({
-        title: "Insufficient credits",
-        description: `You need ${creditsNeeded} credits to send a message. Current balance: ${credits}`,
-        variant: "destructive"
-      });
-      setShowPricing(true);
-      return;
-    }
     
     setIsLoading(true);
     setInitialQuery(query);
@@ -110,17 +99,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     setMessages(prev => [...prev, userMessage]);
     
     try {
-      // Deduct credits for the chat interaction
-      const success = await deductCredits(
-        creditsNeeded, 
-        `Chat message: ${query.substring(0, 50)}...`,
-        `chat-${Date.now()}`
-      );
-      
-      if (!success) {
-        setIsLoading(false);
-        return;
-      }
 
       if (currentService === 'private-markets') {
         // Initialize Private Markets service if not already done
@@ -159,10 +137,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         setMessages(prev => [...prev, assistantMessage]);
       }
       
-      toast({
-        title: "Message sent",
-        description: `${creditsNeeded} credits deducted. Remaining: ${credits - creditsNeeded}`,
-      });
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage: Message = {
@@ -370,35 +344,13 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                   return;
                 }
 
-                // Check if user has enough credits (cost: 5 credits per brand exploration)
-                const creditsNeeded = 5;
-                if (credits < creditsNeeded) {
-                  toast({
-                    title: "Insufficient credits",
-                    description: `You need ${creditsNeeded} credits to explore this brand. Current balance: ${credits}`,
-                    variant: "destructive"
-                  });
-                  setShowPricing(true);
-                  return;
-                }
-
-                // Deduct credits for the interaction
-                const success = await deductCredits(
-                  creditsNeeded, 
-                  `Brand exploration: ${brand.name}`,
-                  `brand-${brand.name}-${Date.now()}`
-                );
-                
-                if (!success) {
-                  return;
-                }
 
                 // Open the brand link
                 window.open(brand.link, '_blank');
                 
                 toast({
                   title: "Brand Explored!",
-                  description: `You've successfully explored ${brand.name}. ${creditsNeeded} credits deducted.`,
+                  description: `You've successfully explored ${brand.name}.`,
                 });
               };
 
