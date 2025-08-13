@@ -24,6 +24,7 @@ import UserAccountDropdown from "./UserAccountDropdown";
 import EnhancedChatView from "./EnhancedChatView";
 import ThreeDotsLoader from "./ui/three-dots-loader";
 import ModernChatSidebar from "./ModernChatSidebar";
+import { useChatSessions } from "@/hooks/useChatSessions";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -70,7 +71,9 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [queryCount, setQueryCount] = useState(0);
   const [currentService, setCurrentService] = useState<'openai' | 'private-markets'>('private-markets');
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
+  const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
   const { credits, useCredits: deductCredits } = useCredits();
+  const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
 
   const handleChatSubmit = useCallback(async (query: string) => {
@@ -91,6 +94,19 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     setIsLoading(true);
     setInitialQuery(query);
     
+    // Create new chat session if this is the first message
+    let sessionId = currentChatSessionId;
+    if (!sessionId && messages.length === 0) {
+      // Generate a title from the first few words of the query
+      const title = query.length > 50 ? query.substring(0, 47) + "..." : query;
+      const newSession = await createSession(title);
+      if (newSession) {
+        sessionId = newSession.id;
+        setCurrentChatSessionId(sessionId);
+        refreshSessions(); // Update the sidebar
+      }
+    }
+    
     // Add user message
     const userMessage: Message = {
       id: Date.now(),
@@ -100,6 +116,22 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     };
     
     setMessages(prev => [...prev, userMessage]);
+    
+    // Save user message to database
+    if (sessionId) {
+      try {
+        await supabase
+          .from('chat_messages')
+          .insert({
+            chat_session_id: sessionId,
+            user_id: user.id,
+            content: query,
+            role: 'user'
+          });
+      } catch (error) {
+        console.error('Error saving user message:', error);
+      }
+    }
     
     try {
 
@@ -125,6 +157,30 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         };
         
         setMessages(prev => [...prev, assistantMessage]);
+        
+        // Save assistant message to database
+        if (sessionId) {
+          try {
+            await supabase
+              .from('chat_messages')
+              .insert({
+                chat_session_id: sessionId,
+                user_id: user.id,
+                content: response.message,
+                role: 'assistant'
+              });
+            
+            // Update session timestamp
+            await supabase
+              .from('chat_sessions')
+              .update({ updated_at: new Date().toISOString() })
+              .eq('id', sessionId);
+              
+            refreshSessions(); // Update the sidebar with new message count
+          } catch (error) {
+            console.error('Error saving assistant message:', error);
+          }
+        }
       } else {
         // OpenAI fallback
         const chatMessages: ChatMessage[] = [{ role: 'user', content: query }];
@@ -138,6 +194,30 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         };
         
         setMessages(prev => [...prev, assistantMessage]);
+        
+        // Save assistant message to database
+        if (sessionId) {
+          try {
+            await supabase
+              .from('chat_messages')
+              .insert({
+                chat_session_id: sessionId,
+                user_id: user.id,
+                content: response,
+                role: 'assistant'
+              });
+              
+            // Update session timestamp
+            await supabase
+              .from('chat_sessions')
+              .update({ updated_at: new Date().toISOString() })
+              .eq('id', sessionId);
+              
+            refreshSessions(); // Update the sidebar
+          } catch (error) {
+            console.error('Error saving assistant message:', error);
+          }
+        }
       }
       
     } catch (error) {
@@ -152,7 +232,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentService, privateMarketsService, user, credits, deductCredits, toast]);
+  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions]);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);
@@ -396,16 +476,18 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           onNewChat={() => {
             setMessages([]);
             setInitialQuery("");
+            setCurrentChatSessionId(null);
             toast({
               title: "New Chat",
               description: "Started a new conversation",
             });
           }}
           onSelectChat={(chatId) => {
+            setCurrentChatSessionId(chatId);
+            // TODO: Load messages for this chat session
             console.log("Selected chat:", chatId);
-            // Handle chat selection here
           }}
-          currentChatId={undefined}
+          currentChatId={currentChatSessionId || undefined}
         />
 
       {/* Main Chat Area */}
