@@ -87,12 +87,12 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className }
             {open ? <Logo /> : <LogoIcon />}
             <button
               onClick={() => setOpen(!open)}
-              className="p-1 hover:bg-muted rounded-md transition-colors"
+              className="p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0"
             >
               {open ? (
-                <PanelLeftClose className="h-4 w-4 text-muted-foreground" />
+                <PanelLeftClose className="h-5 w-5 text-muted-foreground" />
               ) : (
-                <PanelLeftOpen className="h-4 w-4 text-muted-foreground" />
+                <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
               )}
             </button>
           </div>
