@@ -94,7 +94,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
       <SidebarBody className="justify-between gap-1">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo and Collapse Button - Above header line */}
-          <div className="mb-0 py-1">
+          <div className="mb-0 relative">
             {open ? (
               <div className="flex items-center justify-between">
                 <Logo />
@@ -119,7 +119,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
           </div>
           
           {/* New Task Button - Just below header line */}
-          <div className="mb-0 -mt-2">
+          <div className="mb-0 relative z-10 -mt-6">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
@@ -128,7 +128,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             >
               <Button 
                 onClick={handleNewChat} 
-                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white -mt-2"
+                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white -mt-4"
               >
                 <Plus className="h-4 w-4" />
                 New Task
@@ -153,7 +153,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
           </div>
 
           {/* Task History Section - Just below header line */}
-          <div className="flex-1 overflow-hidden -mt-2">
+          <div className="flex-1 overflow-hidden -mt-4">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
