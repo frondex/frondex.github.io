@@ -1,6 +1,6 @@
 import * as React from "react"
-import { useState } from "react";
-import { LogIn, Lock, Mail, UserPlus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { LogIn, Lock, Mail, UserPlus, ArrowLeft, Key } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -11,13 +11,28 @@ interface CleanMinimalSignInProps {
 const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isResetPassword, setIsResetPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
+
+  // Check for password reset flow on component mount
+  useEffect(() => {
+    const checkResetFlow = () => {
+      const hash = window.location.hash;
+      if (hash.includes('type=recovery')) {
+        setIsResetPassword(true);
+      }
+    };
+    checkResetFlow();
+  }, []);
 
   const cleanupAuthState = () => {
     try {
@@ -32,6 +47,106 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
         }
       });
     } catch { }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      toast({
+        title: "Error", 
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password reset sent",
+        description: "Check your email for the password reset link."
+      });
+      setIsForgotPassword(false);
+    } catch (err: any) {
+      toast({
+        title: "Reset failed",
+        description: err.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in both password fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully updated."
+      });
+      
+      // Clear the hash and redirect to normal sign in
+      window.history.replaceState({}, document.title, '/auth');
+      setIsResetPassword(false);
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      toast({
+        title: "Update failed",
+        description: err.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAuth = async () => {
@@ -119,6 +234,120 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
     }
   };
 
+  // Render forgot password view
+  if (isForgotPassword) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <div className="w-full max-w-sm bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-blue-100 text-foreground">
+          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg">
+            <Key className="w-7 h-7 text-foreground" />
+          </div>
+          
+          <h2 className="text-2xl font-semibold mb-2 text-center">
+            Reset your password
+          </h2>
+          
+          <p className="text-muted-foreground text-sm mb-6 text-center">
+            Enter your email address and we'll send you a link to reset your password
+          </p>
+          
+          <div className="w-full flex flex-col gap-3 mb-4">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Mail className="w-4 h-4" />
+              </span>
+              <input
+                placeholder="Email"
+                type="email"
+                value={email}
+                disabled={loading}
+                className="w-full pl-10 pr-3 py-2 rounded-xl border border-input focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background text-foreground text-sm disabled:opacity-50"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <button
+            onClick={handleForgotPassword}
+            disabled={loading}
+            className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 cursor-pointer transition mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Sending..." : "Send Reset Link"}
+          </button>
+          
+          <button
+            onClick={() => setIsForgotPassword(false)}
+            disabled={loading}
+            className="flex items-center gap-2 text-sm text-primary hover:underline font-medium disabled:opacity-50"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to sign in
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Render password reset view
+  if (isResetPassword) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <div className="w-full max-w-sm bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-blue-100 text-foreground">
+          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg">
+            <Lock className="w-7 h-7 text-foreground" />
+          </div>
+          
+          <h2 className="text-2xl font-semibold mb-2 text-center">
+            Set new password
+          </h2>
+          
+          <p className="text-muted-foreground text-sm mb-6 text-center">
+            Enter your new password below
+          </p>
+          
+          <div className="w-full flex flex-col gap-3 mb-4">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Lock className="w-4 h-4" />
+              </span>
+              <input
+                placeholder="New password"
+                type="password"
+                value={newPassword}
+                disabled={loading}
+                className="w-full pl-10 pr-3 py-2 rounded-xl border border-input focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background text-foreground text-sm disabled:opacity-50"
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
+            
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Lock className="w-4 h-4" />
+              </span>
+              <input
+                placeholder="Confirm new password"
+                type="password"
+                value={confirmPassword}
+                disabled={loading}
+                className="w-full pl-10 pr-3 py-2 rounded-xl border border-input focus:outline-none focus:ring-2 focus:ring-primary/20 bg-background text-foreground text-sm disabled:opacity-50"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <button
+            onClick={handleResetPassword}
+            disabled={loading}
+            className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 cursor-pointer transition mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Updating..." : "Update Password"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Render main sign in/up view
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background">
       <div className="w-full max-w-sm bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-blue-100 text-foreground">
@@ -174,44 +403,7 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
             <div className="w-full flex justify-end">
               <button 
                 type="button"
-                onClick={async () => {
-                  if (!email) {
-                    toast({
-                      title: "Error",
-                      description: "Please enter your email address first.",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-                  
-                  if (!validateEmail(email)) {
-                    toast({
-                      title: "Error", 
-                      description: "Please enter a valid email address.",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-
-                  try {
-                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                      redirectTo: `${window.location.origin}/auth`
-                    });
-                    
-                    if (error) throw error;
-                    
-                    toast({
-                      title: "Password reset sent",
-                      description: "Check your email for the password reset link."
-                    });
-                  } catch (err: any) {
-                    toast({
-                      title: "Reset failed",
-                      description: err.message,
-                      variant: "destructive"
-                    });
-                  }
-                }}
+                onClick={() => setIsForgotPassword(true)}
                 className="text-xs hover:underline font-medium text-primary"
               >
                 Forgot password?
