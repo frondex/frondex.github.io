@@ -399,20 +399,20 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { 
-                name: "Carry and Conquer", 
-                description: "",
-                grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
-                colorImage: carryConquerColor,
-                detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
-                link: "https://carryandconquer.github.io/"
-              },
-              { 
                 name: "Landlord Ledger", 
                 description: "",
                 grayscaleImage: "/lovable-uploads/aef212a4-3d8f-4d55-848b-f4038a325eb7.png",
                 colorImage: landlordLedgerColor,
                 detailedDescription: "Insights and analysis on real estate, covering market trends, key deals, and investment strategies shaping the industry.",
                 link: "https://thelandlordledger.github.io/"
+              },
+              { 
+                name: "Carry and Conquer", 
+                description: "",
+                grayscaleImage: "/lovable-uploads/3f43d804-c779-497c-84af-f344445d637e.png",
+                colorImage: carryConquerColor,
+                detailedDescription: "Analysis and insights on private equity, covering key transactions, market trends, and firm strategies.",
+                link: "https://carryandconquer.github.io/"
               },
               { 
                 name: "InfraLedger", 
