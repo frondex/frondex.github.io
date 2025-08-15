@@ -106,21 +106,22 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
         <div className="w-full">
             <div className="relative bg-white rounded-xl border border-gray-200 shadow-lg">
                 {/* Top Controls */}
-                <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 flex items-center gap-1 sm:gap-2">
                     {/* Agent Mode Toggle */}
                     <button
                         type="button"
                         onClick={() => setAgentMode(!agentMode)}
                         className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+                            "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200",
                             agentMode
                                 ? "bg-orange-100 text-orange-700 border border-orange-200"
                                 : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-150"
                         )}
                     >
                         <Zap className={cn("w-3 h-3", agentMode ? "text-orange-600" : "text-gray-500")} />
-                        <span>AGENT MODE</span>
-                        <span className={cn("font-bold", agentMode ? "text-orange-700" : "text-gray-500")}>
+                        <span className="hidden sm:inline">AGENT MODE</span>
+                        <span className="sm:hidden">AGENT</span>
+                        <span className={cn("font-bold text-xs", agentMode ? "text-orange-700" : "text-gray-500")}>
                             {agentMode ? "ON" : "OFF"}
                         </span>
                     </button>
@@ -136,7 +137,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     </button> */}
                 </div>
 
-                <div className="overflow-y-auto pt-2">
+                <div className="overflow-y-auto pt-1 sm:pt-2">
                     <Textarea
                         ref={textareaRef}
                         value={value}
@@ -147,15 +148,15 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         onKeyDown={handleKeyDown}
                         placeholder="Ask anything"
                         className={cn(
-                            "w-full px-4 py-3",
+                            "w-full px-3 sm:px-4 py-2 sm:py-3",
                             "resize-none",
                             "bg-transparent",
                             "border-none",
-                            "text-gray-900 text-lg",
+                            "text-gray-900 text-base sm:text-lg",
                             "focus:outline-none",
                             "focus-visible:ring-0 focus-visible:ring-offset-0",
-                            "placeholder:text-gray-500 placeholder:text-lg",
-                            "min-h-[60px]"
+                            "placeholder:text-gray-500 placeholder:text-base sm:placeholder:text-lg",
+                            "min-h-[50px] sm:min-h-[60px]"
                         )}
                         style={{
                             overflow: "hidden",
@@ -163,25 +164,25 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     />
                 </div>
 
-                <div className="flex items-center justify-between p-3">
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between p-2 sm:p-3">
+                    <div className="flex items-center gap-1 sm:gap-2">
                         <button
                             type="button"
-                            className="group p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
+                            className="group p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
                         >
-                            <Paperclip className="w-4 h-4 text-gray-600" />
-                            <span className="text-xs text-gray-500 hidden group-hover:inline transition-opacity">
+                            <Paperclip className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
+                            <span className="text-xs text-gray-500 hidden sm:group-hover:inline transition-opacity">
                                 Attach
                             </span>
                         </button>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2">
                         <button
                             type="button"
-                            className="px-2 py-1 rounded-lg text-sm text-gray-500 transition-colors border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1"
+                            className="px-2 py-1 rounded-lg text-xs sm:text-sm text-gray-500 transition-colors border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1"
                         >
-                            <PlusIcon className="w-4 h-4" />
-                            Project
+                            <PlusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span className="hidden sm:inline">Project</span>
                         </button>
                         <button
                             type="button"
@@ -196,7 +197,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         >
                             <ArrowUpIcon
                                 className={cn(
-                                    "w-4 h-4",
+                                    "w-3 h-3 sm:w-4 sm:h-4",
                                     value.trim()
                                         ? "text-white"
                                         : "text-gray-500"
