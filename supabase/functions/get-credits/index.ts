@@ -96,20 +96,7 @@ serve(async (req) => {
       throw new Error('Failed to fetch credits');
     }
 
-    // For admins, ensure they have unlimited credits
-    if (isAdmin && creditsData && creditsData.credits < 999999) {
-      logStep("Updating admin credits to unlimited");
-      const { data: updatedCreditsData } = await supabaseService
-        .from('user_credits')
-        .update({ credits: 999999 })
-        .eq('user_id', user.id)
-        .select('credits, created_at, updated_at')
-        .single();
-      
-      if (updatedCreditsData) {
-        creditsData = updatedCreditsData;
-      }
-    }
+    // Note: Removed automatic credit reset for admins to allow testing credit deductions
 
     // Get recent transactions
     const { data: transactionsData, error: transactionsError } = await supabaseService
