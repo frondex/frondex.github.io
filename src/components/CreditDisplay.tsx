@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCredits } from '@/hooks/useCredits';
+import { useUserRole } from '@/hooks/useUserRole';
 
 interface CreditDisplayProps {
   showTransactions?: boolean;
@@ -15,6 +16,7 @@ const CreditDisplay: React.FC<CreditDisplayProps> = ({
   className = "" 
 }) => {
   const { credits, transactions, loading } = useCredits();
+  const { isAdmin } = useUserRole();
 
   if (loading) {
     return (
@@ -49,11 +51,21 @@ const CreditDisplay: React.FC<CreditDisplayProps> = ({
       </CardHeader>
       <CardContent>
         <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-3xl font-bold text-foreground">{credits}</span>
-          <span className="text-sm text-muted-foreground">available</span>
+          <span className="text-3xl font-bold text-foreground">
+            {isAdmin ? "∞" : credits}
+          </span>
+          <span className="text-sm text-muted-foreground">
+            {isAdmin ? "unlimited" : "available"}
+          </span>
         </div>
         
-        {credits < 10 && (
+        {isAdmin && (
+          <Badge variant="secondary" className="mb-4 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+            Admin Access
+          </Badge>
+        )}
+        
+        {!isAdmin && credits < 10 && (
           <Badge variant="destructive" className="mb-4">
             Low balance
           </Badge>

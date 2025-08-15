@@ -1,102 +1,125 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { User } from "@supabase/supabase-js";
-import { Check, Crown, Zap, Star } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, CreditCard, Users, Building, Zap, Sparkles, Crown } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useUserRole } from '@/hooks/useUserRole';
+import PricingCard from './PricingCard';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface SubscriptionManagerProps {
-  user: User | null;
+  user: SupabaseUser | null;
 }
 
 interface SubscriptionData {
   subscribed: boolean;
-  subscription_tier: string | null;
-  subscription_end: string | null;
-  credits: number;
+  subscription_tier?: string;
+  subscription_end?: string;
+  credits?: number;
 }
 
-export const SubscriptionManager = ({ user }: SubscriptionManagerProps) => {
-  const [subscription, setSubscription] = useState<SubscriptionData>({
-    subscribed: false,
-    subscription_tier: null,
-    subscription_end: null,
-    credits: 0
-  });
+const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ user }) => {
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const { toast } = useToast();
+  const { isAdmin, loading: roleLoading } = useUserRole();
 
   const checkSubscription = async () => {
-    if (!user) return;
-    
+    if (!user) {
+      setSubscription({ subscribed: false });
+      return;
+    }
+
+    setLoading(true);
     try {
-      setLoading(true);
       const { data, error } = await supabase.functions.invoke('check-subscription');
       
-      if (error) throw error;
-      
-      setSubscription(prev => ({
-        ...prev,
-        subscribed: data.subscribed,
-        subscription_tier: data.subscription_tier,
-        subscription_end: data.subscription_end
-      }));
+      if (error) {
+        console.error('Error checking subscription:', error);
+        setSubscription({ subscribed: false });
+        return;
+      }
 
-      // Get credits - will be available after database migration completes
-      setSubscription(prev => ({
-        ...prev,
-        credits: subscription.subscribed ? 1000 : 0 // Default credits based on subscription
-      }));
+      setSubscription({
+        subscribed: data?.subscribed || false,
+        subscription_tier: data?.subscription_tier,
+        subscription_end: data?.subscription_end,
+        credits: data?.credits
+      });
     } catch (error) {
       console.error('Error checking subscription:', error);
+      setSubscription({ subscribed: false });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubscribe = async (tier: 'basic' | 'premium' | 'enterprise') => {
-    if (!user) return;
-    
+  const handleSubscribe = async (tier: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to subscribe.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setCheckoutLoading(tier);
     try {
-      setLoading(true);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { tier }
       });
-      
-      if (error) throw error;
-      
-      // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      }
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
-        title: "Error",
-        description: "Failed to create checkout session",
+        title: "Checkout error",
+        description: "Failed to create checkout session. Please try again.",
         variant: "destructive"
       });
     } finally {
-      setLoading(false);
+      setCheckoutLoading(null);
     }
   };
 
   const handleManageSubscription = async () => {
-    if (!user) return;
-    
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to manage subscription.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
-      setLoading(true);
       const { data, error } = await supabase.functions.invoke('customer-portal');
-      
-      if (error) throw error;
-      
-      // Open Stripe customer portal in a new tab
-      window.open(data.url, '_blank');
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.url) {
+        // Open customer portal in a new tab
+        window.open(data.url, '_blank');
+      }
     } catch (error) {
       console.error('Error opening customer portal:', error);
       toast({
-        title: "Error",
-        description: "Failed to open customer portal",
+        title: "Portal error",
+        description: "Failed to open customer portal. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -104,143 +127,273 @@ export const SubscriptionManager = ({ user }: SubscriptionManagerProps) => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      checkSubscription();
-    }
-  }, [user]);
+  if (roleLoading || loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="w-6 h-6 animate-spin" />
+        <span className="ml-2">Loading...</span>
+      </div>
+    );
+  }
 
-  const subscriptionTiers = [
-    {
-      name: "Basic",
-      price: "$9.99",
-      credits: 1000,
-      features: ["1,000 credits/month", "Basic support", "Standard models"],
-      icon: <Zap className="w-5 h-5" />,
-      tier: "basic" as const
-    },
-    {
-      name: "Premium", 
-      price: "$29.99",
-      credits: 5000,
-      features: ["5,000 credits/month", "Priority support", "Advanced models", "API access"],
-      icon: <Star className="w-5 h-5" />,
-      tier: "premium" as const
-    },
-    {
-      name: "Enterprise",
-      price: "$99.99", 
-      credits: 20000,
-      features: ["20,000 credits/month", "24/7 support", "All models", "Custom integrations"],
-      icon: <Crown className="w-5 h-5" />,
-      tier: "enterprise" as const
-    }
-  ];
+  useEffect(() => {
+    checkSubscription();
+  }, [user]);
 
   if (!user) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Sign in to manage subscriptions</CardTitle>
-          <CardDescription>
-            Create an account to access premium features
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <div className="text-center p-8">
+        <p className="text-muted-foreground mb-4">Please sign in to view subscription options.</p>
+      </div>
+    );
+  }
+
+  // Show admin status for admin users
+  if (isAdmin) {
+    return (
+      <div className="max-w-6xl mx-auto p-6 space-y-8">
+        <Card className="border-amber-500 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
+              <Crown className="w-6 h-6" />
+              Administrator Account
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-lg font-semibold text-amber-800 dark:text-amber-200">
+                Unlimited Access
+              </p>
+              <p className="text-amber-700 dark:text-amber-300">
+                You have unlimited credits and full access to all features.
+              </p>
+              <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                Admin Status Active
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-2">Available Plans</h2>
+          <p className="text-muted-foreground">These are the plans available to users</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[
+            {
+              name: "Basic",
+              price: "$9",
+              period: "/month",
+              description: "Perfect for getting started",
+              features: [
+                "100 credits per month",
+                "Access to all AI models",
+                "Email support",
+                "Basic analytics"
+              ],
+              tier: "basic"
+            },
+            {
+              name: "Premium",
+              price: "$19",
+              period: "/month",
+              description: "Most popular choice",
+              features: [
+                "500 credits per month",
+                "Priority model access",
+                "Advanced analytics",
+                "Chat support",
+                "Custom integrations"
+              ],
+              tier: "premium",
+              isPopular: true
+            },
+            {
+              name: "Pro",
+              price: "$49",
+              period: "/month",
+              description: "For power users",
+              features: [
+                "2000 credits per month",
+                "All premium features",
+                "API access",
+                "Priority support",
+                "Custom models"
+              ],
+              tier: "pro"
+            },
+            {
+              name: "Enterprise",
+              price: "$199",
+              period: "/month",
+              description: "For teams and organizations",
+              features: [
+                "Unlimited credits",
+                "Dedicated support",
+                "Custom deployment",
+                "SLA guarantees",
+                "Team management"
+              ],
+              tier: "enterprise"
+            }
+          ].map((plan) => (
+            <PricingCard
+              key={plan.tier}
+              title={plan.name}
+              price={plan.price}
+              period={plan.period}
+              description={plan.description}
+              features={plan.features}
+              isPopular={plan.isPopular}
+              loading={false}
+              buttonText="Admin View"
+              onSelect={() => {}}
+              className="opacity-75"
+            />
+          ))}
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto p-6 space-y-8">
+      {/* Current Status Card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Current Status
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={checkSubscription}
-              disabled={loading}
-            >
-              Refresh
-            </Button>
+            <CreditCard className="w-5 h-5" />
+            Current Plan
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span>Plan:</span>
-              <Badge variant={subscription.subscribed ? "default" : "secondary"}>
-                {subscription.subscription_tier || "Free"}
-              </Badge>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-lg font-semibold">
+                {subscription?.subscribed ? subscription.subscription_tier || 'Pro' : 'Free'} Plan
+              </p>
+              {subscription?.credits !== undefined && (
+                <p className="text-sm text-muted-foreground">
+                  {subscription.credits} credits available
+                </p>
+              )}
+              {subscription?.subscription_end && (
+                <p className="text-sm text-muted-foreground">
+                  Renews on {new Date(subscription.subscription_end).toLocaleDateString()}
+                </p>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <span>Credits:</span>
-              <Badge variant="outline">{subscription.credits}</Badge>
+            <div className="flex gap-2">
+              <Button onClick={checkSubscription} variant="outline" size="sm">
+                Refresh Status
+              </Button>
+              {subscription?.subscribed && (
+                <Button onClick={handleManageSubscription} variant="outline" size="sm">
+                  Manage Subscription
+                </Button>
+              )}
             </div>
-            {subscription.subscribed && subscription.subscription_end && (
-              <div className="text-sm text-muted-foreground">
-                Renews: {new Date(subscription.subscription_end).toLocaleDateString()}
-              </div>
-            )}
           </div>
-          {subscription.subscribed && (
-            <Button
-              onClick={handleManageSubscription}
-              disabled={loading}
-              className="mt-4"
-            >
-              Manage Subscription
-            </Button>
-          )}
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {subscriptionTiers.map((tier) => (
-          <Card key={tier.name} className={`relative ${
-            subscription.subscription_tier === tier.name 
-              ? "ring-2 ring-primary" 
-              : ""
-          }`}>
-            {subscription.subscription_tier === tier.name && (
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-primary">Current Plan</Badge>
-              </div>
-            )}
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {tier.icon}
-                {tier.name}
-              </CardTitle>
-              <CardDescription>
-                <span className="text-2xl font-bold">{tier.price}</span>/month
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 mb-4">
-                {tier.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-green-500" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                onClick={() => handleSubscribe(tier.tier)}
-                disabled={loading || subscription.subscription_tier === tier.name}
-                className="w-full"
-                variant={subscription.subscription_tier === tier.name ? "outline" : "default"}
-              >
-                {subscription.subscription_tier === tier.name 
-                  ? "Current Plan" 
-                  : `Subscribe to ${tier.name}`
-                }
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Subscription Tiers */}
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold mb-2">Choose Your Plan</h2>
+          <p className="text-muted-foreground">Unlock powerful AI research tools with our subscription plans</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              name: "Basic",
+              price: "$9",
+              period: "/month",
+              description: "Perfect for getting started",
+              features: [
+                "100 credits per month",
+                "Access to all AI models",
+                "Email support",
+                "Basic analytics"
+              ],
+              tier: "basic"
+            },
+            {
+              name: "Premium",
+              price: "$19",
+              period: "/month",
+              description: "Most popular choice",
+              features: [
+                "500 credits per month",
+                "Priority model access",
+                "Advanced analytics",
+                "Chat support",
+                "Custom integrations"
+              ],
+              tier: "premium",
+              isPopular: true
+            },
+            {
+              name: "Pro",
+              price: "$49",
+              period: "/month",
+              description: "For power users",
+              features: [
+                "2000 credits per month",
+                "All premium features",
+                "API access",
+                "Priority support",
+                "Custom models"
+              ],
+              tier: "pro"
+            },
+            {
+              name: "Enterprise",
+              price: "$199",
+              period: "/month",
+              description: "For teams and organizations",
+              features: [
+                "Unlimited credits",
+                "Dedicated support",
+                "Custom deployment",
+                "SLA guarantees",
+                "Team management"
+              ],
+              tier: "enterprise"
+            }
+          ].map((plan) => (
+            <PricingCard
+              key={plan.tier}
+              title={plan.name}
+              price={plan.price}
+              period={plan.period}
+              description={plan.description}
+              features={plan.features}
+              isPopular={plan.isPopular}
+              loading={checkoutLoading === plan.tier}
+              buttonText={
+                subscription?.subscription_tier === plan.name.toLowerCase()
+                  ? "Current Plan"
+                  : "Subscribe"
+              }
+              onSelect={() => 
+                subscription?.subscription_tier === plan.name.toLowerCase()
+                  ? handleManageSubscription()
+                  : handleSubscribe(plan.tier)
+              }
+              className={
+                subscription?.subscription_tier === plan.name.toLowerCase()
+                  ? "border-green-500 bg-green-50 dark:bg-green-950"
+                  : ""
+              }
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
 };
+
+export default SubscriptionManager;
