@@ -375,11 +375,11 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
 
         {/* Logo */}
-        <div className="mb-4 sm:mb-6 md:mb-8">
+        <div className="mb-4 sm:mb-6 md:-mb-16 lg:-mb-20">
           <img 
             src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
             alt="Frondex" 
-            className="h-32 sm:h-40 md:h-48 lg:h-64 w-auto mx-auto object-contain"
+            className="h-32 sm:h-40 md:h-54 lg:h-72 w-auto mx-auto object-contain"
           />
         </div>
         

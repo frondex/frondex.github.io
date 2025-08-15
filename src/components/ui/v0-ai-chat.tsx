@@ -119,8 +119,8 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         )}
                     >
                         <Zap className={cn("w-3 h-3", agentMode ? "text-orange-600" : "text-gray-500")} />
-                        <span className="hidden sm:inline">AGENT MODE</span>
-                        <span className="sm:hidden">AGENT</span>
+                        <span className="hidden md:inline">AGENT MODE</span>
+                        <span className="md:hidden">AGENT</span>
                         <span className={cn("font-bold text-xs", agentMode ? "text-orange-700" : "text-gray-500")}>
                             {agentMode ? "ON" : "OFF"}
                         </span>
@@ -171,7 +171,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             className="group p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
                         >
                             <Paperclip className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
-                            <span className="text-xs text-gray-500 hidden sm:group-hover:inline transition-opacity">
+                            <span className="text-xs text-gray-500 hidden md:group-hover:inline transition-opacity">
                                 Attach
                             </span>
                         </button>
@@ -182,7 +182,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             className="px-2 py-1 rounded-lg text-xs sm:text-sm text-gray-500 transition-colors border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1"
                         >
                             <PlusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span className="hidden sm:inline">Project</span>
+                            <span className="hidden md:inline">Project</span>
                         </button>
                         <button
                             type="button"
