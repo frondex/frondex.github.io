@@ -61,7 +61,13 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
         className="font-normal flex space-x-2 items-center text-sm relative z-50 cursor-pointer hover:opacity-80 transition-opacity -mt-8"
         type="button"
       >
-        <img src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" alt="Frondex" className="h-32 w-auto flex-shrink-0 pointer-events-none" />
+        <img 
+          src="/lovable-uploads/29ff1713-d01d-40e9-8e7d-a9a5dfade80d.png" 
+          alt="Frondex" 
+          className="h-32 w-auto flex-shrink-0 pointer-events-none" 
+          loading="eager"
+          style={{ imageRendering: 'auto' }}
+        />
       </button>
     );
   };
@@ -95,27 +101,24 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo and Collapse Button - Above header line */}
           <div className="mb-0 relative">
-            {open ? (
-              <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
+              <div className={`transition-all duration-200 ease-in-out ${open ? 'opacity-100' : 'opacity-0 pointer-events-none absolute'}`}>
                 <Logo />
-                <button
-                  onClick={() => setOpen(!open)}
-                  className="p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0 mt-1"
-                >
-                  <PanelLeftClose className="h-5 w-5 text-muted-foreground -mt-8" />
-                </button>
               </div>
-            ) : (
-              <div className="flex flex-col items-center space-y-2">
+              <div className={`transition-all duration-200 ease-in-out ${!open ? 'opacity-100' : 'opacity-0 pointer-events-none absolute'}`}>
                 <LogoIcon />
-                <button
-                  onClick={() => setOpen(!open)}
-                  className="p-2 hover:bg-muted rounded-md transition-colors"
-                >
-                  <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
-                </button>
               </div>
-            )}
+              <button
+                onClick={() => setOpen(!open)}
+                className={`p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0 ${open ? 'mt-1' : 'mt-0'}`}
+              >
+                {open ? (
+                  <PanelLeftClose className="h-5 w-5 text-muted-foreground -mt-8" />
+                ) : (
+                  <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
+                )}
+              </button>
+            </div>
           </div>
           
           {/* New Task Button - Just below header line */}
