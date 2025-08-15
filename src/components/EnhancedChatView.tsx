@@ -63,8 +63,8 @@ const EnhancedChatView = ({
   const handleSendMessage = async () => {
     if (!newMessage.trim() || isLoading) return;
     
-    // Check credits for non-admin users
-    if (!isAdmin && credits < 1) {
+    // Check credits for all users (including admins for testing)
+    if (credits < 1) {
       toast({
         title: "Insufficient credits",
         description: "You need at least 1 credit to send a message.",
@@ -288,17 +288,15 @@ const EnhancedChatView = ({
         {/* Input Area */}
         <div className="border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95">
           <div className="max-w-4xl mx-auto p-4">
-            {/* Credit usage info for non-admin users */}
-            {!isAdmin && (
-              <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <span>💰 1 credit per message</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span>{credits} credits remaining</span>
-                </div>
+            {/* Credit usage info for all users */}
+            <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <span>💰 1 credit per message</span>
               </div>
-            )}
+              <div className="flex items-center gap-1">
+                <span>{credits} credits remaining {isAdmin && "(Admin - testing mode)"}</span>
+              </div>
+            </div>
             
             <div className="relative">
               <Textarea
@@ -306,7 +304,7 @@ const EnhancedChatView = ({
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={isAdmin ? "Enter your request... (unlimited)" : `Enter your request... (${credits} credits remaining)`}
+                placeholder={`Enter your request... (${credits} credits remaining)`}
                 className="min-h-[44px] max-h-[120px] pr-12 resize-none bg-background border-border focus:border-primary transition-colors"
                 rows={1}
                 disabled={isLoading}
@@ -324,7 +322,7 @@ const EnhancedChatView = ({
                   onClick={handleSendMessage}
                   size="sm"
                   className="h-8 w-8 p-0"
-                  disabled={!newMessage.trim() || isLoading || (!isAdmin && credits < 1)}
+                  disabled={!newMessage.trim() || isLoading || credits < 1}
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

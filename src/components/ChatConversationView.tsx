@@ -320,7 +320,7 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
                     setNewMessage(e.target.value);
                     adjustTextareaHeight();
                   }}
-                  placeholder={isAdmin ? "Ask about private markets, deal flow, or portfolio insights... (unlimited)" : `Ask about private markets, deal flow, or portfolio insights... (${credits} credits remaining)`}
+                  placeholder={`Ask about private markets, deal flow, or portfolio insights... (${credits} credits remaining)`}
                   className="resize-none border-0 bg-transparent text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[20px] max-h-[120px] py-0"
                   style={{ height: 'auto' }}
                   onKeyDown={(e) => {
