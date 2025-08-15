@@ -79,8 +79,8 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
   const handleSendMessage = async () => {
     if (!newMessage.trim() || isLoading) return;
 
-    // Check credits for non-admin users
-    if (!isAdmin && credits < 1) {
+    // Check credits for all users (including admins for testing)
+    if (credits < 1) {
       toast({
         title: "Insufficient credits",
         description: "You need at least 1 credit to send a message.",
@@ -98,17 +98,15 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
       return;
     }
 
-    // Deduct credits before sending message (skip for admin users)
-    if (!isAdmin) {
-      const success = await deductCredits(1, 'Flowith chat message');
-      if (!success) {
-        toast({
-          title: "Credit deduction failed",
-          description: "Unable to process your message. Please try again.",
-          variant: "destructive"
-        });
-        return;
-      }
+    // Deduct credits for all users (including admins for testing)
+    const success = await deductCredits(1, 'Flowith chat message');
+    if (!success) {
+      toast({
+        title: "Credit deduction failed",
+        description: "Unable to process your message. Please try again.",
+        variant: "destructive"
+      });
+      return;
     }
 
     const userMessage = {
@@ -301,18 +299,16 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
       {/* Modern Input Area */}
       <div className="border-t border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 p-4">
         <div className="max-w-4xl mx-auto">
-          {/* Credit usage info for non-admin users */}
-          {!isAdmin && (
-            <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Coins className="w-3 h-3" />
-                <span>1 credit per message</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>{credits} credits remaining</span>
-              </div>
+          {/* Credit usage info for all users */}
+          <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Coins className="w-3 h-3" />
+              <span>1 credit per message</span>
             </div>
-          )}
+            <div className="flex items-center gap-1">
+              <span>{credits} credits remaining {isAdmin && "(Admin - testing mode)"}</span>
+            </div>
+          </div>
           
           <div className="relative bg-card border border-border/60 rounded-2xl shadow-lg">
             <div className="flex items-end gap-3 p-4">
@@ -347,7 +343,7 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
                 
                 <Button 
                   onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || isLoading || (!isAdmin && credits < 1)}
+                  disabled={!newMessage.trim() || isLoading || credits < 1}
                   className="h-9 w-9 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                   size="icon"
                 >
