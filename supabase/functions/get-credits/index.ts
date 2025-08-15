@@ -19,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    logStep("Function started");
+    logStep("Function started v2"); // Updated version to force redeploy
 
     // Create Supabase client using the service role key to bypass RLS for initialization
     const supabaseService = createClient(
