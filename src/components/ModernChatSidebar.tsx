@@ -98,7 +98,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
   return (
     <Sidebar open={open} setOpen={setOpen} animate={true}>
       <SidebarBody className="justify-between gap-1">
-        <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden min-h-0">
           {/* Logo and Collapse Button - Above header line */}
           <div className="mb-0 relative">
             <div className="flex items-center justify-between">
@@ -131,7 +131,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
             >
               <Button 
                 onClick={handleNewChat} 
-                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white -mt-4"
+                className="w-full gap-2 bg-blue-500 hover:bg-blue-600 text-white -mt-4 text-sm sm:text-base py-2 sm:py-3"
               >
                 <Plus className="h-4 w-4" />
                 New Task
@@ -148,7 +148,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
               <Button 
                 onClick={handleNewChat}
                 size="icon"
-                className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 hover:bg-blue-600 text-white"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -170,12 +170,12 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
               </div>
             </motion.div>
 
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 min-h-0">
               <div className="space-y-1 pb-4">
                 {loading ? (
-                  <div className="p-4 text-center text-muted-foreground">Loading...</div>
+                  <div className="p-3 sm:p-4 text-center text-muted-foreground text-sm">Loading...</div>
                 ) : sessions.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground">No chat history yet</div>
+                  <div className="p-3 sm:p-4 text-center text-muted-foreground text-sm">No chat history yet</div>
                 ) : (
                   sessions.map((session) => (
                     <div
@@ -196,15 +196,15 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
                         className="flex flex-col min-w-0 flex-1"
                         onClick={() => onSelectChat(session.id)}
                       >
-                        <p className="text-sm font-medium text-foreground truncate">
+                        <p className="text-xs sm:text-sm font-medium text-foreground truncate leading-tight">
                           {session.title}
                         </p>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-1 sm:gap-2 mt-1">
                           <span className="text-xs text-muted-foreground">
                             {formatTimestamp(session.updated_at)}
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            {session.messageCount || 0} messages
+                            {session.messageCount || 0} msgs
                           </span>
                         </div>
                       </motion.div>

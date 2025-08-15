@@ -350,18 +350,20 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
 
   if (!showChatView) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 relative">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 bg-gray-50 relative">
         {/* Top Right Controls */}
-        <div className="fixed top-4 right-4 z-10">
+        <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-10">
           {!user ? (
             <Button 
               asChild
               variant="outline"
-              className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50 bg-white/90 backdrop-blur-sm shadow-sm"
+              size="sm"
+              className="gap-1 sm:gap-2 border-purple-200 text-purple-700 hover:bg-purple-50 bg-white/90 backdrop-blur-sm shadow-sm text-xs sm:text-sm"
             >
               <Link to="/auth">
-                <Crown className="w-4 h-4" />
-                Log In or Sign Up
+                <Crown className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Log In or Sign Up</span>
+                <span className="sm:hidden">Sign In</span>
               </Link>
             </Button>
           ) : (
@@ -373,26 +375,26 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
 
         {/* Logo */}
-        <div className="-mb-20">
+        <div className="-mb-12 sm:-mb-16 md:-mb-20">
           <img 
             src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
             alt="Frondex" 
-            className="h-54 md:h-72 w-full mx-auto object-contain"
+            className="h-32 sm:h-48 md:h-54 lg:h-72 w-full mx-auto object-contain"
           />
         </div>
         
         {/* Main Heading */}
-        <div className="text-center mb-16 max-w-3xl">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16 max-w-3xl px-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-gray-900 leading-tight">
             What can I help with?
           </h1>
-          <p className="text-gray-600 text-xl md:text-2xl">
+          <p className="text-gray-600 text-lg sm:text-xl md:text-2xl leading-relaxed">
             Ask anything about private markets, deal flow, or portfolio insights
           </p>
         </div>
         
         {/* Chat Input */}
-        <div className="w-full max-w-4xl mb-16">
+        <div className="w-full max-w-4xl mb-8 sm:mb-12 md:mb-16 px-2">
           <VercelV0Chat onSubmit={handleChatSubmit} />
         </div>
         
@@ -411,17 +413,17 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
         
         {/* Our Brands Section */}
-        <section id="brands-section" className="w-full max-w-7xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+        <section id="brands-section" className="w-full max-w-7xl px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-gray-900">
               Our Brands
             </h2>
-            <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
+            <p className="text-gray-600 text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-2">
               Discover the innovative companies and visionary brands that shape tomorrow's markets
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {[
               { 
                 name: "Landlord Ledger", 
@@ -551,14 +553,15 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header with back button and user dropdown */}
-        <div className="flex items-center justify-between gap-4 p-4 bg-white border-b">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-2 sm:gap-4 p-2 sm:p-4 bg-white border-b">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button 
               variant="ghost" 
               size="icon"
               onClick={() => setShowChatView(false)}
+              className="md:hidden"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
@@ -574,11 +577,13 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
               <Button 
                 asChild
                 variant="outline"
-                className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+                size="sm"
+                className="gap-1 sm:gap-2 border-purple-200 text-purple-700 hover:bg-purple-50 text-xs sm:text-sm"
               >
                 <Link to="/auth">
-                  <Crown className="w-4 h-4" />
-                  Log In
+                  <Crown className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Log In</span>
+                  <span className="sm:hidden">Sign In</span>
                 </Link>
               </Button>
             )}
@@ -586,14 +591,14 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
 
         {/* Messages area */}
-        <div className="flex-1 overflow-y-auto p-6 bg-white">
-          <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 bg-white">
+          <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
             {messages.map((message) => (
               <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] ${message.type === "user" ? "order-2" : "order-1"}`}>
+                <div className={`max-w-[85%] sm:max-w-[80%] ${message.type === "user" ? "order-2" : "order-1"}`}>
                   {message.type === "user" ? (
-                    <div className="bg-gray-100 rounded-2xl px-4 py-3 text-right">
-                      <div className="text-gray-900 text-sm">{message.content}</div>
+                    <div className="bg-gray-100 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 text-right">
+                      <div className="text-gray-900 text-sm sm:text-base break-words">{message.content}</div>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -775,7 +780,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
 
         {/* Chat input fixed at bottom - original VercelV0Chat component */}
-        <div className="border-t bg-white p-4">
+        <div className="border-t bg-white p-2 sm:p-3 md:p-4">
           <div className="max-w-4xl mx-auto">
             <VercelV0Chat onSubmit={handleChatSubmit} />
           </div>
