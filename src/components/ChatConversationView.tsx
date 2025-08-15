@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Send, Paperclip, Loader2, Sparkles, Bot, User } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Loader2, Sparkles, Bot, User, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useCredits } from "@/hooks/useCredits";
+import { useUserRole } from "@/hooks/useUserRole";
 import { FlowithService, FlowithSettings, FlowithMessage } from "@/lib/flowith";
 import FlowithSettingsComponent from "./FlowithSettings";
 
@@ -25,6 +27,8 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { credits, useCredits: deductCredits } = useCredits();
+  const { isAdmin } = useUserRole();
 
   useEffect(() => {
     const storedSettings = FlowithService.getStoredSettings();
@@ -75,6 +79,16 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
   const handleSendMessage = async () => {
     if (!newMessage.trim() || isLoading) return;
 
+    // Check credits for non-admin users
+    if (!isAdmin && credits < 1) {
+      toast({
+        title: "Insufficient credits",
+        description: "You need at least 1 credit to send a message.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!flowithService || !settings) {
       toast({
         title: "Configuration Required",
@@ -82,6 +96,19 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
         variant: "destructive"
       });
       return;
+    }
+
+    // Deduct credits before sending message (skip for admin users)
+    if (!isAdmin) {
+      const success = await deductCredits(1, 'Flowith chat message');
+      if (!success) {
+        toast({
+          title: "Credit deduction failed",
+          description: "Unable to process your message. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
     }
 
     const userMessage = {
@@ -274,6 +301,19 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
       {/* Modern Input Area */}
       <div className="border-t border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 p-4">
         <div className="max-w-4xl mx-auto">
+          {/* Credit usage info for non-admin users */}
+          {!isAdmin && (
+            <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Coins className="w-3 h-3" />
+                <span>1 credit per message</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span>{credits} credits remaining</span>
+              </div>
+            </div>
+          )}
+          
           <div className="relative bg-card border border-border/60 rounded-2xl shadow-lg">
             <div className="flex items-end gap-3 p-4">
               <div className="flex-1 relative">
@@ -284,7 +324,7 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
                     setNewMessage(e.target.value);
                     adjustTextareaHeight();
                   }}
-                  placeholder="Ask about private markets, deal flow, or portfolio insights..."
+                  placeholder={isAdmin ? "Ask about private markets, deal flow, or portfolio insights... (unlimited)" : `Ask about private markets, deal flow, or portfolio insights... (${credits} credits remaining)`}
                   className="resize-none border-0 bg-transparent text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[20px] max-h-[120px] py-0"
                   style={{ height: 'auto' }}
                   onKeyDown={(e) => {
@@ -307,7 +347,7 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
                 
                 <Button 
                   onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || isLoading}
+                  disabled={!newMessage.trim() || isLoading || (!isAdmin && credits < 1)}
                   className="h-9 w-9 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                   size="icon"
                 >
@@ -323,6 +363,11 @@ const ChatConversationView = ({ onBack, initialQuery = "" }: ChatConversationVie
           
           <p className="text-xs text-muted-foreground text-center mt-3">
             Press Enter to send • Shift + Enter for new line
+            {!isAdmin && credits < 1 && (
+              <span className="text-red-500 block mt-1">
+                ⚠️ Insufficient credits to send messages
+              </span>
+            )}
           </p>
         </div>
       </div>

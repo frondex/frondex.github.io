@@ -20,6 +20,7 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import CreditDisplay from "./CreditDisplay";
 import { useCredits } from "@/hooks/useCredits";
+import { useUserRole } from "@/hooks/useUserRole";
 import UserAccountDropdown from "./UserAccountDropdown";
 import EnhancedChatView from "./EnhancedChatView";
 import ThreeDotsLoader from "./ui/three-dots-loader";
@@ -73,6 +74,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
   const { credits, useCredits: deductCredits } = useCredits();
+  const { isAdmin } = useUserRole();
   const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
 
@@ -135,6 +137,18 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       return;
     }
 
+    // Check credits before proceeding (skip for admin users)
+    if (!isAdmin) {
+      if (credits < 1) {
+        toast({
+          title: "Insufficient credits",
+          description: "You need at least 1 credit to send a message. Please upgrade your plan or purchase more credits.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     // Show chat view immediately when a message is submitted
     setShowChatView(true);
     setIsLoading(true);
@@ -177,6 +191,23 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       } catch (error) {
         console.error('Error saving user message:', error);
       }
+    }
+    
+    
+    // Deduct credits at the start of processing (1 credit per message)
+    let creditsDeducted = false;
+    if (!isAdmin) {
+      const success = await deductCredits(1, 'Chat message', sessionId);
+      if (!success) {
+        toast({
+          title: "Credit deduction failed",
+          description: "Unable to process your message. Please try again.",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return;
+      }
+      creditsDeducted = true;
     }
     
     try {
@@ -278,7 +309,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions]);
+  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions, isAdmin]);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);

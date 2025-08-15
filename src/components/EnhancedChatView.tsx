@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { useCredits } from "@/hooks/useCredits";
+import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
 import ChatSidebar from "./ChatSidebar";
 import ReactMarkdown from "react-markdown";
@@ -37,6 +39,8 @@ const EnhancedChatView = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { credits } = useCredits();
+  const { isAdmin } = useUserRole();
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -58,6 +62,16 @@ const EnhancedChatView = ({
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || isLoading) return;
+    
+    // Check credits for non-admin users
+    if (!isAdmin && credits < 1) {
+      toast({
+        title: "Insufficient credits",
+        description: "You need at least 1 credit to send a message.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     const messageToSend = newMessage;
     setNewMessage("");
@@ -274,13 +288,25 @@ const EnhancedChatView = ({
         {/* Input Area */}
         <div className="border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95">
           <div className="max-w-4xl mx-auto p-4">
+            {/* Credit usage info for non-admin users */}
+            {!isAdmin && (
+              <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <span>💰 1 credit per message</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span>{credits} credits remaining</span>
+                </div>
+              </div>
+            )}
+            
             <div className="relative">
               <Textarea
                 ref={textareaRef}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Enter your request..."
+                placeholder={isAdmin ? "Enter your request... (unlimited)" : `Enter your request... (${credits} credits remaining)`}
                 className="min-h-[44px] max-h-[120px] pr-12 resize-none bg-background border-border focus:border-primary transition-colors"
                 rows={1}
                 disabled={isLoading}
@@ -298,7 +324,7 @@ const EnhancedChatView = ({
                   onClick={handleSendMessage}
                   size="sm"
                   className="h-8 w-8 p-0"
-                  disabled={!newMessage.trim() || isLoading}
+                  disabled={!newMessage.trim() || isLoading || (!isAdmin && credits < 1)}
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -310,6 +336,11 @@ const EnhancedChatView = ({
             </div>
             <p className="text-xs text-muted-foreground text-center mt-3">
               Press Enter to send • Shift + Enter for new line
+              {!isAdmin && credits < 1 && (
+                <span className="text-red-500 block mt-1">
+                  ⚠️ Insufficient credits to send messages
+                </span>
+              )}
             </p>
           </div>
         </div>
