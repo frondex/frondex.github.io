@@ -126,15 +126,16 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         </span>
                     </button>
                     
-                    {/* Video Chat Button - Temporarily disabled */}
-                    {/* <button
+                    {/* Video Chat Button */}
+                    <button
                         type="button"
                         onClick={() => setIsVideoChatOpen(true)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 shadow-[0_0_10px_rgba(34,197,94,0.2)]"
                     >
                         <Phone className="w-3 h-3 text-green-600" />
-                        <span>VIDEO CHAT</span>
-                    </button> */}
+                        <span className="hidden sm:inline">VIDEO CHAT</span>
+                        <span className="sm:hidden">VIDEO</span>
+                    </button>
                 </div>
 
                 <div className="overflow-y-auto pt-1 sm:pt-2">
