@@ -4,7 +4,7 @@ import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import Pricing from "@/components/ui/pricing-cards";
+import { ModernPricingSection } from "./ModernPricingSection";
 import { OpenAISettings } from "./OpenAISettings";
 import { AnamSettings } from "./AnamSettings";
 import { PrivateMarketsSettings } from "./PrivateMarketsSettings";
@@ -532,7 +532,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
             <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
-            <Pricing />
+            <ModernPricingSection user={user} />
           </DialogContent>
         </Dialog>
       </div>
@@ -803,7 +803,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
           <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
           <div className="p-6">
-            <Pricing />
+            <ModernPricingSection user={user} />
           </div>
         </DialogContent>
       </Dialog>

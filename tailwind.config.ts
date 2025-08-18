@@ -18,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			maskImage: {
+				'radial-gradient': 'radial-gradient(var(--tw-gradient-stops))',
+			},
 			fontFamily: {
 				'sans': ['Inter', 'system-ui', 'sans-serif'],
 				'display': ['Space Grotesk', 'system-ui', 'sans-serif'],
