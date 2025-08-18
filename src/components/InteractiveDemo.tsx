@@ -25,6 +25,7 @@ import UserAccountDropdown from "./UserAccountDropdown";
 import EnhancedChatView from "./EnhancedChatView";
 import ThreeDotsLoader from "./ui/three-dots-loader";
 import ModernChatSidebar from "./ModernChatSidebar";
+import ComingSoonPage from "./ComingSoonPage";
 import { useChatSessions } from "@/hooks/useChatSessions";
 
 // Import all generated images
@@ -64,6 +65,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
   const [showPricing, setShowPricing] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [comingSoonPlan, setComingSoonPlan] = useState("");
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -332,6 +335,12 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     console.log('setShowPricing(true) called');
   };
 
+  const handleComingSoon = (plan: string) => {
+    setComingSoonPlan(plan);
+    setShowPricing(false);
+    setShowComingSoon(true);
+  };
+
   const handleMessageAction = (action: string, messageId: number) => {
     // Handle message actions like copy, thumbs up, etc.
     console.log(`Action: ${action} for message: ${messageId}`);
@@ -528,11 +537,14 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
 
         {/* Pricing Modal */}
-        <Dialog open={showPricing} onOpenChange={setShowPricing}>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <Dialog open={showPricing} onOpenChange={(open) => {
+          console.log('Pricing modal state change:', open);
+          setShowPricing(open);
+        }}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto" onPointerDownOutside={() => setShowPricing(false)} onEscapeKeyDown={() => setShowPricing(false)}>
             <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
             <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
-            <ModernPricingSection user={user} />
+            <ModernPricingSection user={user} onComingSoon={handleComingSoon} />
           </DialogContent>
         </Dialog>
       </div>
@@ -798,13 +810,28 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         onOpenChange={setShowWaitlistModal}
       />
 
-      <Dialog open={showPricing} onOpenChange={setShowPricing}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+      <Dialog open={showPricing} onOpenChange={(open) => {
+        console.log('Chat pricing modal state change:', open);
+        setShowPricing(open);
+      }}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0" onPointerDownOutside={() => setShowPricing(false)} onEscapeKeyDown={() => setShowPricing(false)}>
           <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
           <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
           <div className="p-6">
-            <ModernPricingSection user={user} />
+            <ModernPricingSection user={user} onComingSoon={handleComingSoon} />
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Coming Soon Modal */}
+      <Dialog open={showComingSoon} onOpenChange={(open) => {
+        console.log('Coming soon modal state change:', open);
+        setShowComingSoon(open);
+      }}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" onPointerDownOutside={() => setShowComingSoon(false)} onEscapeKeyDown={() => setShowComingSoon(false)}>
+          <DialogTitle className="sr-only">Coming Soon - {comingSoonPlan} Plan</DialogTitle>
+          <DialogDescription className="sr-only">Join the waitlist for the {comingSoonPlan} plan</DialogDescription>
+          <ComingSoonPage plan={comingSoonPlan} />
         </DialogContent>
       </Dialog>
     </div>

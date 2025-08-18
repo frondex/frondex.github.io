@@ -7,11 +7,12 @@ import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface ModernPricingSectionProps {
   user?: SupabaseUser | null;
+  onComingSoon?: (plan: string) => void;
 }
 
 export const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
 
-export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user }) => {
+export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user, onComingSoon }) => {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -19,51 +20,23 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
     if (tier === 'free') {
       toast({
         title: "Free Plan",
-        description: "You're already on the free plan! Sign up to start using your daily queries.",
+        description: "You're already on the free plan! Start using your daily queries now.",
       });
       return;
     }
 
-    if (tier === 'enterprise') {
-      toast({
-        title: "Enterprise Sales",
-        description: "Please contact our sales team for enterprise pricing at sales@frondex.com",
-      });
-      return;
-    }
-
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to subscribe.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setCheckoutLoading(tier);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { tier }
-      });
-
-      if (error) {
-        throw error;
+    if (tier === 'pro' || tier === 'business' || tier === 'enterprise') {
+      if (onComingSoon) {
+        onComingSoon(tier.charAt(0).toUpperCase() + tier.slice(1));
+      } else {
+        toast({
+          title: "Coming Soon",
+          description: `The ${tier} plan is launching soon. Join our waitlist to be notified!`,
+        });
       }
-
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error creating checkout:', error);
-      toast({
-        title: "Checkout error",
-        description: "Failed to create checkout session. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setCheckoutLoading(null);
+      return;
     }
+
   };
 
   const TIERS: PricingTier[] = [
@@ -81,9 +54,9 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Limited deal summaries",
         "Community support"
       ],
-      cta: "Get Started",
+      cta: "Current Plan",
       onSelect: () => handleSubscribe('free'),
-      loading: checkoutLoading === 'free'
+      loading: false
     },
     {
       name: "Pro",
@@ -103,10 +76,10 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Role-based permissions",
         "Credit rollover"
       ],
-      cta: "Upgrade to Pro",
+      cta: "Join Waitlist",
       popular: true,
       onSelect: () => handleSubscribe('pro'),
-      loading: checkoutLoading === 'pro'
+      loading: false
     },
     {
       name: "Business",
@@ -125,9 +98,9 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Team collaboration with shared memory",
         "Option to exclude data from AI training"
       ],
-      cta: "Upgrade to Business",
+      cta: "Join Waitlist",
       onSelect: () => handleSubscribe('business'),
-      loading: checkoutLoading === 'business'
+      loading: false
     },
     {
       name: "Enterprise",
@@ -146,10 +119,10 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Dedicated onboarding & training",
         "24/7 priority support"
       ],
-      cta: "Contact Sales",
+      cta: "Join Waitlist",
       highlighted: true,
       onSelect: () => handleSubscribe('enterprise'),
-      loading: checkoutLoading === 'enterprise'
+      loading: false
     }
   ];
 
