@@ -64,39 +64,8 @@ interface InteractiveDemoProps {
 const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
-  const [showPricing, setShowPricing] = useState(false);
-  const [showComingSoon, setShowComingSoon] = useState(false);
-  const [comingSoonPlan, setComingSoonPlan] = useState("");
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
-
-  // Debug current modal states
-  useEffect(() => {
-    console.log('Modal states - Pricing:', showPricing, 'ComingSoon:', showComingSoon, 'Signup:', showSignupPrompt, 'Waitlist:', showWaitlistModal);
-  }, [showPricing, showComingSoon, showSignupPrompt, showWaitlistModal]);
-
-  // Force close all modals function
-  const forceCloseAllModals = () => {
-    console.log('Force closing all modals');
-    setShowPricing(false);
-    setShowComingSoon(false);
-    setShowSignupPrompt(false);
-    setShowWaitlistModal(false);
-    console.log('All modals force closed');
-  };
-
-  // Emergency escape key handler
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        console.log('Escape key pressed, force closing all modals');
-        forceCloseAllModals();
-      }
-    };
-    
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, []);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
@@ -357,20 +326,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       });
       return;
     }
-    console.log('Upgrade button clicked - handler function called');
-    console.log('Current showPricing state:', showPricing);
-    setShowPricing(true);
-    console.log('setShowPricing(true) called');
-  };
-
-  const handleComingSoon = (plan: string) => {
-    console.log('handleComingSoon called with plan:', plan);
-    setComingSoonPlan(plan);
-    console.log('Setting showPricing to false');
-    setShowPricing(false);
-    console.log('Setting showComingSoon to true');
-    setShowComingSoon(true);
-    console.log('Coming soon modal should now be open for plan:', plan);
+    // Simple upgrade action - just show waitlist modal for now
+    setShowWaitlistModal(true);
   };
 
   const handleMessageAction = (action: string, messageId: number) => {
@@ -449,38 +406,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           </button>
         </div>
         
-        {/* Debug Panel - Remove in production */}
-        <div className="fixed top-4 right-4 z-[9999] bg-red-500 text-white p-2 rounded text-xs pointer-events-auto">
-          <div>Pricing: {showPricing ? 'OPEN' : 'CLOSED'}</div>
-          <div>ComingSoon: {showComingSoon ? 'OPEN' : 'CLOSED'}</div>
-          <div>Signup: {showSignupPrompt ? 'OPEN' : 'CLOSED'}</div>
-          <div>Waitlist: {showWaitlistModal ? 'OPEN' : 'CLOSED'}</div>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              forceCloseAllModals();
-            }}
-            className="mt-1 bg-white text-red-500 px-2 py-1 rounded text-xs cursor-pointer hover:bg-gray-100"
-            style={{ pointerEvents: 'auto' }}
-          >
-            Force Close All
-          </button>
-        </div>
-
-        {/* Emergency overlay killer */}
-        {(showPricing || showComingSoon || showSignupPrompt || showWaitlistModal) && (
-          <div 
-            className="fixed inset-0 z-[9998] bg-transparent cursor-pointer"
-            onClick={forceCloseAllModals}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                forceCloseAllModals();
-              }
-            }}
-            tabIndex={0}
-          />
-        )}
 
         {/* Our Brands Section */}
         <section id="brands-section" className="w-full max-w-7xl px-4 sm:px-6">
@@ -601,30 +526,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           <p>Frondex can make mistakes. <a href="/admin" className="text-gray-600 hover:text-gray-800">Please</a> double-check responses.</p>
         </div>
 
-        {/* Pricing Modal */}
-        <Dialog 
-          open={showPricing} 
-          onOpenChange={(open) => {
-            console.log('Pricing modal onOpenChange:', open);
-            setShowPricing(open);
-          }}
-        >
-          <DialogContent 
-            className="max-w-6xl max-h-[90vh] overflow-y-auto" 
-            onPointerDownOutside={(e) => {
-              console.log('Pricing modal clicked outside');
-              setShowPricing(false);
-            }} 
-            onEscapeKeyDown={(e) => {
-              console.log('Pricing modal escape pressed');
-              setShowPricing(false);
-            }}
-          >
-            <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
-            <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
-            <ModernPricingSection user={user} onComingSoon={handleComingSoon} />
-          </DialogContent>
-        </Dialog>
       </div>
     );
   }
@@ -888,55 +789,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         onOpenChange={setShowWaitlistModal}
       />
 
-      <Dialog open={showPricing} onOpenChange={(open) => {
-        console.log('Chat pricing modal state change:', open);
-        setShowPricing(open);
-      }}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0" onPointerDownOutside={() => setShowPricing(false)} onEscapeKeyDown={() => setShowPricing(false)}>
-          <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
-          <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
-          <div className="p-6">
-            <ModernPricingSection user={user} onComingSoon={handleComingSoon} />
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Coming Soon Modal - Fixed version */}
-      <Dialog 
-        open={showComingSoon} 
-        onOpenChange={(open) => {
-          console.log('Coming soon modal onOpenChange:', open);
-          if (!open) {
-            console.log('Coming soon modal closing');
-            setShowComingSoon(false);
-          }
-        }}
-      >
-        <DialogContent 
-          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 z-[9999]" 
-          onPointerDownOutside={(e) => {
-            console.log('Coming soon modal clicked outside');
-            setShowComingSoon(false);
-          }} 
-          onEscapeKeyDown={(e) => {
-            console.log('Coming soon modal escape pressed');
-            setShowComingSoon(false);
-          }}
-        >
-          <DialogTitle className="sr-only">Coming Soon - {comingSoonPlan} Plan</DialogTitle>
-          <DialogDescription className="sr-only">Join the waitlist for the {comingSoonPlan} plan</DialogDescription>
-          {comingSoonPlan ? (
-            <ComingSoonPage plan={comingSoonPlan} />
-          ) : (
-            <div className="p-6 text-center">
-              <p>Loading coming soon page...</p>
-              <button onClick={() => setShowComingSoon(false)} className="mt-4 px-4 py-2 bg-primary text-white rounded">
-                Close
-              </button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
