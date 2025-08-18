@@ -354,12 +354,9 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     setComingSoonPlan(plan);
     console.log('Setting showPricing to false');
     setShowPricing(false);
-    // Add a small delay to ensure pricing modal closes first
-    setTimeout(() => {
-      console.log('Setting showComingSoon to true');
-      setShowComingSoon(true);
-      console.log('Coming soon modal should now be open for plan:', plan);
-    }, 100);
+    console.log('Setting showComingSoon to true');
+    setShowComingSoon(true);
+    console.log('Coming soon modal should now be open for plan:', plan);
   };
 
   const handleMessageAction = (action: string, messageId: number) => {
@@ -438,6 +435,20 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           </button>
         </div>
         
+        {/* Debug Panel - Remove in production */}
+        <div className="fixed top-4 right-4 z-50 bg-red-500 text-white p-2 rounded text-xs">
+          <div>Pricing: {showPricing ? 'OPEN' : 'CLOSED'}</div>
+          <div>ComingSoon: {showComingSoon ? 'OPEN' : 'CLOSED'}</div>
+          <div>Signup: {showSignupPrompt ? 'OPEN' : 'CLOSED'}</div>
+          <div>Waitlist: {showWaitlistModal ? 'OPEN' : 'CLOSED'}</div>
+          <button 
+            onClick={forceCloseAllModals}
+            className="mt-1 bg-white text-red-500 px-2 py-1 rounded text-xs"
+          >
+            Force Close All
+          </button>
+        </div>
+
         {/* Our Brands Section */}
         <section id="brands-section" className="w-full max-w-7xl px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
@@ -558,36 +569,29 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
 
         {/* Pricing Modal */}
-        {showPricing && (
-          <Dialog 
-            open={true}
-            onOpenChange={(open) => {
-              console.log('Pricing modal onOpenChange:', open);
-              if (!open) {
-                console.log('Forcing pricing modal close');
-                setShowPricing(false);
-              }
+        <Dialog 
+          open={showPricing} 
+          onOpenChange={(open) => {
+            console.log('Pricing modal onOpenChange:', open);
+            setShowPricing(open);
+          }}
+        >
+          <DialogContent 
+            className="max-w-6xl max-h-[90vh] overflow-y-auto" 
+            onPointerDownOutside={(e) => {
+              console.log('Pricing modal clicked outside');
+              setShowPricing(false);
+            }} 
+            onEscapeKeyDown={(e) => {
+              console.log('Pricing modal escape pressed');
+              setShowPricing(false);
             }}
           >
-            <DialogContent 
-              className="max-w-6xl max-h-[90vh] overflow-y-auto" 
-              onPointerDownOutside={(e) => {
-                console.log('Pricing modal clicked outside');
-                e.preventDefault();
-                setShowPricing(false);
-              }} 
-              onEscapeKeyDown={(e) => {
-                console.log('Pricing modal escape pressed');
-                e.preventDefault();
-                setShowPricing(false);
-              }}
-            >
-              <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
-              <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
-              <ModernPricingSection user={user} onComingSoon={handleComingSoon} />
-            </DialogContent>
-          </Dialog>
-        )}
+            <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
+            <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
+            <ModernPricingSection user={user} onComingSoon={handleComingSoon} />
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -865,36 +869,29 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       </Dialog>
 
       {/* Coming Soon Modal */}
-      {showComingSoon && (
-        <Dialog 
-          open={true}
-          onOpenChange={(open) => {
-            console.log('Coming soon modal onOpenChange:', open);
-            if (!open) {
-              console.log('Forcing coming soon modal close');
-              setShowComingSoon(false);
-            }
+      <Dialog 
+        open={showComingSoon} 
+        onOpenChange={(open) => {
+          console.log('Coming soon modal onOpenChange:', open);
+          setShowComingSoon(open);
+        }}
+      >
+        <DialogContent 
+          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" 
+          onPointerDownOutside={(e) => {
+            console.log('Coming soon modal clicked outside');
+            setShowComingSoon(false);
+          }} 
+          onEscapeKeyDown={(e) => {
+            console.log('Coming soon modal escape pressed');
+            setShowComingSoon(false);
           }}
         >
-          <DialogContent 
-            className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" 
-            onPointerDownOutside={(e) => {
-              console.log('Coming soon modal clicked outside');
-              e.preventDefault();
-              setShowComingSoon(false);
-            }} 
-            onEscapeKeyDown={(e) => {
-              console.log('Coming soon modal escape pressed');
-              e.preventDefault();
-              setShowComingSoon(false);
-            }}
-          >
-            <DialogTitle className="sr-only">Coming Soon - {comingSoonPlan} Plan</DialogTitle>
-            <DialogDescription className="sr-only">Join the waitlist for the {comingSoonPlan} plan</DialogDescription>
-            <ComingSoonPage plan={comingSoonPlan} />
-          </DialogContent>
-        </Dialog>
-      )}
+          <DialogTitle className="sr-only">Coming Soon - {comingSoonPlan} Plan</DialogTitle>
+          <DialogDescription className="sr-only">Join the waitlist for the {comingSoonPlan} plan</DialogDescription>
+          <ComingSoonPage plan={comingSoonPlan} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
