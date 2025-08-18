@@ -50,7 +50,6 @@ const Subscription = () => {
         "Credit rollover"
       ],
       cta: "Join Waitlist",
-      popular: true,
       onSelect: () => setWaitlistOpen(true),
     },
     {

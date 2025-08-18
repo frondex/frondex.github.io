@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,10 @@ export const JoinWaitlistModal: React.FC<JoinWaitlistModalProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl w-full p-0 border-0 bg-transparent shadow-none">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Join Waitlist</DialogTitle>
+          <DialogDescription>Sign up to be notified when we launch</DialogDescription>
+        </DialogHeader>
         <div className="relative h-[40rem] w-full rounded-lg bg-background overflow-hidden">
           <button
             onClick={() => onOpenChange(false)}
