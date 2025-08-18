@@ -51,9 +51,10 @@ serve(async (req) => {
 
     // Define pricing based on tier
     const tierPricing = {
-      basic: { amount: 999, name: "Basic Plan - 1,000 credits/month" },
-      premium: { amount: 2999, name: "Premium Plan - 5,000 credits/month" },
-      enterprise: { amount: 9999, name: "Enterprise Plan - 20,000 credits/month" }
+      free: { amount: 0, name: "Free Plan - 5 queries/day" },
+      pro: { amount: 20000, name: "Pro Plan - 1,000 agent queries/month" },
+      business: { amount: 40000, name: "Business Plan - 2,500 agent queries/month" },
+      enterprise: { amount: 99999, name: "Enterprise Plan - Custom allotment" }
     };
 
     const pricing = tierPricing[tier as keyof typeof tierPricing];

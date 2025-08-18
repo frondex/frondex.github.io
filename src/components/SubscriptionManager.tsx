@@ -182,58 +182,69 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ user }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
-              name: "Basic",
-              price: "$9",
+              name: "Free",
+              price: "$0",
               period: "/month",
               description: "Perfect for getting started",
               features: [
-                "100 credits per month",
-                "Access to all AI models",
-                "Email support",
-                "Basic analytics"
+                "5 queries per day (150/month)",
+                "Ask basic private markets questions",
+                "Public data lookups",
+                "Limited deal summaries",
+                "Community support"
               ],
-              tier: "basic"
-            },
-            {
-              name: "Premium",
-              price: "$19",
-              period: "/month",
-              description: "Most popular choice",
-              features: [
-                "500 credits per month",
-                "Priority model access",
-                "Advanced analytics",
-                "Chat support",
-                "Custom integrations"
-              ],
-              tier: "premium",
-              isPopular: true
+              tier: "free"
             },
             {
               name: "Pro",
-              price: "$49",
+              price: "$200",
               period: "/month",
-              description: "For power users",
+              description: "Most popular choice",
               features: [
-                "2000 credits per month",
-                "All premium features",
-                "API access",
-                "Priority support",
-                "Custom models"
+                "1,000 agent queries/month",
+                "Everything in Free, plus:",
+                "Weekly AI-generated insights email",
+                "Deeper deal analysis & comps",
+                "Private project spaces",
+                "Portfolio monitoring alerts",
+                "Smart watchlists (AI-curated)",
+                "Role-based permissions",
+                "Credit rollover"
               ],
-              tier: "pro"
+              tier: "pro",
+              isPopular: true
+            },
+            {
+              name: "Business",
+              price: "$400",
+              period: "/month",
+              description: "For growing teams",
+              features: [
+                "2,500 agent queries/month",
+                "All features in Pro, plus:",
+                "Multi-agent workflows",
+                "Sector-specific research agents",
+                "AI-generated presentations & exports",
+                "API access (basic)",
+                "Team collaboration with shared memory",
+                "Option to exclude data from AI training"
+              ],
+              tier: "business"
             },
             {
               name: "Enterprise",
-              price: "$199",
-              period: "/month",
-              description: "For teams and organizations",
+              price: "Custom",
+              period: "pricing",
+              description: "For large organizations",
               features: [
-                "Unlimited credits",
-                "Dedicated support",
-                "Custom deployment",
-                "SLA guarantees",
-                "Team management"
+                "Unlimited or custom allotment",
+                "Everything in Business, plus:",
+                "Dedicated AI agent fine-tuned to your firm",
+                "Multi-user orchestration & compliance controls",
+                "Advanced API & data feed integrations",
+                "CRM / Data room integration",
+                "Dedicated onboarding & training",
+                "24/7 priority support"
               ],
               tier: "enterprise"
             }
@@ -308,58 +319,69 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ user }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             {
-              name: "Basic",
-              price: "$9",
+              name: "Free",
+              price: "$0",
               period: "/month",
               description: "Perfect for getting started",
               features: [
-                "100 credits per month",
-                "Access to all AI models",
-                "Email support",
-                "Basic analytics"
+                "5 queries per day (150/month)",
+                "Ask basic private markets questions",
+                "Public data lookups",
+                "Limited deal summaries",
+                "Community support"
               ],
-              tier: "basic"
-            },
-            {
-              name: "Premium",
-              price: "$19",
-              period: "/month",
-              description: "Most popular choice",
-              features: [
-                "500 credits per month",
-                "Priority model access",
-                "Advanced analytics",
-                "Chat support",
-                "Custom integrations"
-              ],
-              tier: "premium",
-              isPopular: true
+              tier: "free"
             },
             {
               name: "Pro",
-              price: "$49",
+              price: "$200",
               period: "/month",
-              description: "For power users",
+              description: "Most popular choice",
               features: [
-                "2000 credits per month",
-                "All premium features",
-                "API access",
-                "Priority support",
-                "Custom models"
+                "1,000 agent queries/month",
+                "Everything in Free, plus:",
+                "Weekly AI-generated insights email",
+                "Deeper deal analysis & comps",
+                "Private project spaces",
+                "Portfolio monitoring alerts",
+                "Smart watchlists (AI-curated)",
+                "Role-based permissions",
+                "Credit rollover"
               ],
-              tier: "pro"
+              tier: "pro",
+              isPopular: true
+            },
+            {
+              name: "Business",
+              price: "$400",
+              period: "/month",
+              description: "For growing teams",
+              features: [
+                "2,500 agent queries/month",
+                "All features in Pro, plus:",
+                "Multi-agent workflows",
+                "Sector-specific research agents",
+                "AI-generated presentations & exports",
+                "API access (basic)",
+                "Team collaboration with shared memory",
+                "Option to exclude data from AI training"
+              ],
+              tier: "business"
             },
             {
               name: "Enterprise",
-              price: "$199",
-              period: "/month",
-              description: "For teams and organizations",
+              price: "Custom",
+              period: "pricing",
+              description: "For large organizations",
               features: [
-                "Unlimited credits",
-                "Dedicated support",
-                "Custom deployment",
-                "SLA guarantees",
-                "Team management"
+                "Unlimited or custom allotment",
+                "Everything in Business, plus:",
+                "Dedicated AI agent fine-tuned to your firm",
+                "Multi-user orchestration & compliance controls",
+                "Advanced API & data feed integrations",
+                "CRM / Data room integration",
+                "Dedicated onboarding & training",
+                "24/7 priority support"
               ],
               tier: "enterprise"
             }
