@@ -17,8 +17,6 @@ export interface PricingTier {
   cta: string
   highlighted?: boolean
   popular?: boolean
-  onSelect?: () => void
-  loading?: boolean
 }
 
 interface PricingCardProps {
@@ -65,7 +63,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
               className="text-4xl font-medium"
             />
             <p className="-mt-2 text-xs text-muted-foreground">
-              Per month
+              Per month/user
             </p>
           </>
         ) : (
@@ -94,11 +92,9 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
       <Button
         variant={isHighlighted ? "secondary" : "default"}
         className="w-full"
-        onClick={tier.onSelect}
-        disabled={tier.loading}
       >
-        {tier.loading ? "Processing..." : tier.cta}
-        {!tier.loading && <ArrowRight className="ml-2 h-4 w-4" />}
+        {tier.cta}
+        <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
     </Card>
   )

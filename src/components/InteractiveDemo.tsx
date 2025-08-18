@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,7 @@ interface InteractiveDemoProps {
 }
 
 const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
+  const navigate = useNavigate();
   const [showChatView, setShowChatView] = useState(false);
   const [initialQuery, setInitialQuery] = useState("");
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
@@ -318,16 +319,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   };
 
   const handleUpgradeClick = () => {
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to upgrade.",
-        variant: "destructive"
-      });
-      return;
-    }
-    // Simple upgrade action - just show waitlist modal for now
-    setShowWaitlistModal(true);
+    navigate('/subscription');
   };
 
   const handleMessageAction = (action: string, messageId: number) => {
