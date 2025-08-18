@@ -113,7 +113,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
                 className={`p-2 hover:bg-muted rounded-md transition-colors flex-shrink-0 ${open ? 'mt-1' : 'mt-0'}`}
               >
                 {open ? (
-                  <PanelLeftClose className="h-5 w-5 text-muted-foreground -mt-8" />
+                  <PanelLeftClose className="h-5 w-5 text-muted-foreground -mt-6" />
                 ) : (
                   <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
                 )}
