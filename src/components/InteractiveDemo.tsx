@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 import { ChevronDown, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Crown, Settings, Loader2, ArrowLeft, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import Pricing from "@/components/ui/pricing-cards";
 import { OpenAISettings } from "./OpenAISettings";
 import { AnamSettings } from "./AnamSettings";
@@ -530,6 +530,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         {/* Pricing Modal */}
         <Dialog open={showPricing} onOpenChange={setShowPricing}>
           <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
+            <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
             <Pricing />
           </DialogContent>
         </Dialog>
@@ -798,6 +800,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
 
       <Dialog open={showPricing} onOpenChange={setShowPricing}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogTitle className="sr-only">Upgrade Pricing Plans</DialogTitle>
+          <DialogDescription className="sr-only">Choose the best plan for your needs</DialogDescription>
           <div className="p-6">
             <Pricing />
           </div>
