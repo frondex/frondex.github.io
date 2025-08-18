@@ -1,5 +1,8 @@
 import React from 'react';
 import { useAuth } from "@/components/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { PricingSection } from "@/components/ui/pricing-section";
 
 const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
@@ -85,6 +88,7 @@ const TIERS = [
 
 const Subscription = () => {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -96,6 +100,19 @@ const Subscription = () => {
 
   return (
     <div className="min-h-screen bg-background font-sans">
+      {/* Back Button */}
+      <div className="fixed top-4 left-4 z-10">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Button>
+      </div>
+      
       <div className="relative flex justify-center items-center w-full mt-20">
         <div className="absolute inset-0 -z-10">
           <div className="h-full w-full bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:35px_35px] opacity-30 [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
