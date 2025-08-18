@@ -48,7 +48,7 @@ export const JoinWaitlistModal: React.FC<JoinWaitlistModalProps> = ({
               </h1>
               
               <p className="text-muted-foreground max-w-lg mx-auto mb-8 text-sm md:text-base">
-                Be the first to experience our revolutionary AI platform. Get early access to advanced chat features, 
+                Be the first to hear. Get early access to advanced chat features, 
                 agent mode, and exclusive beta testing opportunities.
               </p>
               
