@@ -17,7 +17,10 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
   const { toast } = useToast();
 
   const handleSubscribe = async (tier: string) => {
+    console.log('ModernPricingSection handleSubscribe called with tier:', tier);
+    
     if (tier === 'free') {
+      console.log('Free tier selected');
       toast({
         title: "Free Plan",
         description: "You're already on the free plan! Start using your daily queries now.",
@@ -26,12 +29,16 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
     }
 
     if (tier === 'pro' || tier === 'business' || tier === 'enterprise') {
+      console.log('Paid tier selected, calling onComingSoon with:', tier);
+      const planName = tier.charAt(0).toUpperCase() + tier.slice(1);
       if (onComingSoon) {
-        onComingSoon(tier.charAt(0).toUpperCase() + tier.slice(1));
+        console.log('onComingSoon function exists, calling it with:', planName);
+        onComingSoon(planName);
       } else {
+        console.log('onComingSoon function not provided, showing toast');
         toast({
           title: "Coming Soon",
-          description: `The ${tier} plan is launching soon. Join our waitlist to be notified!`,
+          description: `The ${planName} plan is launching soon. Join our waitlist to be notified!`,
         });
       }
       return;
