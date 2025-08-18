@@ -129,11 +129,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     
     // Check if user is authenticated
     if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to start chatting.",
-        variant: "destructive"
-      });
+      window.location.href = "/auth";
       return;
     }
 
