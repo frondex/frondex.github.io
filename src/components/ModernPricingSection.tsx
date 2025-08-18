@@ -61,9 +61,7 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Limited deal summaries",
         "Community support"
       ],
-      cta: "Current Plan",
-      onSelect: () => handleSubscribe('free'),
-      loading: false
+      cta: "Current Plan"
     },
     {
       name: "Pro",
@@ -84,9 +82,7 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Credit rollover"
       ],
       cta: "Join Waitlist",
-      popular: true,
-      onSelect: () => handleSubscribe('pro'),
-      loading: false
+      popular: true
     },
     {
       name: "Business",
@@ -105,9 +101,7 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "Team collaboration with shared memory",
         "Option to exclude data from AI training"
       ],
-      cta: "Join Waitlist",
-      onSelect: () => handleSubscribe('business'),
-      loading: false
+      cta: "Join Waitlist"
     },
     {
       name: "Enterprise",
@@ -127,9 +121,7 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
         "24/7 priority support"
       ],
       cta: "Join Waitlist",
-      highlighted: true,
-      onSelect: () => handleSubscribe('enterprise'),
-      loading: false
+      highlighted: true
     }
   ];
 
