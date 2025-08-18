@@ -82,7 +82,21 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     setShowComingSoon(false);
     setShowSignupPrompt(false);
     setShowWaitlistModal(false);
+    console.log('All modals force closed');
   };
+
+  // Emergency escape key handler
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        console.log('Escape key pressed, force closing all modals');
+        forceCloseAllModals();
+      }
+    };
+    
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
@@ -436,18 +450,37 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </div>
         
         {/* Debug Panel - Remove in production */}
-        <div className="fixed top-4 right-4 z-50 bg-red-500 text-white p-2 rounded text-xs">
+        <div className="fixed top-4 right-4 z-[9999] bg-red-500 text-white p-2 rounded text-xs pointer-events-auto">
           <div>Pricing: {showPricing ? 'OPEN' : 'CLOSED'}</div>
           <div>ComingSoon: {showComingSoon ? 'OPEN' : 'CLOSED'}</div>
           <div>Signup: {showSignupPrompt ? 'OPEN' : 'CLOSED'}</div>
           <div>Waitlist: {showWaitlistModal ? 'OPEN' : 'CLOSED'}</div>
           <button 
-            onClick={forceCloseAllModals}
-            className="mt-1 bg-white text-red-500 px-2 py-1 rounded text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              forceCloseAllModals();
+            }}
+            className="mt-1 bg-white text-red-500 px-2 py-1 rounded text-xs cursor-pointer hover:bg-gray-100"
+            style={{ pointerEvents: 'auto' }}
           >
             Force Close All
           </button>
         </div>
+
+        {/* Emergency overlay killer */}
+        {(showPricing || showComingSoon || showSignupPrompt || showWaitlistModal) && (
+          <div 
+            className="fixed inset-0 z-[9998] bg-transparent cursor-pointer"
+            onClick={forceCloseAllModals}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                forceCloseAllModals();
+              }
+            }}
+            tabIndex={0}
+          />
+        )}
 
         {/* Our Brands Section */}
         <section id="brands-section" className="w-full max-w-7xl px-4 sm:px-6">
@@ -868,16 +901,19 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         </DialogContent>
       </Dialog>
 
-      {/* Coming Soon Modal */}
+      {/* Coming Soon Modal - Fixed version */}
       <Dialog 
         open={showComingSoon} 
         onOpenChange={(open) => {
           console.log('Coming soon modal onOpenChange:', open);
-          setShowComingSoon(open);
+          if (!open) {
+            console.log('Coming soon modal closing');
+            setShowComingSoon(false);
+          }
         }}
       >
         <DialogContent 
-          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0" 
+          className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 z-[9999]" 
           onPointerDownOutside={(e) => {
             console.log('Coming soon modal clicked outside');
             setShowComingSoon(false);
@@ -889,7 +925,16 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         >
           <DialogTitle className="sr-only">Coming Soon - {comingSoonPlan} Plan</DialogTitle>
           <DialogDescription className="sr-only">Join the waitlist for the {comingSoonPlan} plan</DialogDescription>
-          <ComingSoonPage plan={comingSoonPlan} />
+          {comingSoonPlan ? (
+            <ComingSoonPage plan={comingSoonPlan} />
+          ) : (
+            <div className="p-6 text-center">
+              <p>Loading coming soon page...</p>
+              <button onClick={() => setShowComingSoon(false)} className="mt-4 px-4 py-2 bg-primary text-white rounded">
+                Close
+              </button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
