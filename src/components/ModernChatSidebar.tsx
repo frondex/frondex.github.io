@@ -122,7 +122,7 @@ const ModernChatSidebar = ({ onNewChat, onSelectChat, currentChatId, className, 
           </div>
           
           {/* New Task Button - Just below header line */}
-          <div className="mb-0 relative z-10 -mt-6">
+          <div className="mb-0 relative z-10 mt-2">
             <motion.div
               animate={{
                 opacity: open ? 1 : 0,
