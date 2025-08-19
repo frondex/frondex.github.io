@@ -39,7 +39,7 @@ const EnhancedChatView = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { credits } = useCredits();
+  const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
 
   // Auto-scroll to bottom when new messages arrive
@@ -77,6 +77,19 @@ const EnhancedChatView = ({
     setNewMessage("");
     
     try {
+      // Deduct 1 credit before sending the message
+      const success = await deductCredits(1, "Chat message", currentChatId);
+      if (!success) {
+        toast({
+          title: "Credit deduction failed",
+          description: "Failed to deduct credits. Please try again.",
+          variant: "destructive"
+        });
+        // Restore the message if credit deduction failed
+        setNewMessage(messageToSend);
+        return;
+      }
+      
       await onSendMessage(messageToSend);
     } catch (error) {
       console.error('Error sending message:', error);
@@ -85,6 +98,8 @@ const EnhancedChatView = ({
         description: "Failed to send message. Please try again.",
         variant: "destructive"
       });
+      // Restore the message if sending failed
+      setNewMessage(messageToSend);
     }
   };
 

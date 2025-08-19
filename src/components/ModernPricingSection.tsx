@@ -55,7 +55,7 @@ export const ModernPricingSection: React.FC<ModernPricingSectionProps> = ({ user
       },
       description: "Perfect for getting started",
       features: [
-        "5 queries per day (150/month)",
+        "10 credits to start (5 queries)",
         "Ask basic private markets questions",
         "Public data lookups",
         "Limited deal summaries",
