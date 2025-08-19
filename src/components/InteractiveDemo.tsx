@@ -76,7 +76,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [currentService, setCurrentService] = useState<'openai' | 'private-markets'>('private-markets');
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
-  const { credits, useCredits: deductCredits, loading: creditsLoading } = useCredits();
+  const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
   const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
@@ -137,18 +137,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       return;
     }
 
-    // Wait for credits to load before checking
-    if (creditsLoading) {
-      toast({
-        title: "Loading...",
-        description: "Please wait while we load your account information.",
-        variant: "default"
-      });
-      return;
-    }
-
     // Debug logging
-    console.log('Credit check:', { credits, creditsLoading, user: user?.id });
+    console.log('Credit check:', { credits, user: user?.id });
 
     // Check credits for all users (including admins for testing)
     if (credits < 1) {
@@ -317,7 +307,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions, isAdmin]);
+  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions]);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);
