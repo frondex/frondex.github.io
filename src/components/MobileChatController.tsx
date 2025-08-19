@@ -27,6 +27,7 @@ const MobileChatController = ({ user, onBack, initialQuery }: MobileChatControll
   const [isLoading, setIsLoading] = useState(false);
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
+  const [initialQuerySent, setInitialQuerySent] = useState(false);
   const { toast } = useToast();
   const { credits, useCredits: deductCredits } = useCredits();
   const { createSession, refreshSessions } = useChatSessions();
@@ -156,10 +157,11 @@ const MobileChatController = ({ user, onBack, initialQuery }: MobileChatControll
 
   // Handle initial query if provided
   useEffect(() => {
-    if (initialQuery && initialQuery.trim()) {
+    if (initialQuery && initialQuery.trim() && !initialQuerySent) {
+      setInitialQuerySent(true);
       handleSendMessage(initialQuery);
     }
-  }, [initialQuery, handleSendMessage]);
+  }, [initialQuery, initialQuerySent, handleSendMessage]);
 
   return (
     <MobileChatView
