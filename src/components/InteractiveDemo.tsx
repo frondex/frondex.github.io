@@ -147,11 +147,15 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       return;
     }
 
+    // Debug logging
+    console.log('Credit check:', { credits, creditsLoading, user: user?.id });
+
     // Check credits for all users (including admins for testing)
     if (credits < 1) {
+      console.log('Insufficient credits triggered with:', credits);
       toast({
         title: "Insufficient credits",
-        description: "You need at least 1 credit to send a message. Please upgrade your plan or purchase more credits.",
+        description: `You have ${credits} credits. You need at least 1 credit to send a message. Please upgrade your plan or purchase more credits.`,
         variant: "destructive"
       });
       return;
