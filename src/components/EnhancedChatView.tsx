@@ -9,6 +9,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import ChatSidebar from "./ChatSidebar";
+import MobileChatView from "./MobileChatView";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -44,6 +45,19 @@ const EnhancedChatView = ({
   const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
   const isMobile = useIsMobile();
+
+  // If mobile, use the dedicated mobile view
+  if (isMobile) {
+    return (
+      <MobileChatView
+        onBack={onBack}
+        initialQuery={initialQuery}
+        onSendMessage={onSendMessage}
+        messages={messages}
+        isLoading={isLoading}
+      />
+    );
+  }
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
