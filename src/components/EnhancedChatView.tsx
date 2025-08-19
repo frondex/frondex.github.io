@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Send, Paperclip, Loader2, Bot, User, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Loader2, Bot, User, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useCredits } from "@/hooks/useCredits";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import ChatSidebar from "./ChatSidebar";
 import ReactMarkdown from "react-markdown";
@@ -36,11 +37,13 @@ const EnhancedChatView = ({
 }: EnhancedChatViewProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [currentChatId, setCurrentChatId] = useState<string>("1");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
+  const isMobile = useIsMobile();
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -133,19 +136,46 @@ const EnhancedChatView = ({
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background relative">
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <ChatSidebar 
-        onNewChat={handleNewChat}
-        onSelectChat={handleSelectChat}
-        currentChatId={currentChatId}
-      />
+      <div className={cn(
+        "transition-transform duration-300 ease-in-out z-50",
+        isMobile ? "fixed inset-y-0 left-0" : "relative",
+        isMobile && !isSidebarOpen && "-translate-x-full"
+      )}>
+        <ChatSidebar 
+          onNewChat={handleNewChat}
+          onSelectChat={(chatId) => {
+            handleSelectChat(chatId);
+            if (isMobile) setIsSidebarOpen(false);
+          }}
+          currentChatId={currentChatId}
+        />
+      </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95">
           <div className="flex items-center gap-3">
+            {isMobile && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsSidebarOpen(true)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            )}
             <Button 
               variant="ghost" 
               size="sm" 
@@ -156,9 +186,12 @@ const EnhancedChatView = ({
             </Button>
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5 text-primary" />
+              {!isMobile && (
+                <span className="text-sm font-medium">Frondex AI</span>
+              )}
             </div>
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground hidden sm:block">
             AI Assistant ready to help
           </div>
         </div>
