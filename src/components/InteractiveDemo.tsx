@@ -23,12 +23,10 @@ import { useCredits } from "@/hooks/useCredits";
 import { useUserRole } from "@/hooks/useUserRole";
 import UserAccountDropdown from "./UserAccountDropdown";
 import EnhancedChatView from "./EnhancedChatView";
-import MobileChatController from "./MobileChatController";
 import ThreeDotsLoader from "./ui/three-dots-loader";
 import ModernChatSidebar from "./ModernChatSidebar";
 import ComingSoonPage from "./ComingSoonPage";
 import { useChatSessions } from "@/hooks/useChatSessions";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -80,7 +78,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const { isAdmin } = useUserRole();
   const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
-  const isMobile = useIsMobile();
 
   const loadChatSession = useCallback(async (sessionId: string) => {
     if (!user) return;
@@ -137,15 +134,11 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       return;
     }
 
-    // Debug logging
-    console.log('Credit check:', { credits, user: user?.id });
-
     // Check credits for all users (including admins for testing)
     if (credits < 1) {
-      console.log('Insufficient credits triggered with:', credits);
       toast({
         title: "Insufficient credits",
-        description: `You have ${credits} credits. You need at least 1 credit to send a message. Please upgrade your plan or purchase more credits.`,
+        description: "You need at least 1 credit to send a message. Please upgrade your plan or purchase more credits.",
         variant: "destructive"
       });
       return;
@@ -307,7 +300,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions]);
+  }, [currentService, privateMarketsService, user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions, isAdmin]);
 
   const handleSignup = () => {
     setShowSignupPrompt(false);
@@ -340,40 +333,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       brandsSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  // Mobile chat view
-  if (showChatView && isMobile && user) {
-    return (
-      <MobileChatController
-        user={user}
-        onBack={handleNewChat}
-        initialQuery={initialQuery}
-      />
-    );
-  }
-
-  // Desktop chat view
-  if (showChatView) {
-    return (
-      <div className="min-h-screen bg-background font-sans">
-        <div className="max-w-7xl mx-auto flex h-screen">
-          <ModernChatSidebar 
-            onNewChat={handleNewChat} 
-            onSelectChat={loadChatSession} 
-          />
-          <div className="flex-1">
-            <EnhancedChatView
-              onBack={handleNewChat}
-              initialQuery={initialQuery}
-              onSendMessage={handleChatSubmit}
-              messages={messages}
-              isLoading={isLoading}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (!showChatView) {
     return (

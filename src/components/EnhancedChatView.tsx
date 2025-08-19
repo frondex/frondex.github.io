@@ -8,6 +8,7 @@ import { useCredits } from "@/hooks/useCredits";
 import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
 import ChatSidebar from "./ChatSidebar";
+import MobileChatView from "./MobileChatView";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -41,6 +42,39 @@ const EnhancedChatView = ({
   const { toast } = useToast();
   const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
+  const [isMobileState, setIsMobileState] = useState<boolean>(false);
+
+  // Mobile detection effect
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileScreen = window.innerWidth < 768;
+      console.log('Screen width:', window.innerWidth, 'isMobile:', isMobileScreen);
+      setIsMobileState(isMobileScreen);
+    };
+    
+    checkMobile(); // Check immediately
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  console.log('Current mobile state:', isMobileState);
+
+  // Force mobile view for testing - remove this line after testing
+  const forceMobile = window.innerWidth < 768;
+  
+  // If mobile, use the dedicated mobile view
+  if (forceMobile || isMobileState) {
+    console.log('Rendering mobile view');
+    return (
+      <MobileChatView
+        onBack={onBack}
+        initialQuery={initialQuery}
+        onSendMessage={onSendMessage}
+        messages={messages}
+        isLoading={isLoading}
+      />
+    );
+  }
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
