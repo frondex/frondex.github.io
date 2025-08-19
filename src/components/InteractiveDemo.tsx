@@ -360,42 +360,45 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           )}
         </div>
 
-        {/* Logo */}
-        <div className="mb-1 sm:mb-6 md:-mb-16 lg:-mb-20">
-          <img 
-            src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
-            alt="Frondex" 
-            className="h-32 sm:h-40 md:h-54 lg:h-72 w-auto mx-auto object-contain"
-          />
-        </div>
-        
-        {/* Main Heading */}
-        <div className="text-center mb-8 sm:mb-12 md:mb-16 max-w-3xl px-2">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-gray-900 leading-tight">
-            What can I help with?
-          </h1>
-          <p className="text-gray-600 text-lg sm:text-xl md:text-2xl leading-relaxed">
-            Ask anything about private markets, deal flow, or portfolio insights
-          </p>
-        </div>
-        
-        {/* Chat Input */}
-        <div className="w-full max-w-4xl mb-8 sm:mb-12 md:mb-16 px-2">
-          <VercelV0Chat onSubmit={handleChatSubmit} />
-        </div>
-        
-        {/* Scroll Down Indicator */}
-        <div className="flex flex-col items-center mb-32">
-          <button
-            onClick={scrollToBrands}
-            className="group flex flex-col items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-            aria-label="Scroll to brands section"
-          >
-            <span className="text-sm font-medium">Explore Our Brands</span>
-            <ChevronDown 
-              className="h-6 w-6 animate-bounce group-hover:translate-y-1 transition-transform duration-200" 
+        {/* Mobile optimized layout */}
+        <div className="w-full max-w-4xl flex flex-col items-center justify-center min-h-screen py-8 px-4">
+          {/* Logo - smaller on mobile */}
+          <div className="mb-4 sm:mb-6">
+            <img 
+              src="/lovable-uploads/160f2a0f-b791-4f94-8817-0cd61d047a14.png" 
+              alt="Frondex" 
+              className="h-20 sm:h-32 md:h-40 lg:h-54 w-auto mx-auto object-contain"
             />
-          </button>
+          </div>
+          
+          {/* Main Heading - mobile optimized */}
+          <div className="text-center mb-6 sm:mb-8 w-full">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-6 text-gray-900 leading-tight px-2">
+              What can I help with?
+            </h1>
+            <p className="text-gray-600 text-base sm:text-xl md:text-2xl leading-relaxed px-4">
+              Ask anything about private markets, deal flow, or portfolio insights
+            </p>
+          </div>
+          
+          {/* Chat Input - full width on mobile */}
+          <div className="w-full mb-8 sm:mb-12">
+            <VercelV0Chat onSubmit={handleChatSubmit} />
+          </div>
+          
+          {/* Scroll indicator - hide on small screens */}
+          <div className="hidden sm:flex flex-col items-center">
+            <button
+              onClick={scrollToBrands}
+              className="group flex flex-col items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+              aria-label="Scroll to brands section"
+            >
+              <span className="text-sm font-medium">Explore Our Brands</span>
+              <ChevronDown 
+                className="h-6 w-6 animate-bounce group-hover:translate-y-1 transition-transform duration-200" 
+              />
+            </button>
+          </div>
         </div>
         
 
