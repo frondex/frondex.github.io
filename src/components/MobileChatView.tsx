@@ -38,7 +38,7 @@ const MobileChatView = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { credits, useCredits: deductCredits } = useCredits();
+  const { credits, useCredits: deductCredits, loading: creditsLoading } = useCredits();
   const { isAdmin } = useUserRole();
 
   // Auto-scroll to bottom when new messages arrive
@@ -48,6 +48,16 @@ const MobileChatView = ({
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || isLoading) return;
+    
+    // Wait for credits to load before checking
+    if (creditsLoading) {
+      toast({
+        title: "Loading...",
+        description: "Please wait while we load your account information.",
+        variant: "default"
+      });
+      return;
+    }
     
     // Check credits
     if (credits < 1) {

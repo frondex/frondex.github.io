@@ -28,7 +28,7 @@ const MobileChatController = ({ user, onBack, initialQuery }: MobileChatControll
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
   const { toast } = useToast();
-  const { credits, useCredits: deductCredits } = useCredits();
+  const { credits, useCredits: deductCredits, loading: creditsLoading } = useCredits();
   const { createSession, refreshSessions } = useChatSessions();
 
   // Handle initial query if provided
@@ -40,6 +40,16 @@ const MobileChatController = ({ user, onBack, initialQuery }: MobileChatControll
 
   const handleSendMessage = useCallback(async (query: string) => {
     if (!query.trim() || isLoading) return;
+
+    // Wait for credits to load before checking
+    if (creditsLoading) {
+      toast({
+        title: "Loading...",
+        description: "Please wait while we load your account information.",
+        variant: "default"
+      });
+      return;
+    }
 
     // Check credits
     if (credits < 1) {
@@ -159,7 +169,7 @@ const MobileChatController = ({ user, onBack, initialQuery }: MobileChatControll
     } finally {
       setIsLoading(false);
     }
-  }, [user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions, privateMarketsService, isLoading]);
+  }, [user, credits, deductCredits, toast, currentChatSessionId, messages.length, createSession, refreshSessions, privateMarketsService, isLoading, creditsLoading]);
 
   return (
     <MobileChatView
