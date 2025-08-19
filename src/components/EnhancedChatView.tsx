@@ -47,7 +47,9 @@ const EnhancedChatView = ({
   // Mobile detection effect
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobileState(window.innerWidth < 768);
+      const isMobileScreen = window.innerWidth < 768;
+      console.log('Screen width:', window.innerWidth, 'isMobile:', isMobileScreen);
+      setIsMobileState(isMobileScreen);
     };
     
     checkMobile(); // Check immediately
@@ -55,8 +57,14 @@ const EnhancedChatView = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  console.log('Current mobile state:', isMobileState);
+
+  // Force mobile view for testing - remove this line after testing
+  const forceMobile = window.innerWidth < 768;
+  
   // If mobile, use the dedicated mobile view
-  if (isMobileState) {
+  if (forceMobile || isMobileState) {
+    console.log('Rendering mobile view');
     return (
       <MobileChatView
         onBack={onBack}
