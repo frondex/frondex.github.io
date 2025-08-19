@@ -76,7 +76,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [currentService, setCurrentService] = useState<'openai' | 'private-markets'>('private-markets');
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
-  const { credits, useCredits: deductCredits } = useCredits();
+  const { credits, useCredits: deductCredits, loading: creditsLoading } = useCredits();
   const { isAdmin } = useUserRole();
   const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
@@ -134,6 +134,16 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     // Check if user is authenticated
     if (!user) {
       window.location.href = "/auth";
+      return;
+    }
+
+    // Wait for credits to load before checking
+    if (creditsLoading) {
+      toast({
+        title: "Loading...",
+        description: "Please wait while we load your account information.",
+        variant: "default"
+      });
       return;
     }
 
