@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Send, Paperclip, Loader2, Bot, User, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share, Menu, X } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Loader2, Bot, User, Copy, ThumbsUp, ThumbsDown, RotateCcw, Volume2, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useCredits } from "@/hooks/useCredits";
 import { useUserRole } from "@/hooks/useUserRole";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import ChatSidebar from "./ChatSidebar";
 import MobileChatView from "./MobileChatView";
@@ -38,16 +37,26 @@ const EnhancedChatView = ({
 }: EnhancedChatViewProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [currentChatId, setCurrentChatId] = useState<string>("1");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
-  const isMobile = useIsMobile();
+  const [isMobileState, setIsMobileState] = useState<boolean>(false);
+
+  // Mobile detection effect
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileState(window.innerWidth < 768);
+    };
+    
+    checkMobile(); // Check immediately
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // If mobile, use the dedicated mobile view
-  if (isMobile) {
+  if (isMobileState) {
     return (
       <MobileChatView
         onBack={onBack}
@@ -150,46 +159,19 @@ const EnhancedChatView = ({
   };
 
   return (
-    <div className="flex h-screen bg-background relative">
-      {/* Mobile Sidebar Overlay */}
-      {isMobile && isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <div className={cn(
-        "transition-transform duration-300 ease-in-out z-50",
-        isMobile ? "fixed inset-y-0 left-0" : "relative",
-        isMobile && !isSidebarOpen && "-translate-x-full"
-      )}>
-        <ChatSidebar 
-          onNewChat={handleNewChat}
-          onSelectChat={(chatId) => {
-            handleSelectChat(chatId);
-            if (isMobile) setIsSidebarOpen(false);
-          }}
-          currentChatId={currentChatId}
-        />
-      </div>
+      <ChatSidebar 
+        onNewChat={handleNewChat}
+        onSelectChat={handleSelectChat}
+        currentChatId={currentChatId}
+      />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95">
           <div className="flex items-center gap-3">
-            {isMobile && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setIsSidebarOpen(true)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-            )}
             <Button 
               variant="ghost" 
               size="sm" 
@@ -200,12 +182,10 @@ const EnhancedChatView = ({
             </Button>
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5 text-primary" />
-              {!isMobile && (
-                <span className="text-sm font-medium">Frondex AI</span>
-              )}
+              <span className="text-sm font-medium">Frondex AI</span>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground hidden sm:block">
+          <div className="text-sm text-muted-foreground">
             AI Assistant ready to help
           </div>
         </div>
