@@ -375,7 +375,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
             What can I help with?
           </h1>
           <p className="text-gray-600 text-lg sm:text-xl md:text-2xl leading-relaxed">
-            Ask anything about private markets, deal flow, or portfolio insights
+            Your business copilot for smarter insights, sharper strategy, seamless execution.
           </p>
         </div>
         
