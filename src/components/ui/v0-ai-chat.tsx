@@ -133,6 +133,45 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     return (
         <div className="w-full">
             <div className="relative bg-white rounded-xl border border-gray-200 shadow-lg">
+                {/* Attachments Preview - Top Left */}
+                {attachments.length > 0 && (
+                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 flex gap-1 sm:gap-2">
+                        {attachments.map((file, index) => (
+                            <div key={index} className="relative group">
+                                {file.type.startsWith('image/') ? (
+                                    <div className="relative">
+                                        <img
+                                            src={URL.createObjectURL(file)}
+                                            alt={file.name}
+                                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 shadow-sm"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeAttachment(index)}
+                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center">
+                                        <span className="text-xs text-gray-600 font-medium">
+                                            {file.name.split('.').pop()?.toUpperCase()}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeAttachment(index)}
+                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 {/* Top Controls */}
                 <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 flex items-center gap-1 sm:gap-2">
                     {/* Agent Mode Toggle */}
@@ -194,25 +233,6 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     />
                 </div>
 
-                {/* Attachments Preview */}
-                {attachments.length > 0 && (
-                    <div className="px-3 sm:px-4 pb-2 border-t border-gray-100">
-                        <div className="flex flex-wrap gap-2 mt-2">
-                            {attachments.map((file, index) => (
-                                <div key={index} className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 text-sm">
-                                    <span className="text-gray-700 truncate max-w-[150px]">{file.name}</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeAttachment(index)}
-                                        className="text-gray-500 hover:text-red-500 transition-colors"
-                                    >
-                                        ×
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
                 <div className="flex items-center justify-between p-2 sm:p-3">
                     <div className="flex items-center gap-1 sm:gap-2">
