@@ -206,8 +206,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 </div>
 
                 <div className="overflow-y-auto pt-1 sm:pt-2 relative">
-                    {/* Invisible spacer to push text down when buttons are present */}
-                    <div className="float-right w-[180px] sm:w-[220px] h-8 sm:h-10 clear-right"></div>
+                    {/* Conditional spacer that only appears when text would reach buttons */}
+                    {value.length > 50 && (
+                        <div className="float-right w-[180px] sm:w-[220px] h-8 sm:h-10 clear-right"></div>
+                    )}
                     <Textarea
                         ref={textareaRef}
                         value={value}
