@@ -173,7 +173,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 )}
 
                 {/* Top Controls */}
-                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 flex items-center gap-1 sm:gap-2">
+                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20 flex items-center gap-1 sm:gap-2">
                     {/* Agent Mode Toggle */}
                     <button
                         type="button"
@@ -226,6 +226,8 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             "focus-visible:ring-0 focus-visible:ring-offset-0",
                             "placeholder:text-gray-500 placeholder:text-base sm:placeholder:text-lg",
                             "min-h-[50px] sm:min-h-[60px]",
+                            // Add padding to avoid text going under buttons
+                            "pr-[160px] sm:pr-[200px]",
                             // Add top padding when attachments are present
                             attachments.length > 0 && "pt-12 sm:pt-14"
                         )}
