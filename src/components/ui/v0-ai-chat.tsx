@@ -75,24 +75,52 @@ function useAutoResizeTextarea({
 }
 
 interface VercelV0ChatProps {
-    onSubmit?: (query: string) => void;
+    onSubmit?: (query: string, attachments?: File[]) => void;
 }
 
 export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     const [value, setValue] = useState("");
     const [agentMode, setAgentMode] = useState(false);
     const [isVideoChatOpen, setIsVideoChatOpen] = useState(false);
+    const [attachments, setAttachments] = useState<File[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 60,
         maxHeight: 200,
     });
 
     const handleSubmit = () => {
-        if (value.trim()) {
-            onSubmit?.(value.trim());
+        if (value.trim() || attachments.length > 0) {
+            onSubmit?.(value.trim(), attachments);
             setValue("");
+            setAttachments([]);
             adjustHeight(true);
         }
+    };
+
+    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(event.target.files || []);
+        setAttachments(prev => [...prev, ...files]);
+    };
+
+    const handleAttachClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handlePaste = (event: React.ClipboardEvent) => {
+        const items = Array.from(event.clipboardData.items);
+        const imageFiles = items
+            .filter(item => item.type.startsWith('image/'))
+            .map(item => item.getAsFile())
+            .filter(file => file !== null) as File[];
+        
+        if (imageFiles.length > 0) {
+            setAttachments(prev => [...prev, ...imageFiles]);
+        }
+    };
+
+    const removeAttachment = (index: number) => {
+        setAttachments(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -147,6 +175,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             adjustHeight();
                         }}
                         onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
                         placeholder="Ask anything"
                         className={cn(
                             "w-full px-3 sm:px-4 py-2 sm:py-3",
@@ -165,10 +194,31 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     />
                 </div>
 
+                {/* Attachments Preview */}
+                {attachments.length > 0 && (
+                    <div className="px-3 sm:px-4 pb-2 border-t border-gray-100">
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {attachments.map((file, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 text-sm">
+                                    <span className="text-gray-700 truncate max-w-[150px]">{file.name}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeAttachment(index)}
+                                        className="text-gray-500 hover:text-red-500 transition-colors"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex items-center justify-between p-2 sm:p-3">
                     <div className="flex items-center gap-1 sm:gap-2">
                         <button
                             type="button"
+                            onClick={handleAttachClick}
                             className="group p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
                         >
                             <Paperclip className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
@@ -176,6 +226,14 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                                 Attach
                             </span>
                         </button>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            accept="image/*,.pdf,.doc,.docx,.txt"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                        />
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2">
                         <button
@@ -188,10 +246,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         <button
                             type="button"
                             onClick={handleSubmit}
-                            disabled={!value.trim()}
+                            disabled={!value.trim() && attachments.length === 0}
                             className={cn(
                                 "px-1.5 py-1.5 rounded-lg text-sm transition-colors border border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1",
-                                value.trim()
+                                (value.trim() || attachments.length > 0)
                                     ? "bg-gray-900 text-white"
                                     : "text-gray-500"
                             )}
@@ -199,7 +257,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             <ArrowUpIcon
                                 className={cn(
                                     "w-3 h-3 sm:w-4 sm:h-4",
-                                    value.trim()
+                                    (value.trim() || attachments.length > 0)
                                         ? "text-white"
                                         : "text-gray-500"
                                 )}
