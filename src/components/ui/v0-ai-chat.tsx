@@ -205,7 +205,9 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     </button>
                 </div>
 
-                <div className="overflow-y-auto pt-1 sm:pt-2">
+                <div className="overflow-y-auto pt-1 sm:pt-2 relative">
+                    {/* Invisible spacer to push text down when buttons are present */}
+                    <div className="float-right w-[180px] sm:w-[220px] h-8 sm:h-10 clear-right"></div>
                     <Textarea
                         ref={textareaRef}
                         value={value}
@@ -226,8 +228,6 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             "focus-visible:ring-0 focus-visible:ring-offset-0",
                             "placeholder:text-gray-500 placeholder:text-base sm:placeholder:text-lg",
                             "min-h-[50px] sm:min-h-[60px]",
-                            // Add padding to avoid text going under buttons
-                            "pr-[160px] sm:pr-[200px]",
                             // Add top padding when attachments are present
                             attachments.length > 0 && "pt-12 sm:pt-14"
                         )}
