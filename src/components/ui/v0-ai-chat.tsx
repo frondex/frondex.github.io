@@ -179,16 +179,16 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         type="button"
                         onClick={() => setAgentMode(!agentMode)}
                         className={cn(
-                            "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+                            "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
                             agentMode
-                                ? "bg-orange-100 text-orange-700 border border-orange-200"
-                                : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-150"
+                                ? "bg-orange-100/95 text-orange-800 border border-orange-300"
+                                : "bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
                         )}
                     >
-                        <Zap className={cn("w-3 h-3", agentMode ? "text-orange-600" : "text-gray-500")} />
-                        <span className="hidden md:inline">AGENT MODE</span>
-                        <span className="md:hidden">AGENT</span>
-                        <span className={cn("font-bold text-xs", agentMode ? "text-orange-700" : "text-gray-500")}>
+                        <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
+                        <span className="hidden md:inline font-semibold">AGENT MODE</span>
+                        <span className="md:hidden font-semibold">AGENT</span>
+                        <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
                             {agentMode ? "ON" : "OFF"}
                         </span>
                     </button>
@@ -197,11 +197,11 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     <button
                         type="button"
                         onClick={() => setIsVideoChatOpen(true)}
-                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-100/95 text-green-800 border border-green-300 hover:bg-green-200/95 shadow-sm backdrop-blur-sm"
                     >
-                        <Phone className="w-3 h-3 text-green-600" />
-                        <span className="hidden sm:inline">VIDEO CHAT</span>
-                        <span className="sm:hidden">VIDEO</span>
+                        <Phone className="w-3 h-3 text-green-700" />
+                        <span className="hidden sm:inline font-semibold">VIDEO CHAT</span>
+                        <span className="sm:hidden font-semibold">VIDEO</span>
                     </button>
                 </div>
 
@@ -225,7 +225,9 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             "focus:outline-none",
                             "focus-visible:ring-0 focus-visible:ring-offset-0",
                             "placeholder:text-gray-500 placeholder:text-base sm:placeholder:text-lg",
-                            "min-h-[50px] sm:min-h-[60px]"
+                            "min-h-[50px] sm:min-h-[60px]",
+                            // Add top padding when attachments are present
+                            attachments.length > 0 && "pt-12 sm:pt-14"
                         )}
                         style={{
                             overflow: "hidden",
