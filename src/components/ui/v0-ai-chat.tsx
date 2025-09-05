@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 // import { VideoChatModal } from "@/components/VideoChatModal";
 import {
     ImageIcon,
@@ -84,9 +85,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     const [isVideoChatOpen, setIsVideoChatOpen] = useState(false);
     const [attachments, setAttachments] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const isMobile = useIsMobile();
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
-        minHeight: 60,
-        maxHeight: 200,
+        minHeight: isMobile ? 50 : 60,
+        maxHeight: isMobile ? 120 : 200,
     });
 
     const handleSubmit = () => {
@@ -135,7 +137,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
             <div className="relative bg-white rounded-xl border border-gray-200 shadow-lg">
                 {/* Attachments Preview - Top Left */}
                 {attachments.length > 0 && (
-                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 flex gap-1 sm:gap-2">
+                    <div className={cn(
+                        "absolute z-10 flex gap-1 sm:gap-2",
+                        isMobile ? "top-2 left-2 flex-wrap max-w-[calc(100%-4rem)]" : "top-2 sm:top-3 left-2 sm:left-3"
+                    )}>
                         {attachments.map((file, index) => (
                             <div key={index} className="relative group">
                                 {file.type.startsWith('image/') ? (
@@ -143,25 +148,40 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                                         <img
                                             src={URL.createObjectURL(file)}
                                             alt={file.name}
-                                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 shadow-sm"
+                                            className={cn(
+                                                "rounded-lg object-cover border border-gray-200 shadow-sm",
+                                                isMobile ? "w-8 h-8" : "w-10 h-10 sm:w-12 sm:h-12"
+                                            )}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => removeAttachment(index)}
-                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                                            className={cn(
+                                                "absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center",
+                                                isMobile ? "w-5 h-5 opacity-100" : "w-4 h-4 opacity-0 group-hover:opacity-100"
+                                            )}
                                         >
                                             ×
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center">
-                                        <span className="text-xs text-gray-600 font-medium">
+                                    <div className={cn(
+                                        "relative bg-gray-100 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center",
+                                        isMobile ? "w-8 h-8" : "w-10 h-10 sm:w-12 sm:h-12"
+                                    )}>
+                                        <span className={cn(
+                                            "text-gray-600 font-medium",
+                                            isMobile ? "text-[10px]" : "text-xs"
+                                        )}>
                                             {file.name.split('.').pop()?.toUpperCase()}
                                         </span>
                                         <button
                                             type="button"
                                             onClick={() => removeAttachment(index)}
-                                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                                            className={cn(
+                                                "absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center",
+                                                isMobile ? "w-5 h-5 opacity-100" : "w-4 h-4 opacity-0 group-hover:opacity-100"
+                                            )}
                                         >
                                             ×
                                         </button>
@@ -172,42 +192,72 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     </div>
                 )}
 
-                {/* Top Controls */}
-                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20 flex items-center gap-1 sm:gap-2">
-                    {/* Agent Mode Toggle */}
-                    <button
-                        type="button"
-                        onClick={() => setAgentMode(!agentMode)}
-                        className={cn(
-                            "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
-                            agentMode
-                                ? "bg-orange-100/95 text-orange-800 border border-orange-300"
-                                : "bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
-                        )}
-                    >
-                        <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
-                        <span className="hidden md:inline font-semibold">AGENT MODE</span>
-                        <span className="md:hidden font-semibold">AGENT</span>
-                        <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
-                            {agentMode ? "ON" : "OFF"}
-                        </span>
-                    </button>
-                    
-                    {/* Video Chat Button */}
-                    <button
-                        type="button"
-                        onClick={() => setIsVideoChatOpen(true)}
-                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-100/95 text-green-800 border border-green-300 hover:bg-green-200/95 shadow-sm backdrop-blur-sm"
-                    >
-                        <Phone className="w-3 h-3 text-green-700" />
-                        <span className="hidden sm:inline font-semibold">VIDEO CHAT</span>
-                        <span className="sm:hidden font-semibold">VIDEO</span>
-                    </button>
-                </div>
+                {/* Controls - Mobile: Below textarea, Desktop: Top right */}
+                {isMobile ? (
+                    // Mobile: Controls at bottom for better reachability
+                    <div className="flex justify-end gap-1 p-2 pt-0">
+                        <button
+                            type="button"
+                            onClick={() => setAgentMode(!agentMode)}
+                            className={cn(
+                                "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm",
+                                agentMode
+                                    ? "bg-orange-100 text-orange-800 border border-orange-300"
+                                    : "bg-white text-gray-700 border border-gray-300"
+                            )}
+                        >
+                            <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
+                            <span className="font-semibold">AGENT</span>
+                            <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
+                                {agentMode ? "ON" : "OFF"}
+                            </span>
+                        </button>
+                        
+                        <button
+                            type="button"
+                            onClick={() => setIsVideoChatOpen(true)}
+                            className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-green-100 text-green-800 border border-green-300 shadow-sm"
+                        >
+                            <Phone className="w-3 h-3 text-green-700" />
+                            <span className="font-semibold">VIDEO</span>
+                        </button>
+                    </div>
+                ) : (
+                    // Desktop: Controls at top right
+                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20 flex items-center gap-1 sm:gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setAgentMode(!agentMode)}
+                            className={cn(
+                                "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
+                                agentMode
+                                    ? "bg-orange-100/95 text-orange-800 border border-orange-300"
+                                    : "bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
+                            )}
+                        >
+                            <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
+                            <span className="hidden md:inline font-semibold">AGENT MODE</span>
+                            <span className="md:hidden font-semibold">AGENT</span>
+                            <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
+                                {agentMode ? "ON" : "OFF"}
+                            </span>
+                        </button>
+                        
+                        <button
+                            type="button"
+                            onClick={() => setIsVideoChatOpen(true)}
+                            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 bg-green-100/95 text-green-800 border border-green-300 hover:bg-green-200/95 shadow-sm backdrop-blur-sm"
+                        >
+                            <Phone className="w-3 h-3 text-green-700" />
+                            <span className="hidden sm:inline font-semibold">VIDEO CHAT</span>
+                            <span className="sm:hidden font-semibold">VIDEO</span>
+                        </button>
+                    </div>
+                )}
 
                 <div className="overflow-y-auto pt-1 sm:pt-2 relative">
-                    {/* Conditional spacer that only appears when text would reach buttons */}
-                    {value.length > 50 && (
+                    {/* Conditional spacer for desktop text wrapping */}
+                    {!isMobile && value.length > 50 && (
                         <div className="float-right w-[180px] sm:w-[220px] h-8 sm:h-10 clear-right"></div>
                     )}
                     <Textarea
@@ -221,17 +271,13 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         onPaste={handlePaste}
                         placeholder="Ask anything"
                         className={cn(
-                            "w-full px-3 sm:px-4 py-2 sm:py-3",
-                            "resize-none",
-                            "bg-transparent",
-                            "border-none",
-                            "text-gray-900 text-base sm:text-lg",
-                            "focus:outline-none",
-                            "focus-visible:ring-0 focus-visible:ring-offset-0",
-                            "placeholder:text-gray-500 placeholder:text-base sm:placeholder:text-lg",
-                            "min-h-[50px] sm:min-h-[60px]",
+                            "w-full resize-none bg-transparent border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
+                            "text-gray-900 placeholder:text-gray-500",
+                            isMobile 
+                                ? "px-3 py-2 text-base placeholder:text-base min-h-[45px]" 
+                                : "px-3 sm:px-4 py-2 sm:py-3 text-base sm:text-lg placeholder:text-base sm:placeholder:text-lg min-h-[50px] sm:min-h-[60px]",
                             // Add top padding when attachments are present
-                            attachments.length > 0 && "pt-12 sm:pt-14"
+                            attachments.length > 0 && (isMobile ? "pt-10" : "pt-12 sm:pt-14")
                         )}
                         style={{
                             overflow: "hidden",
@@ -240,17 +286,28 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 </div>
 
 
-                <div className="flex items-center justify-between p-2 sm:p-3">
+                <div className={cn(
+                    "flex items-center justify-between",
+                    isMobile ? "p-2" : "p-2 sm:p-3"
+                )}>
                     <div className="flex items-center gap-1 sm:gap-2">
                         <button
                             type="button"
                             onClick={handleAttachClick}
-                            className="group p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
+                            className={cn(
+                                "group hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1",
+                                isMobile ? "p-2" : "p-1.5 sm:p-2"
+                            )}
                         >
-                            <Paperclip className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
-                            <span className="text-xs text-gray-500 hidden md:group-hover:inline transition-opacity">
-                                Attach
-                            </span>
+                            <Paperclip className={cn(
+                                "text-gray-600",
+                                isMobile ? "w-4 h-4" : "w-3 h-3 sm:w-4 sm:h-4"
+                            )} />
+                            {!isMobile && (
+                                <span className="text-xs text-gray-500 hidden md:group-hover:inline transition-opacity">
+                                    Attach
+                                </span>
+                            )}
                         </button>
                         <input
                             ref={fileInputRef}
@@ -264,17 +321,23 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                     <div className="flex items-center gap-1 sm:gap-2">
                         <button
                             type="button"
-                            className="px-2 py-1 rounded-lg text-xs sm:text-sm text-gray-500 transition-colors border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1"
+                            className={cn(
+                                "px-2 py-1 rounded-lg text-gray-500 transition-colors border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1",
+                                isMobile ? "text-xs" : "text-xs sm:text-sm"
+                            )}
                         >
-                            <PlusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span className="hidden md:inline">Project</span>
+                            <PlusIcon className={cn(
+                                isMobile ? "w-3 h-3" : "w-3 h-3 sm:w-4 sm:h-4"
+                            )} />
+                            {!isMobile && <span className="hidden md:inline">Project</span>}
                         </button>
                         <button
                             type="button"
                             onClick={handleSubmit}
                             disabled={!value.trim() && attachments.length === 0}
                             className={cn(
-                                "px-1.5 py-1.5 rounded-lg text-sm transition-colors border border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1",
+                                "rounded-lg text-sm transition-colors border border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between gap-1",
+                                isMobile ? "px-2 py-2" : "px-1.5 py-1.5",
                                 (value.trim() || attachments.length > 0)
                                     ? "bg-gray-900 text-white"
                                     : "text-gray-500"
@@ -282,10 +345,10 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                         >
                             <ArrowUpIcon
                                 className={cn(
-                                    "w-3 h-3 sm:w-4 sm:h-4",
                                     (value.trim() || attachments.length > 0)
                                         ? "text-white"
-                                        : "text-gray-500"
+                                        : "text-gray-500",
+                                    isMobile ? "w-4 h-4" : "w-3 h-3 sm:w-4 sm:h-4"
                                 )}
                             />
                             <span className="sr-only">Send</span>
