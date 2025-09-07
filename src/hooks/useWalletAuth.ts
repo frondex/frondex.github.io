@@ -1,61 +1,72 @@
 import { useState, useCallback } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/integrations/supabase/client'
+import { useConnect, useDisconnect, useAccount } from 'wagmi'
+import { injected, walletConnect, coinbaseWallet } from 'wagmi/connectors'
 import type { WalletType } from '@/lib/wallet'
 
 interface UseWalletAuthReturn {
   isConnecting: boolean
   error: string | null
+  isConnected: boolean
+  address: string | undefined
   connectWallet: (walletType: WalletType) => Promise<void>
   disconnectWallet: () => Promise<void>
 }
 
 export function useWalletAuth(): UseWalletAuthReturn {
-  const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
+  const { connect, isPending: isConnecting } = useConnect()
+  const { disconnect } = useDisconnect()
+  const { isConnected, address } = useAccount()
+
+  const getConnector = (walletType: WalletType) => {
+    switch (walletType) {
+      case 'metamask':
+        return injected()
+      case 'walletconnect':
+        return walletConnect({
+          projectId: 'demo-project-id', // You can get a real one from WalletConnect
+        })
+      case 'coinbase':
+        return coinbaseWallet({
+          appName: 'Your App',
+        })
+      default:
+        return injected()
+    }
+  }
 
   const connectWallet = useCallback(async (walletType: WalletType) => {
-    setIsConnecting(true)
     setError(null)
 
     try {
-      // Check if wallet is available
+      // Check if MetaMask is available for metamask connections
       if (walletType === 'metamask' && !window.ethereum?.isMetaMask) {
         throw new Error('MetaMask not detected. Please install MetaMask.')
       }
 
-      // Request account access
-      let accounts: string[] = []
+      const connector = getConnector(walletType)
       
-      if (walletType === 'metamask' && window.ethereum) {
-        accounts = await window.ethereum.request({
-          method: 'eth_requestAccounts',
-        })
-      } else {
-        throw new Error(`${walletType} connection not implemented yet`)
-      }
-
-      if (!accounts || accounts.length === 0) {
-        throw new Error('No accounts found')
-      }
-
-      const address = accounts[0]
-
-      // Here you would typically:
-      // 1. Generate a nonce for the user to sign
-      // 2. Have them sign a message (SIWE - Sign-In with Ethereum)
-      // 3. Verify the signature on the backend
-      // 4. Create or link the wallet to a user account in Supabase
-
-      // For now, we'll just show success
-      toast({
-        title: 'Wallet Connected',
-        description: `Successfully connected ${walletType} wallet: ${address.slice(0, 6)}...${address.slice(-4)}`,
+      connect({ connector }, {
+        onSuccess: (data) => {
+          toast({
+            title: 'Wallet Connected',
+            description: `Successfully connected ${walletType} wallet: ${data.accounts[0]?.slice(0, 6)}...${data.accounts[0]?.slice(-4)}`,
+          })
+          console.log('Connected wallet:', { walletType, address: data.accounts[0] })
+        },
+        onError: (err) => {
+          const errorMessage = err.message || 'Failed to connect wallet'
+          setError(errorMessage)
+          toast({
+            title: 'Connection Failed',
+            description: errorMessage,
+            variant: 'destructive',
+          })
+        }
       })
-
-      // TODO: Implement actual authentication flow with Supabase
-      console.log('Connected wallet:', { walletType, address })
 
     } catch (err: any) {
       const errorMessage = err.message || 'Failed to connect wallet'
@@ -65,14 +76,13 @@ export function useWalletAuth(): UseWalletAuthReturn {
         description: errorMessage,
         variant: 'destructive',
       })
-    } finally {
-      setIsConnecting(false)
     }
-  }, [toast])
+  }, [connect, toast])
 
   const disconnectWallet = useCallback(async () => {
     try {
-      // TODO: Implement wallet disconnection logic
+      disconnect()
+      setError(null)
       toast({
         title: 'Wallet Disconnected',
         description: 'Your wallet has been disconnected',
@@ -84,11 +94,13 @@ export function useWalletAuth(): UseWalletAuthReturn {
         variant: 'destructive',
       })
     }
-  }, [toast])
+  }, [disconnect, toast])
 
   return {
     isConnecting,
     error,
+    isConnected,
+    address,
     connectWallet,
     disconnectWallet,
   }
