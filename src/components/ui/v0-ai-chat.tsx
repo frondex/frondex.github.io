@@ -209,6 +209,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             <DropdownMenuTrigger asChild>
                                 <button
                                     type="button"
+                                    onClick={() => !agentMode && setAgentMode(true)}
                                     className={cn(
                                         "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm",
                                         agentMode
@@ -229,28 +230,26 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                                     {agentMode && <ChevronDown className="w-3 h-3" />}
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
-                                <DropdownMenuItem onClick={() => setAgentMode(!agentMode)}>
-                                    <Zap className="w-4 h-4 mr-2" />
-                                    {agentMode ? "Turn Off Agent Mode" : "Turn On Agent Mode"}
-                                </DropdownMenuItem>
-                                {agentMode && (
-                                    <>
-                                        {agents.map((agent) => (
-                                            <DropdownMenuItem
-                                                key={agent.id}
-                                                onClick={() => setSelectedAgent(agent)}
-                                                className={selectedAgent.id === agent.id ? "bg-orange-50" : ""}
-                                            >
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium">{agent.name}</span>
-                                                    <span className="text-xs text-gray-500">{agent.description}</span>
-                                                </div>
-                                            </DropdownMenuItem>
-                                        ))}
-                                    </>
-                                )}
-                            </DropdownMenuContent>
+                            {agentMode && (
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuItem onClick={() => setAgentMode(false)}>
+                                        <Zap className="w-4 h-4 mr-2" />
+                                        Turn Off Agent Mode
+                                    </DropdownMenuItem>
+                                    {agents.map((agent) => (
+                                        <DropdownMenuItem
+                                            key={agent.id}
+                                            onClick={() => setSelectedAgent(agent)}
+                                            className={selectedAgent.id === agent.id ? "bg-orange-50" : ""}
+                                        >
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{agent.name}</span>
+                                                <span className="text-xs text-gray-500">{agent.description}</span>
+                                            </div>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            )}
                         </DropdownMenu>
                         
                         <button
@@ -269,6 +268,7 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                             <DropdownMenuTrigger asChild>
                                 <button
                                     type="button"
+                                    onClick={() => !agentMode && setAgentMode(true)}
                                     className={cn(
                                         "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
                                         agentMode
@@ -295,28 +295,26 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                                     {agentMode && <ChevronDown className="w-3 h-3" />}
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
-                                <DropdownMenuItem onClick={() => setAgentMode(!agentMode)}>
-                                    <Zap className="w-4 h-4 mr-2" />
-                                    {agentMode ? "Turn Off Agent Mode" : "Turn On Agent Mode"}
-                                </DropdownMenuItem>
-                                {agentMode && (
-                                    <>
-                                        {agents.map((agent) => (
-                                            <DropdownMenuItem
-                                                key={agent.id}
-                                                onClick={() => setSelectedAgent(agent)}
-                                                className={selectedAgent.id === agent.id ? "bg-orange-50" : ""}
-                                            >
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium">{agent.name}</span>
-                                                    <span className="text-xs text-gray-500">{agent.description}</span>
-                                                </div>
-                                            </DropdownMenuItem>
-                                        ))}
-                                    </>
-                                )}
-                            </DropdownMenuContent>
+                            {agentMode && (
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuItem onClick={() => setAgentMode(false)}>
+                                        <Zap className="w-4 h-4 mr-2" />
+                                        Turn Off Agent Mode
+                                    </DropdownMenuItem>
+                                    {agents.map((agent) => (
+                                        <DropdownMenuItem
+                                            key={agent.id}
+                                            onClick={() => setSelectedAgent(agent)}
+                                            className={selectedAgent.id === agent.id ? "bg-orange-50" : ""}
+                                        >
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{agent.name}</span>
+                                                <span className="text-xs text-gray-500">{agent.description}</span>
+                                            </div>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            )}
                         </DropdownMenu>
                         
                         <button
