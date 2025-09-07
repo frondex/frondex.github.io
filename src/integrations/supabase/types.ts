@@ -154,6 +154,60 @@ export type Database = {
         }
         Relationships: []
       }
+      user_wallets: {
+        Row: {
+          address: string
+          chain: string
+          created_at: string
+          id: string
+          type: Database["public"]["Enums"]["wallet_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          chain?: string
+          created_at?: string
+          id?: string
+          type?: Database["public"]["Enums"]["wallet_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          chain?: string
+          created_at?: string
+          id?: string
+          type?: Database["public"]["Enums"]["wallet_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_nonces: {
+        Row: {
+          address: string
+          chain: string
+          created_at: string
+          id: string
+          nonce: string
+        }
+        Insert: {
+          address: string
+          chain?: string
+          created_at?: string
+          id?: string
+          nonce: string
+        }
+        Update: {
+          address?: string
+          chain?: string
+          created_at?: string
+          id?: string
+          nonce?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -191,6 +245,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      wallet_type: "evm"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -319,6 +374,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      wallet_type: ["evm"],
     },
   },
 } as const
