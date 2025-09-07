@@ -15,8 +15,8 @@ import Subscription from "./pages/Subscription";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <WagmiProvider config={wagmiConfig}>
+  <WagmiProvider config={wagmiConfig}>
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
@@ -33,8 +33,8 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
-    </WagmiProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );
 
 export default App;
