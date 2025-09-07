@@ -17,7 +17,9 @@ import {
     PlusIcon,
     Zap,
     Phone,
+    ChevronDown,
 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface UseAutoResizeTextareaProps {
     minHeight: number;
@@ -79,9 +81,16 @@ interface VercelV0ChatProps {
     onSubmit?: (query: string, attachments?: File[]) => void;
 }
 
+const agents = [
+    { id: 'general', name: 'General Agent', description: 'General AI assistant' },
+    { id: 'mao', name: 'Mao', description: 'Mao Matchmaking agent' },
+    { id: 'private-markets', name: 'Private Markets Intelligence', description: 'Private markets analysis' },
+];
+
 export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
     const [value, setValue] = useState("");
     const [agentMode, setAgentMode] = useState(false);
+    const [selectedAgent, setSelectedAgent] = useState(agents[0]);
     const [isVideoChatOpen, setIsVideoChatOpen] = useState(false);
     const [attachments, setAttachments] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -196,22 +205,53 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 {isMobile ? (
                     // Mobile: Controls at bottom for better reachability
                     <div className="flex justify-end gap-1 p-2 pt-0">
-                        <button
-                            type="button"
-                            onClick={() => setAgentMode(!agentMode)}
-                            className={cn(
-                                "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm",
-                                agentMode
-                                    ? "bg-orange-100 text-orange-800 border border-orange-300"
-                                    : "bg-white text-gray-700 border border-gray-300"
-                            )}
-                        >
-                            <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
-                            <span className="font-semibold">AGENT</span>
-                            <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
-                                {agentMode ? "ON" : "OFF"}
-                            </span>
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    type="button"
+                                    className={cn(
+                                        "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm",
+                                        agentMode
+                                            ? "bg-orange-100 text-orange-800 border border-orange-300"
+                                            : "bg-white text-gray-700 border border-gray-300"
+                                    )}
+                                >
+                                    <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
+                                    <span className="font-semibold">
+                                        {agentMode && selectedAgent.id !== 'general' 
+                                            ? selectedAgent.name.toUpperCase() 
+                                            : "AGENT"
+                                        }
+                                    </span>
+                                    <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
+                                        {agentMode ? "ON" : "OFF"}
+                                    </span>
+                                    {agentMode && <ChevronDown className="w-3 h-3" />}
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuItem onClick={() => setAgentMode(!agentMode)}>
+                                    <Zap className="w-4 h-4 mr-2" />
+                                    {agentMode ? "Turn Off Agent Mode" : "Turn On Agent Mode"}
+                                </DropdownMenuItem>
+                                {agentMode && (
+                                    <>
+                                        {agents.map((agent) => (
+                                            <DropdownMenuItem
+                                                key={agent.id}
+                                                onClick={() => setSelectedAgent(agent)}
+                                                className={selectedAgent.id === agent.id ? "bg-orange-50" : ""}
+                                            >
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">{agent.name}</span>
+                                                    <span className="text-xs text-gray-500">{agent.description}</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         
                         <button
                             type="button"
@@ -225,23 +265,59 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 ) : (
                     // Desktop: Controls at top right
                     <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20 flex items-center gap-1 sm:gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setAgentMode(!agentMode)}
-                            className={cn(
-                                "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
-                                agentMode
-                                    ? "bg-orange-100/95 text-orange-800 border border-orange-300"
-                                    : "bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
-                            )}
-                        >
-                            <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
-                            <span className="hidden md:inline font-semibold">AGENT MODE</span>
-                            <span className="md:hidden font-semibold">AGENT</span>
-                            <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
-                                {agentMode ? "ON" : "OFF"}
-                            </span>
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    type="button"
+                                    className={cn(
+                                        "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
+                                        agentMode
+                                            ? "bg-orange-100/95 text-orange-800 border border-orange-300"
+                                            : "bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
+                                    )}
+                                >
+                                    <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
+                                    <span className="hidden md:inline font-semibold">
+                                        {agentMode && selectedAgent.id !== 'general' 
+                                            ? `${selectedAgent.name.toUpperCase()} AGENT` 
+                                            : "AGENT MODE"
+                                        }
+                                    </span>
+                                    <span className="md:hidden font-semibold">
+                                        {agentMode && selectedAgent.id !== 'general' 
+                                            ? selectedAgent.name.toUpperCase() 
+                                            : "AGENT"
+                                        }
+                                    </span>
+                                    <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
+                                        {agentMode ? "ON" : "OFF"}
+                                    </span>
+                                    {agentMode && <ChevronDown className="w-3 h-3" />}
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuItem onClick={() => setAgentMode(!agentMode)}>
+                                    <Zap className="w-4 h-4 mr-2" />
+                                    {agentMode ? "Turn Off Agent Mode" : "Turn On Agent Mode"}
+                                </DropdownMenuItem>
+                                {agentMode && (
+                                    <>
+                                        {agents.map((agent) => (
+                                            <DropdownMenuItem
+                                                key={agent.id}
+                                                onClick={() => setSelectedAgent(agent)}
+                                                className={selectedAgent.id === agent.id ? "bg-orange-50" : ""}
+                                            >
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">{agent.name}</span>
+                                                    <span className="text-xs text-gray-500">{agent.description}</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         
                         <button
                             type="button"
