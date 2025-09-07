@@ -1,8 +1,11 @@
 import * as React from "react"
 import { useState, useEffect } from "react";
-import { LogIn, Lock, Mail, UserPlus, ArrowLeft, Key } from "lucide-react";
+import { LogIn, Lock, Mail, UserPlus, ArrowLeft, Key, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { WalletConnectModal } from "@/components/ui/wallet-connect-modal";
+import { useWalletAuth } from "@/hooks/useWalletAuth";
+import type { WalletType } from "@/lib/wallet";
 
 interface CleanMinimalSignInProps {
   onSuccess?: () => void;
@@ -17,7 +20,9 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const { toast } = useToast();
+  const { isConnecting, error: walletError, connectWallet } = useWalletAuth();
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -439,6 +444,15 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
           </svg>
           Continue with Google
         </button>
+
+        <button
+          onClick={() => setIsWalletModalOpen(true)}
+          disabled={loading || isConnecting}
+          className="w-full bg-white border border-input text-foreground font-medium py-2 rounded-xl shadow hover:bg-gray-50 cursor-pointer transition mb-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+        >
+          <Wallet className="w-4 h-4" />
+          Connect Wallet
+        </button>
         
         <div className="flex items-center w-full my-2">
           <div className="flex-grow border-t border-dashed border-border"></div>
@@ -456,6 +470,17 @@ const CleanMinimalSignIn = ({ onSuccess }: CleanMinimalSignInProps) => {
           {isSignUp ? "Sign in instead" : "Create account"}
         </button>
       </div>
+
+      <WalletConnectModal
+        open={isWalletModalOpen}
+        onOpenChange={setIsWalletModalOpen}
+        onWalletSelect={async (walletType: WalletType) => {
+          await connectWallet(walletType);
+          setIsWalletModalOpen(false);
+        }}
+        isConnecting={isConnecting}
+        error={walletError}
+      />
     </div>
   );
 };
