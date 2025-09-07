@@ -27,6 +27,7 @@ import ThreeDotsLoader from "./ui/three-dots-loader";
 import ModernChatSidebar from "./ModernChatSidebar";
 import ComingSoonPage from "./ComingSoonPage";
 import { useChatSessions } from "@/hooks/useChatSessions";
+import { ConnectWalletHeaderButton } from "./ConnectWalletHeaderButton";
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -338,7 +339,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 bg-gray-50 relative">
         {/* Top Right Controls */}
-        <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-10">
+        <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-10 flex gap-2">
+          <ConnectWalletHeaderButton />
           {!user ? (
             <Button 
               asChild
