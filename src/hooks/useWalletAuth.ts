@@ -65,14 +65,72 @@ export function useWalletAuth(): UseWalletAuthReturn {
           })
           console.log('Connected wallet:', { walletType, address: walletAddress })
           
-          // If user is authenticated, offer to link the wallet
           if (user && walletAddress) {
+            // User is authenticated - offer to link wallet
             setTimeout(() => {
               toast({
                 title: 'Link Wallet?',
                 description: 'Would you like to link this wallet to your account?',
               })
             }, 1000)
+          } else if (!user && walletAddress) {
+            // User is not authenticated - use wallet as login
+            setTimeout(async () => {
+              try {
+                // Get nonce for wallet authentication
+                const { data: nonceData, error: nonceError } = await supabase.functions.invoke('wallet-link-nonce', {
+                  body: { address: walletAddress, chain: 'eip155:1' }
+                })
+
+                if (nonceError || !nonceData?.nonce) {
+                  throw new Error('Failed to get authentication nonce')
+                }
+
+                // Create message for user to sign
+                const message = `Sign this message to authenticate with your wallet.\n\nAddress: ${walletAddress}\nChain: Ethereum\nNonce: ${nonceData.nonce}\nTimestamp: ${new Date().toISOString()}`
+
+                // Get signature using wagmi
+                const { signMessage } = await import('@wagmi/core')
+                const { wagmiConfig } = await import('@/lib/wallet')
+                
+                const signature = await signMessage(wagmiConfig, { 
+                  account: walletAddress as `0x${string}`,
+                  message 
+                })
+
+                // Authenticate with backend
+                const { data: authData, error: authError } = await supabase.functions.invoke('wallet-auth', {
+                  body: {
+                    address: walletAddress,
+                    signature,
+                    message,
+                    chain: 'eip155:1'
+                  }
+                })
+
+                if (authError || !authData?.success) {
+                  throw new Error('Wallet authentication failed')
+                }
+
+                // Navigate to magic link to complete authentication
+                if (authData.magic_link) {
+                  window.location.href = authData.magic_link
+                }
+
+                toast({
+                  title: 'Wallet Authentication Successful',
+                  description: 'You are now signed in with your wallet',
+                })
+
+              } catch (authErr: any) {
+                console.error('Wallet authentication failed:', authErr)
+                toast({
+                  title: 'Authentication Failed',
+                  description: authErr.message || 'Failed to authenticate with wallet',
+                  variant: 'destructive',
+                })
+              }
+            }, 500)
           }
         },
         onError: (err) => {
@@ -95,7 +153,7 @@ export function useWalletAuth(): UseWalletAuthReturn {
         variant: 'destructive',
       })
     }
-  }, [connect, toast])
+  }, [connect, toast, user])
 
   const disconnectWallet = useCallback(async () => {
     try {

@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.wallet-link-verify]
 verify_jwt = true
+
+[functions.wallet-auth]
+verify_jwt = false
