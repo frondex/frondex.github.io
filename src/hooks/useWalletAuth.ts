@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { useConnect, useDisconnect, useAccount } from 'wagmi'
 import { injected, walletConnect, coinbaseWallet } from 'wagmi/connectors'
 import type { WalletType } from '@/lib/wallet'
+import { useAuth } from '@/components/AuthContext'
+import { useWalletLink } from './useWalletLink'
 
 interface UseWalletAuthReturn {
   isConnecting: boolean
@@ -12,6 +14,9 @@ interface UseWalletAuthReturn {
   address: string | undefined
   connectWallet: (walletType: WalletType) => Promise<void>
   disconnectWallet: () => Promise<void>
+  isLinking: boolean
+  linkWallet: (address: string) => Promise<boolean>
+  linkedWallets: string[]
 }
 
 export function useWalletAuth(): UseWalletAuthReturn {
@@ -20,6 +25,8 @@ export function useWalletAuth(): UseWalletAuthReturn {
   const { connect, isPending: isConnecting } = useConnect()
   const { disconnect } = useDisconnect()
   const { isConnected, address } = useAccount()
+  const { user } = useAuth()
+  const { isLinking, linkWallet: performLinkWallet, linkedWallets, fetchLinkedWallets } = useWalletLink()
 
   const getConnector = (walletType: WalletType) => {
     switch (walletType) {
@@ -50,12 +57,23 @@ export function useWalletAuth(): UseWalletAuthReturn {
       const connector = getConnector(walletType)
       
       connect({ connector }, {
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
+          const walletAddress = data.accounts[0]
           toast({
             title: 'Wallet Connected',
-            description: `Successfully connected ${walletType} wallet: ${data.accounts[0]?.slice(0, 6)}...${data.accounts[0]?.slice(-4)}`,
+            description: `Successfully connected ${walletType} wallet: ${walletAddress?.slice(0, 6)}...${walletAddress?.slice(-4)}`,
           })
-          console.log('Connected wallet:', { walletType, address: data.accounts[0] })
+          console.log('Connected wallet:', { walletType, address: walletAddress })
+          
+          // If user is authenticated, offer to link the wallet
+          if (user && walletAddress) {
+            setTimeout(() => {
+              toast({
+                title: 'Link Wallet?',
+                description: 'Would you like to link this wallet to your account?',
+              })
+            }, 1000)
+          }
         },
         onError: (err) => {
           const errorMessage = err.message || 'Failed to connect wallet'
@@ -96,6 +114,18 @@ export function useWalletAuth(): UseWalletAuthReturn {
     }
   }, [disconnect, toast])
 
+  const linkWallet = useCallback(async (address: string): Promise<boolean> => {
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please sign in first to link your wallet',
+        variant: 'destructive',
+      })
+      return false
+    }
+    return await performLinkWallet(address)
+  }, [user, performLinkWallet, toast])
+
   return {
     isConnecting,
     error,
@@ -103,5 +133,8 @@ export function useWalletAuth(): UseWalletAuthReturn {
     address,
     connectWallet,
     disconnectWallet,
+    isLinking,
+    linkWallet,
+    linkedWallets,
   }
 }

@@ -1,1 +1,7 @@
 project_id = "kazpdkmftoymgtoadqrl"
+
+[functions.wallet-link-nonce]
+verify_jwt = false
+
+[functions.wallet-link-verify]
+verify_jwt = true
