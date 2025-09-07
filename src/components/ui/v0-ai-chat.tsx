@@ -205,32 +205,27 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 {isMobile ? (
                     // Mobile: Controls at bottom for better reachability
                     <div className="flex justify-end gap-1 p-2 pt-0">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button
-                                    type="button"
-                                    onClick={() => !agentMode && setAgentMode(true)}
-                                    className={cn(
-                                        "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm",
-                                        agentMode
-                                            ? "bg-orange-100 text-orange-800 border border-orange-300"
-                                            : "bg-white text-gray-700 border border-gray-300"
-                                    )}
-                                >
-                                    <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
-                                    <span className="font-semibold">
-                                        {agentMode && selectedAgent.id !== 'general' 
-                                            ? selectedAgent.name.toUpperCase() 
-                                            : "AGENT"
-                                        }
-                                    </span>
-                                    <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
-                                        {agentMode ? "ON" : "OFF"}
-                                    </span>
-                                    {agentMode && <ChevronDown className="w-3 h-3" />}
-                                </button>
-                            </DropdownMenuTrigger>
-                            {agentMode && (
+                        {agentMode ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className={cn(
+                                            "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm",
+                                            "bg-orange-100 text-orange-800 border border-orange-300"
+                                        )}
+                                    >
+                                        <Zap className="w-3 h-3 text-orange-700" />
+                                        <span className="font-semibold">
+                                            {selectedAgent.id !== 'general' 
+                                                ? selectedAgent.name.toUpperCase() 
+                                                : "AGENT"
+                                            }
+                                        </span>
+                                        <span className="font-bold text-xs text-orange-800">ON</span>
+                                        <ChevronDown className="w-3 h-3" />
+                                    </button>
+                                </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-56">
                                     <DropdownMenuItem onClick={() => setAgentMode(false)}>
                                         <Zap className="w-4 h-4 mr-2" />
@@ -249,8 +244,18 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
-                            )}
-                        </DropdownMenu>
+                            </DropdownMenu>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => setAgentMode(true)}
+                                className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 shadow-sm bg-white text-gray-700 border border-gray-300"
+                            >
+                                <Zap className="w-3 h-3 text-gray-600" />
+                                <span className="font-semibold">AGENT</span>
+                                <span className="font-bold text-xs text-gray-600">OFF</span>
+                            </button>
+                        )}
                         
                         <button
                             type="button"
@@ -264,38 +269,33 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                 ) : (
                     // Desktop: Controls at top right
                     <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20 flex items-center gap-1 sm:gap-2">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button
-                                    type="button"
-                                    onClick={() => !agentMode && setAgentMode(true)}
-                                    className={cn(
-                                        "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
-                                        agentMode
-                                            ? "bg-orange-100/95 text-orange-800 border border-orange-300"
-                                            : "bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
-                                    )}
-                                >
-                                    <Zap className={cn("w-3 h-3", agentMode ? "text-orange-700" : "text-gray-600")} />
-                                    <span className="hidden md:inline font-semibold">
-                                        {agentMode && selectedAgent.id !== 'general' 
-                                            ? `${selectedAgent.name.toUpperCase()} AGENT` 
-                                            : "AGENT MODE"
-                                        }
-                                    </span>
-                                    <span className="md:hidden font-semibold">
-                                        {agentMode && selectedAgent.id !== 'general' 
-                                            ? selectedAgent.name.toUpperCase() 
-                                            : "AGENT"
-                                        }
-                                    </span>
-                                    <span className={cn("font-bold text-xs", agentMode ? "text-orange-800" : "text-gray-600")}>
-                                        {agentMode ? "ON" : "OFF"}
-                                    </span>
-                                    {agentMode && <ChevronDown className="w-3 h-3" />}
-                                </button>
-                            </DropdownMenuTrigger>
-                            {agentMode && (
+                        {agentMode ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className={cn(
+                                            "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm",
+                                            "bg-orange-100/95 text-orange-800 border border-orange-300"
+                                        )}
+                                    >
+                                        <Zap className="w-3 h-3 text-orange-700" />
+                                        <span className="hidden md:inline font-semibold">
+                                            {selectedAgent.id !== 'general' 
+                                                ? `${selectedAgent.name.toUpperCase()} AGENT` 
+                                                : "AGENT MODE"
+                                            }
+                                        </span>
+                                        <span className="md:hidden font-semibold">
+                                            {selectedAgent.id !== 'general' 
+                                                ? selectedAgent.name.toUpperCase() 
+                                                : "AGENT"
+                                            }
+                                        </span>
+                                        <span className="font-bold text-xs text-orange-800">ON</span>
+                                        <ChevronDown className="w-3 h-3" />
+                                    </button>
+                                </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-56">
                                     <DropdownMenuItem onClick={() => setAgentMode(false)}>
                                         <Zap className="w-4 h-4 mr-2" />
@@ -314,8 +314,19 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
-                            )}
-                        </DropdownMenu>
+                            </DropdownMenu>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => setAgentMode(true)}
+                                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all duration-200 shadow-sm backdrop-blur-sm bg-white/95 text-gray-700 border border-gray-300 hover:bg-gray-50/95"
+                            >
+                                <Zap className="w-3 h-3 text-gray-600" />
+                                <span className="hidden md:inline font-semibold">AGENT MODE</span>
+                                <span className="md:hidden font-semibold">AGENT</span>
+                                <span className="font-bold text-xs text-gray-600">OFF</span>
+                            </button>
+                        )}
                         
                         <button
                             type="button"
