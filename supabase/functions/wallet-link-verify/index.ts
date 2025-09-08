@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.54.0";
+import { verifyMessage } from 'https://esm.sh/viem@2.37.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -60,14 +61,15 @@ serve(async (req) => {
       );
     }
 
-    console.log('Verifying wallet link for user:', user.id, 'address:', address);
+    const normalizedAddress = address.toLowerCase()
+    console.log('Verifying wallet link for user:', user.id, 'address:', normalizedAddress);
 
     // Verify the nonce exists and is valid (within 10 minutes)
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
     const { data: nonceData, error: nonceError } = await supabase
       .from('wallet_nonces')
-      .select('nonce')
-      .eq('address', address.toLowerCase())
+      .select('id, nonce')
+      .eq('address', normalizedAddress)
       .eq('chain', chain)
       .gt('created_at', tenMinutesAgo)
       .maybeSingle();
@@ -75,19 +77,46 @@ serve(async (req) => {
     if (nonceError || !nonceData) {
       console.error('Nonce verification failed:', nonceError);
       return new Response(
-        JSON.stringify({ error: 'Invalid or expired nonce' }),
+        JSON.stringify({ error: 'INVALID_NONCE', message: 'Invalid or expired nonce' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Basic signature verification (in production, you'd want more robust SIWE verification)
-    // For now, we'll trust that the frontend properly signs and the message contains the nonce
-    if (!message.includes(nonceData.nonce)) {
+    console.log('Nonce found for link verification:', { nonceId: nonceData.id })
+
+    // Verify the signature
+    try {
+      const isValidSignature = await verifyMessage({
+        address: normalizedAddress as `0x${string}`,
+        message,
+        signature: signature as `0x${string}`,
+      })
+
+      if (!isValidSignature) {
+        console.error('Invalid signature for wallet link:', normalizedAddress)
+        return new Response(
+          JSON.stringify({ error: 'INVALID_SIGNATURE', message: 'Invalid signature' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } catch (signatureError) {
+      console.error('Signature verification error:', signatureError)
       return new Response(
-        JSON.stringify({ error: 'Message does not contain valid nonce' }),
+        JSON.stringify({ error: 'SIGNATURE_VERIFICATION_FAILED', message: 'Failed to verify signature' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Validate message contains the nonce
+    if (!message.includes(nonceData.nonce)) {
+      console.error('Message does not contain expected nonce')
+      return new Response(
+        JSON.stringify({ error: 'INVALID_MESSAGE', message: 'Message does not contain valid nonce' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Signature verification successful for wallet link:', normalizedAddress)
 
     // Create a service role client for privileged operations
     const serviceSupabase = createClient(
@@ -105,7 +134,7 @@ serve(async (req) => {
     const { data: existingWallet, error: existingError } = await serviceSupabase
       .from('user_wallets')
       .select('user_id')
-      .eq('address', address.toLowerCase())
+      .eq('address', normalizedAddress)
       .eq('chain', chain)
       .maybeSingle();
 
@@ -119,7 +148,7 @@ serve(async (req) => {
 
     if (existingWallet && existingWallet.user_id !== user.id) {
       return new Response(
-        JSON.stringify({ error: 'Wallet is already linked to another account' }),
+        JSON.stringify({ error: 'WALLET_ALREADY_LINKED', message: 'Wallet is already linked to another account' }),
         { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -129,7 +158,7 @@ serve(async (req) => {
       .from('user_wallets')
       .upsert({
         user_id: user.id,
-        address: address.toLowerCase(),
+        address: normalizedAddress,
         chain,
         type: 'evm',
       }, {
@@ -144,15 +173,19 @@ serve(async (req) => {
       );
     }
 
-    // Clean up the used nonce
-    await serviceSupabase
+    // Clean up the used nonce (critical security step)
+    const { error: deleteError } = await serviceSupabase
       .from('wallet_nonces')
       .delete()
-      .eq('address', address.toLowerCase())
-      .eq('chain', chain)
-      .eq('nonce', nonceData.nonce);
+      .eq('id', nonceData.id)
 
-    console.log('Wallet linked successfully');
+    if (deleteError) {
+      console.error('Failed to delete nonce:', deleteError)
+    } else {
+      console.log('Nonce successfully deleted for wallet link:', nonceData.id)
+    }
+
+    console.log('Wallet linked successfully to user:', user.id);
 
     return new Response(
       JSON.stringify({ success: true, message: 'Wallet linked successfully' }),

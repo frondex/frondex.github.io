@@ -98,6 +98,12 @@ export function useWalletAuth(): UseWalletAuthReturn {
                   message 
                 })
 
+                // Show signing in toast
+                toast({
+                  title: "Signing you in with your wallet...",
+                  description: "Please wait while we authenticate your wallet."
+                })
+
                 // Authenticate with backend
                 const { data: authData, error: authError } = await supabase.functions.invoke('wallet-auth', {
                   body: {
@@ -116,11 +122,6 @@ export function useWalletAuth(): UseWalletAuthReturn {
                 if (authData.magic_link) {
                   window.location.href = authData.magic_link
                 }
-
-                toast({
-                  title: 'Wallet Authentication Successful',
-                  description: 'You are now signed in with your wallet',
-                })
 
               } catch (authErr: any) {
                 console.error('Wallet authentication failed:', authErr)
