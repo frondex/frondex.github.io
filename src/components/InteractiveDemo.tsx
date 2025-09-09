@@ -56,6 +56,8 @@ interface Message {
   entities?: PrivateMarketsEntity[];
   suggestions?: PrivateMarketsSuggestion[];
   visualizations?: any[];
+  attachment?: File;
+  attachmentUrl?: string;
 }
 
 interface InteractiveDemoProps {
@@ -170,6 +172,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       type: "user",
       content: query,
       timestamp: new Date(),
+      attachment: file,
+      attachmentUrl: file ? URL.createObjectURL(file) : undefined,
     };
     
     setMessages(prev => [...prev, userMessage]);
@@ -582,6 +586,29 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                 <div className={`max-w-[85%] sm:max-w-[80%] ${message.type === "user" ? "order-2" : "order-1"}`}>
                   {message.type === "user" ? (
                     <div className="bg-gray-100 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 text-right">
+                      {/* User attachment display */}
+                      {message.attachmentUrl && (
+                        <div className="mb-3">
+                          {message.attachment?.type.startsWith('image/') ? (
+                            <img
+                              src={message.attachmentUrl}
+                              alt={message.attachment.name}
+                              className="max-w-xs rounded-lg border border-gray-200 shadow-sm"
+                            />
+                          ) : (
+                            <div className="bg-white rounded-lg border border-gray-200 p-3 flex items-center gap-2 text-left">
+                              <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
+                                <span className="text-xs font-medium text-gray-600">
+                                  {message.attachment?.name.split('.').pop()?.toUpperCase()}
+                                </span>
+                              </div>
+                              <span className="text-sm text-gray-700 truncate">
+                                {message.attachment?.name}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <div className="text-gray-900 text-sm sm:text-base break-words">{message.content}</div>
                     </div>
                   ) : (
