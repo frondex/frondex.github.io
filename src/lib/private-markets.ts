@@ -45,6 +45,22 @@ export interface PrivateMarketsResponse {
   suggestions: PrivateMarketsSuggestion[];
   visualizations: PrivateMarketsVisualization[];
   sessionToken: string;
+  documentProcessed?: boolean;
+  documentContext?: string;
+  document?: {
+    name: string;
+    type: string;
+    size: number;
+  };
+  metadata?: {
+    webSearchUsed: boolean;
+    processingTime: number;
+    documentAnalysisUsed?: boolean;
+    documentName?: string;
+    documentType?: string;
+    memoryUsed: boolean;
+  };
+  conversationId?: string;
   conversationContext: {
     intent: string;
     entitiesDiscussed: string[];
@@ -66,8 +82,38 @@ export class PrivateMarketsService {
   };
 
   private sessionToken: string | null = null;
+  private conversationId: string | null = null;
 
-  constructor(private settings: PrivateMarketsSettings) {}
+  constructor(private settings: PrivateMarketsSettings) {
+    this.conversationId = this.getOrCreateConversationId();
+  }
+
+  private getOrCreateConversationId(): string {
+    const stored = localStorage.getItem('private-markets-conversation-id');
+    if (stored) {
+      return stored;
+    }
+    const newId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('private-markets-conversation-id', newId);
+    return newId;
+  }
+
+  private validateFile(file: File): void {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+      'text/plain', 'text/csv', 'text/markdown'
+    ];
+
+    if (file.size > maxSize) {
+      throw new Error('File too large. Maximum size is 10MB.');
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error(`Unsupported file type: ${file.type}`);
+    }
+  }
 
   static getSettings(): PrivateMarketsSettings {
     try {
@@ -121,25 +167,46 @@ export class PrivateMarketsService {
     }
   }
 
-  async sendMessage(message: string): Promise<PrivateMarketsResponse> {
+  async sendMessage(message: string, file?: File): Promise<PrivateMarketsResponse> {
+    if (file) {
+      this.validateFile(file);
+    }
     try {
-      const response = await fetch(`${this.settings.apiUrl}/api/wrapper/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          sessionToken: this.sessionToken,
-          userId: this.settings.userId,
-          context: { 
-            appId: this.settings.appId,
-            userPreferences: {
-              responseFormat: this.settings.responseFormat,
-              includeCharts: this.settings.includeCharts,
-              maxResults: this.settings.maxResults
+      let response: Response;
+
+      if (file) {
+        // Use FormData for file uploads
+        const formData = new FormData();
+        formData.append('message', message);
+        formData.append('conversationId', this.conversationId || '');
+        formData.append('file', file);
+
+        response = await fetch(`${this.settings.apiUrl}/api/wrapper/chat`, {
+          method: 'POST',
+          body: formData,
+          // Don't set Content-Type header - let browser set it automatically for FormData
+        });
+      } else {
+        // Use JSON for text-only messages (backward compatibility)
+        response = await fetch(`${this.settings.apiUrl}/api/wrapper/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            conversationId: this.conversationId,
+            sessionToken: this.sessionToken,
+            userId: this.settings.userId,
+            context: { 
+              appId: this.settings.appId,
+              userPreferences: {
+                responseFormat: this.settings.responseFormat,
+                includeCharts: this.settings.includeCharts,
+                maxResults: this.settings.maxResults
+              }
             }
-          }
-        })
-      });
+          })
+        });
+      }
 
       if (!response.ok) {
         if (response.status === 429) {
@@ -154,16 +221,25 @@ export class PrivateMarketsService {
       const data = await response.json();
       
       if (data.success) {
-        // Update session token
+        // Update session token and conversation ID
         this.sessionToken = data.sessionToken;
+        if (data.conversationId) {
+          this.conversationId = data.conversationId;
+          localStorage.setItem('private-markets-conversation-id', data.conversationId);
+        }
         
         return {
           success: true,
-          message: data.response.message,
-          entities: data.response.data?.entities || [],
-          suggestions: data.response.suggestions || [],
-          visualizations: data.response.visualizations || [],
+          message: data.response?.message || data.message || '',
+          entities: data.response?.data?.entities || data.entities || [],
+          suggestions: data.response?.suggestions || data.suggestions || [],
+          visualizations: data.response?.visualizations || data.visualizations || [],
           sessionToken: data.sessionToken,
+          documentProcessed: data.documentProcessed || false,
+          documentContext: data.documentContext,
+          document: data.document,
+          metadata: data.metadata,
+          conversationId: data.conversationId,
           conversationContext: data.conversationContext || {
             intent: 'general_search',
             entitiesDiscussed: [],
@@ -173,7 +249,7 @@ export class PrivateMarketsService {
           }
         };
       } else {
-        throw new Error(data.error?.message || 'Chat request failed');
+        throw new Error(data.error?.message || data.error || 'Chat request failed');
       }
     } catch (error) {
       console.error('Private Markets API error:', error);

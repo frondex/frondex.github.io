@@ -126,7 +126,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     setInitialQuery("");
   }, []);
 
-  const handleChatSubmit = useCallback(async (query: string) => {
+  const handleChatSubmit = useCallback(async (query: string, attachments?: File[]) => {
+    const file = attachments && attachments.length > 0 ? attachments[0] : undefined;
     if (!query.trim()) return;
     
     // Check if user is authenticated
@@ -213,7 +214,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           setPrivateMarketsService(service);
         }
         
-        const response = await (privateMarketsService || new PrivateMarketsService(PrivateMarketsService.getSettings())).sendMessage(query);
+        const response = await (privateMarketsService || new PrivateMarketsService(PrivateMarketsService.getSettings())).sendMessage(query, file);
         
         const assistantMessage: Message = {
           id: Date.now() + 1,
@@ -383,7 +384,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         
         {/* Chat Input */}
         <div className="w-full max-w-4xl mb-8 sm:mb-12 md:mb-16 px-2">
-          <VercelV0Chat onSubmit={handleChatSubmit} />
+          <VercelV0Chat onSubmit={(query, attachments) => handleChatSubmit(query, attachments)} />
         </div>
         
         {/* Scroll Down Indicator */}

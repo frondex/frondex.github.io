@@ -109,9 +109,40 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
         }
     };
 
+    const validateFile = (file: File): boolean => {
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = [
+            'application/pdf',
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+            'text/plain', 'text/csv', 'text/markdown'
+        ];
+
+        if (file.size > maxSize) {
+            alert('File too large. Maximum size is 10MB.');
+            return false;
+        }
+
+        if (!allowedTypes.includes(file.type)) {
+            alert(`Unsupported file type: ${file.type}. Please use PDF, images, or text files.`);
+            return false;
+        }
+
+        return true;
+    };
+
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(event.target.files || []);
-        setAttachments(prev => [...prev, ...files]);
+        const validFiles = files.filter(validateFile);
+        
+        // Only allow single file upload
+        if (validFiles.length > 0) {
+            setAttachments([validFiles[0]]);
+        }
+        
+        // Reset the file input
+        if (event.target) {
+            event.target.value = '';
+        }
     };
 
     const handleAttachClick = () => {
@@ -126,7 +157,11 @@ export function VercelV0Chat({ onSubmit }: VercelV0ChatProps) {
             .filter(file => file !== null) as File[];
         
         if (imageFiles.length > 0) {
-            setAttachments(prev => [...prev, ...imageFiles]);
+            const validFiles = imageFiles.filter(validateFile);
+            if (validFiles.length > 0) {
+                // Only allow single file
+                setAttachments([validFiles[0]]);
+            }
         }
     };
 
