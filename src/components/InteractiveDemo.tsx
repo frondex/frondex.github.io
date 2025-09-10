@@ -556,10 +556,6 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <div className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">Frondex AI</span>
-              </div>
             </div>
             <div className="flex items-center">
               {user ? (
