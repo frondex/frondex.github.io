@@ -64,9 +64,20 @@ serve(async (req) => {
     const normalizedAddress = address.toLowerCase()
     console.log('Verifying wallet link for user:', user.id, 'address:', normalizedAddress);
 
-    // Verify the nonce exists and is valid (within 10 minutes)
+    // Create a service role client and verify the nonce exists and is valid (within 10 minutes)
+    const serviceSupabase = createClient(
+      Deno.env.get('SUPABASE_URL') || '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      }
+    );
+
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    const { data: nonceData, error: nonceError } = await supabase
+    const { data: nonceData, error: nonceError } = await serviceSupabase
       .from('wallet_nonces')
       .select('id, nonce')
       .eq('address', normalizedAddress)
@@ -118,17 +129,6 @@ serve(async (req) => {
 
     console.log('Signature verification successful for wallet link:', normalizedAddress)
 
-    // Create a service role client for privileged operations
-    const serviceSupabase = createClient(
-      Deno.env.get('SUPABASE_URL') || '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
 
     // Check if wallet is already linked to another user
     const { data: existingWallet, error: existingError } = await serviceSupabase
