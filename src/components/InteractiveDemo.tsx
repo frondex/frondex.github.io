@@ -529,16 +529,131 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
     );
   }
 
-  // Chat view - now using EnhancedChatView for mobile optimization
+  // Chat view layout - restored original with mobile optimizations
   return (
     <>
-      <EnhancedChatView
-        onBack={() => setShowChatView(false)}
-        initialQuery={initialQuery}
-        onSendMessage={handleChatSubmit}
-        messages={messages}
-        isLoading={isLoading}
-      />
+      <div className="flex h-screen bg-background">
+        {/* Modern Chat Sidebar - hidden on mobile */}
+        <div className="hidden md:block">
+          <ModernChatSidebar 
+            onNewChat={handleNewChat}
+            onSelectChat={loadChatSession}
+            currentChatId={currentChatSessionId || undefined}
+            onBackToHome={() => setShowChatView(false)}
+          />
+        </div>
+
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Header with back button and user dropdown */}
+          <div className="flex items-center justify-between gap-2 sm:gap-4 p-2 sm:p-4 bg-white border-b">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setShowChatView(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <Bot className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-foreground">Frondex AI</span>
+              </div>
+            </div>
+            <div className="flex items-center">
+              {user ? (
+                <UserAccountDropdown 
+                  user={user} 
+                  onUpgradeClick={() => setShowWaitlistModal(true)}
+                />
+              ) : (
+                <Button 
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 sm:gap-2 border-purple-200 text-purple-700 hover:bg-purple-50 text-xs sm:text-sm"
+                >
+                  <Link to="/auth">
+                    <Crown className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Log In</span>
+                    <span className="sm:hidden">Sign In</span>
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Messages area - mobile optimized */}
+          <div className="flex-1 overflow-y-auto p-2 sm:p-4 md:p-6 bg-white">
+            <div className="max-w-4xl mx-auto space-y-3 sm:space-y-4 md:space-y-6">
+              {messages.map((message) => (
+                <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] ${message.type === "user" ? "order-2" : "order-1"}`}>
+                    {message.type === "user" ? (
+                      <div className="bg-primary text-primary-foreground rounded-2xl px-3 sm:px-4 py-2 sm:py-3 text-right">
+                        <div className="text-sm sm:text-base break-words">{message.content}</div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="bg-muted/50 rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
+                          <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                            <ReactMarkdown 
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                p: ({ children }) => <p className="mb-2 last:mb-0 text-sm sm:text-base leading-relaxed">{children}</p>,
+                                h1: ({ children }) => <h1 className="text-lg sm:text-xl font-bold mb-3 text-foreground">{children}</h1>,
+                                h2: ({ children }) => <h2 className="text-base sm:text-lg font-semibold mb-2 text-foreground">{children}</h2>,
+                                h3: ({ children }) => <h3 className="text-sm sm:text-base font-medium mb-2 text-foreground">{children}</h3>,
+                                ul: ({ children }) => <ul className="mb-2 last:mb-0 pl-4 text-sm sm:text-base space-y-1">{children}</ul>,
+                                ol: ({ children }) => <ol className="mb-2 last:mb-0 pl-4 text-sm sm:text-base space-y-1 list-decimal">{children}</ol>,
+                                li: ({ children }) => <li className="text-foreground">{children}</li>,
+                                strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                                em: ({ children }) => <em className="italic text-muted-foreground">{children}</em>,
+                                code: ({ children }) => <code className="bg-background px-1.5 py-0.5 rounded text-xs sm:text-sm font-mono text-foreground">{children}</code>,
+                                pre: ({ children }) => <pre className="bg-background p-3 rounded-lg overflow-x-auto mb-2 text-xs sm:text-sm">{children}</pre>,
+                                blockquote: ({ children }) => <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-2">{children}</blockquote>,
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              
+              {/* Loading indicator with three dots in chat */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <Bot className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                    <div className="bg-muted/50 rounded-2xl px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <ThreeDotsLoader />
+                        <span className="text-sm text-muted-foreground">Thinking...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Chat input fixed at bottom - mobile optimized */}
+          <div className="border-t bg-background p-2 sm:p-3 md:p-4 sticky bottom-0">
+            <div className="max-w-4xl mx-auto">
+              <VercelV0Chat onSubmit={handleChatSubmit} />
+            </div>
+          </div>
+        </div>
+      </div>
       
       {/* Modals */}
       <SignupPrompt
