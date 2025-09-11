@@ -563,7 +563,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
 
         {/* Footer Text */}
         <div className="text-center text-sm text-gray-600 max-w-lg">
-          <p>Frondex can make mistakes. <a href="/admin" className="text-gray-600 hover:text-gray-800">Please</a> double-check responses.</p>
+          <p>Frondex can make <a href="/demo" className="text-gray-600 hover:text-gray-800">mistakes</a>. <a href="/admin" className="text-gray-600 hover:text-gray-800">Please</a> double-check responses.</p>
         </div>
 
       </div>
