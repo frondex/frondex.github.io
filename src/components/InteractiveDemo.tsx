@@ -28,6 +28,10 @@ import ModernChatSidebar from "./ModernChatSidebar";
 import ComingSoonPage from "./ComingSoonPage";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { ConnectWalletHeaderButton } from "./ConnectWalletHeaderButton";
+import FilePreviewCard, { type FileAttachment } from '@/components/FilePreviewCard';
+import MarkdownViewer from '@/components/MarkdownViewer';
+import CSVViewer from '@/components/CSVViewer';
+import { detectFileInContent, createFileAttachment } from '@/utils/fileProcessor';
 
 // Import all generated images
 import longShortGrayNew from "@/assets/long-short-grayscale-new.jpg";
@@ -58,6 +62,7 @@ interface Message {
   visualizations?: any[];
   attachment?: File;
   attachmentUrl?: string;
+  fileAttachments?: FileAttachment[];
 }
 
 interface InteractiveDemoProps {
@@ -77,10 +82,29 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [currentService, setCurrentService] = useState<'openai' | 'private-markets'>('private-markets');
   const [privateMarketsService, setPrivateMarketsService] = useState<PrivateMarketsService | null>(null);
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null);
+  const [selectedFileAttachment, setSelectedFileAttachment] = useState<FileAttachment | null>(null);
+  const [showMarkdownViewer, setShowMarkdownViewer] = useState(false);
+  const [showCSVViewer, setShowCSVViewer] = useState(false);
   const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
   const { createSession, refreshSessions } = useChatSessions();
   const { toast } = useToast();
+
+  // File viewer handlers
+  const handleOpenFileViewer = useCallback((attachment: FileAttachment) => {
+    setSelectedFileAttachment(attachment);
+    if (attachment.type === 'markdown') {
+      setShowMarkdownViewer(true);
+    } else if (attachment.type === 'csv') {
+      setShowCSVViewer(true);
+    }
+  }, []);
+
+  const handleCloseFileViewer = useCallback(() => {
+    setShowMarkdownViewer(false);
+    setShowCSVViewer(false);
+    setSelectedFileAttachment(null);
+  }, []);
 
   const loadChatSession = useCallback(async (sessionId: string) => {
     if (!user) return;
@@ -105,6 +129,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         type: msg.role as "user" | "assistant",
         content: msg.content,
         timestamp: new Date(msg.created_at),
+        fileAttachments: msg.attachments ? (msg.attachments as unknown as FileAttachment[]) : undefined,
       })) || [];
       
       setMessages(loadedMessages);
@@ -220,6 +245,15 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         
         const response = await (privateMarketsService || new PrivateMarketsService(PrivateMarketsService.getSettings())).sendMessage(query, file);
         
+        // Process file attachments from response
+        const fileAttachments: FileAttachment[] = [];
+        const detectedFile = detectFileInContent(response.message);
+        
+        if (detectedFile.type) {
+          const attachment = createFileAttachment(detectedFile.type, detectedFile.content);
+          fileAttachments.push(attachment);
+        }
+
         const assistantMessage: Message = {
           id: Date.now() + 1,
           type: "assistant",
@@ -228,6 +262,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           entities: response.entities,
           suggestions: response.suggestions,
           visualizations: response.visualizations,
+          fileAttachments: fileAttachments.length > 0 ? fileAttachments : undefined,
         };
         
         setMessages(prev => [...prev, assistantMessage]);
@@ -241,7 +276,8 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                 chat_session_id: sessionId,
                 user_id: user.id,
                 content: response.message,
-                role: 'assistant'
+                role: 'assistant',
+                attachments: fileAttachments.length > 0 ? JSON.parse(JSON.stringify(fileAttachments)) : null
               });
             
             // Update session timestamp
@@ -614,6 +650,15 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
                               {message.content}
                             </ReactMarkdown>
                           </div>
+                          
+                          {/* File attachments */}
+                          {message.fileAttachments && message.fileAttachments.map((attachment) => (
+                            <FilePreviewCard 
+                              key={attachment.id}
+                              attachment={attachment}
+                              onOpenViewer={handleOpenFileViewer}
+                            />
+                          ))}
                         </div>
                       </div>
                     )}
@@ -663,6 +708,22 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
         open={showWaitlistModal}
         onOpenChange={setShowWaitlistModal}
       />
+      
+      {/* File viewers */}
+      {selectedFileAttachment && (
+        <>
+          <MarkdownViewer 
+            isOpen={showMarkdownViewer}
+            onClose={handleCloseFileViewer}
+            attachment={selectedFileAttachment}
+          />
+          <CSVViewer 
+            isOpen={showCSVViewer}
+            onClose={handleCloseFileViewer}
+            attachment={selectedFileAttachment}
+          />
+        </>
+      )}
     </>
   );
 };
