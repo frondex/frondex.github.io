@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 export interface FileAttachment {
   id: string;
   name: string;
-  type: 'csv' | 'markdown' | 'pdf' | 'image';
+  type: 'csv' | 'markdown' | 'presentation' | 'pdf' | 'image';
   size: number;
   rawContent: string;
   previewContent: any;
@@ -16,6 +16,8 @@ export interface FileAttachment {
     rows?: number;
     columns?: string[];
     wordCount?: number;
+    slideCount?: number;
+    characterCount?: number;
   };
 }
 
@@ -39,6 +41,8 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({ attachment, onOpenVie
         return <Table className="h-5 w-5 text-emerald-600" />;
       case 'markdown':
         return <FileText className="h-5 w-5 text-blue-600" />;
+      case 'presentation':
+        return <FileText className="h-5 w-5 text-purple-600" />;
       default:
         return <FileText className="h-5 w-5 text-muted-foreground" />;
     }
@@ -50,6 +54,9 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({ attachment, onOpenVie
     }
     if (attachment.type === 'markdown' && attachment.metadata?.wordCount) {
       return `${attachment.metadata.wordCount} words`;
+    }
+    if (attachment.type === 'presentation' && attachment.metadata?.slideCount) {
+      return `${attachment.metadata.slideCount} slides`;
     }
     return 'Click to preview';
   };
@@ -81,9 +88,9 @@ const FilePreviewCard: React.FC<FilePreviewCardProps> = ({ attachment, onOpenVie
               <h4 className="text-sm font-medium text-foreground truncate">
                 {attachment.name}
               </h4>
-              <Badge variant="secondary" className="text-xs">
-                {attachment.type.toUpperCase()}
-              </Badge>
+        <Badge variant="secondary" className="text-xs">
+          {attachment.type === 'presentation' ? 'SLIDES' : attachment.type.toUpperCase()}
+        </Badge>
             </div>
             
             <p className="text-xs text-muted-foreground mb-2">

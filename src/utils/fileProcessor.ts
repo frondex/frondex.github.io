@@ -57,7 +57,7 @@ export function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(word => word.length > 0).length;
 }
 
-export function detectFileInContent(content: string): { type: 'csv' | 'markdown' | null, content: string } {
+export function detectFileInContent(content: string): { type: 'csv' | 'markdown' | 'presentation' | null, content: string } {
   // Check for CSV code blocks
   const csvMatch = content.match(/```csv\n([\s\S]*?)\n```/);
   if (csvMatch) {
@@ -68,6 +68,12 @@ export function detectFileInContent(content: string): { type: 'csv' | 'markdown'
   const markdownMatch = content.match(/```markdown\n([\s\S]*?)\n```/);
   if (markdownMatch) {
     return { type: 'markdown', content: markdownMatch[1] };
+  }
+
+  // Check for presentation code blocks (HTML/reveal.js)
+  const presentationMatch = content.match(/```(?:html|presentation)\n([\s\S]*?)\n```/);
+  if (presentationMatch) {
+    return { type: 'presentation', content: presentationMatch[1] };
   }
   
   // Check for generic code blocks that might be CSV (contains commas and looks tabular)
@@ -91,7 +97,7 @@ export function detectFileInContent(content: string): { type: 'csv' | 'markdown'
 }
 
 export function createFileAttachment(
-  type: 'csv' | 'markdown',
+  type: 'csv' | 'markdown' | 'presentation',
   content: string,
   filename?: string
 ): FileAttachment {
@@ -113,6 +119,15 @@ export function createFileAttachment(
     previewContent = content;
     metadata = {
       wordCount: countWords(content)
+    };
+  } else if (type === 'presentation') {
+    // Parse slides from HTML content
+    const slides = content.split(/<\/?section[^>]*>/i).filter(slide => slide.trim());
+    const slideCount = Math.max(1, slides.length - 1); // Subtract 1 for empty first split
+    previewContent = content;
+    metadata = {
+      slideCount,
+      characterCount: content.length
     };
   }
   

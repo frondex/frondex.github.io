@@ -31,6 +31,7 @@ import { ConnectWalletHeaderButton } from "./ConnectWalletHeaderButton";
 import FilePreviewCard, { type FileAttachment } from '@/components/FilePreviewCard';
 import MarkdownViewer from '@/components/MarkdownViewer';
 import CSVViewer from '@/components/CSVViewer';
+import { PresentationViewer } from '@/components/PresentationViewer';
 import { detectFileInContent, createFileAttachment } from '@/utils/fileProcessor';
 
 // Import all generated images
@@ -85,6 +86,7 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
   const [selectedFileAttachment, setSelectedFileAttachment] = useState<FileAttachment | null>(null);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState(false);
   const [showCSVViewer, setShowCSVViewer] = useState(false);
+  const [showPresentationViewer, setShowPresentationViewer] = useState(false);
   const { credits, useCredits: deductCredits } = useCredits();
   const { isAdmin } = useUserRole();
   const { createSession, refreshSessions } = useChatSessions();
@@ -97,12 +99,15 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
       setShowMarkdownViewer(true);
     } else if (attachment.type === 'csv') {
       setShowCSVViewer(true);
+    } else if (attachment.type === 'presentation') {
+      setShowPresentationViewer(true);
     }
   }, []);
 
   const handleCloseFileViewer = useCallback(() => {
     setShowMarkdownViewer(false);
     setShowCSVViewer(false);
+    setShowPresentationViewer(false);
     setSelectedFileAttachment(null);
   }, []);
 
@@ -719,6 +724,11 @@ const InteractiveDemo = ({ user }: InteractiveDemoProps) => {
           />
           <CSVViewer 
             isOpen={showCSVViewer}
+            onClose={handleCloseFileViewer}
+            attachment={selectedFileAttachment}
+          />
+          <PresentationViewer 
+            isOpen={showPresentationViewer}
             onClose={handleCloseFileViewer}
             attachment={selectedFileAttachment}
           />
